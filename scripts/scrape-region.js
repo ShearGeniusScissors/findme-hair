@@ -90,15 +90,16 @@ async function placesSearchText(query, centre, retries = 3) {
 
 function addressBits(place, fallbackSuburb, fallbackState) {
   const comps = place.addressComponents || [];
-  const find = (t) => comps.find((c) => (c.types || []).includes(t))?.longText;
-  const line1 = [find('street_number'), find('route')].filter(Boolean).join(' ') ||
+  const findLong = (t) => comps.find((c) => (c.types || []).includes(t))?.longText;
+  const findShort = (t) => comps.find((c) => (c.types || []).includes(t))?.shortText;
+  const line1 = [findLong('street_number'), findLong('route')].filter(Boolean).join(' ') ||
     (place.formattedAddress || '').split(',')[0] ||
     '';
   return {
     line1,
-    suburb: find('locality') || find('sublocality') || fallbackSuburb,
-    state: find('administrative_area_level_1') || fallbackState,
-    postcode: find('postal_code') || '',
+    suburb: findLong('locality') || findLong('sublocality') || fallbackSuburb,
+    state: findShort('administrative_area_level_1') || fallbackState,
+    postcode: findLong('postal_code') || '',
   };
 }
 
