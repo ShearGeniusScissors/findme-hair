@@ -1,10 +1,11 @@
 import { supabaseServerAnon } from '@/lib/supabase';
-import type { AuState, Business, BusinessType } from '@/types/database';
+import type { AuState, Business, BusinessType, Region, Suburb } from '@/types/database';
 
 export interface SearchFilters {
   q?: string;
   state?: AuState;
-  suburb?: string;
+  region?: string; // slug
+  suburb?: string; // slug OR name (case-insensitive)
   type?: BusinessType;
   limit?: number;
   offset?: number;
@@ -16,13 +17,22 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     .from('businesses')
     .select('*')
     .eq('status', 'active')
+    .order('confidence_score', { ascending: false, nullsFirst: false })
     .order('google_rating', { ascending: false, nullsFirst: false })
     .limit(filters.limit ?? 40);
 
   if (filters.state) query = query.eq('state', filters.state);
-  if (filters.suburb) query = query.ilike('suburb', filters.suburb);
   if (filters.type) query = query.eq('business_type', filters.type);
   if (filters.q) query = query.ilike('name', `%${filters.q}%`);
+
+  if (filters.region) {
+    const region = await getRegionBySlug(filters.region);
+    if (region) query = query.eq('region_id', region.id);
+  }
+  if (filters.suburb) {
+    // Match by slug or by name ilike
+    query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
+  }
   if (filters.offset) query = query.range(filters.offset, (filters.offset ?? 0) + (filters.limit ?? 40) - 1);
 
   const { data, error } = await query;
@@ -42,17 +52,64 @@ export async function getBusinessBySlug(slug: string): Promise<Business | null> 
   return (data as Business | null) ?? null;
 }
 
-export async function getSuburbBusinesses(state: AuState, suburb: string): Promise<Business[]> {
+export async function listRegions(state?: AuState): Promise<Region[]> {
   const supabase = supabaseServerAnon();
-  const { data, error } = await supabase
+  let query = supabase.from('regions').select('*').order('name');
+  if (state) query = query.eq('state', state);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []) as Region[];
+}
+
+export async function getRegionBySlug(slug: string): Promise<Region | null> {
+  const supabase = supabaseServerAnon();
+  const { data } = await supabase.from('regions').select('*').eq('slug', slug).maybeSingle();
+  return (data as Region | null) ?? null;
+}
+
+export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
+  const supabase = supabaseServerAnon();
+  const { data } = await supabase
+    .from('suburbs')
+    .select('*')
+    .eq('region_id', regionId)
+    .order('name');
+  return (data ?? []) as Suburb[];
+}
+
+export async function getSuburbBusinesses(
+  state: AuState,
+  regionSlug: string,
+  suburbSlug: string,
+): Promise<Business[]> {
+  const supabase = supabaseServerAnon();
+  const region = await getRegionBySlug(regionSlug);
+  if (!region) return [];
+  const suburbName = suburbSlug.replace(/-/g, ' ');
+  const { data } = await supabase
     .from('businesses')
     .select('*')
     .eq('status', 'active')
     .eq('state', state)
-    .ilike('suburb', suburb)
+    .eq('region_id', region.id)
+    .ilike('suburb', suburbName)
+    .order('confidence_score', { ascending: false, nullsFirst: false })
     .order('google_rating', { ascending: false, nullsFirst: false });
-  if (error) throw error;
   return (data ?? []) as Business[];
+}
+
+export async function getSuburbByRegionAndSlug(
+  regionId: string,
+  suburbSlug: string,
+): Promise<Suburb | null> {
+  const supabase = supabaseServerAnon();
+  const { data } = await supabase
+    .from('suburbs')
+    .select('*')
+    .eq('region_id', regionId)
+    .eq('slug', suburbSlug)
+    .maybeSingle();
+  return (data as Suburb | null) ?? null;
 }
 
 export async function listStates(): Promise<AuState[]> {

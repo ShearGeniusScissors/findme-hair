@@ -8,6 +8,37 @@ export type TerritoryStatus = 'pending' | 'imported' | 'verified' | 'live';
 export type UserRole = 'owner' | 'admin';
 export type MediaType = 'cover' | 'gallery' | 'logo';
 
+export interface GooglePhotoRef {
+  name: string;
+  widthPx?: number;
+  heightPx?: number;
+}
+
+export interface GoogleHours {
+  weekdayDescriptions: string[];
+  periods: unknown[];
+}
+
+export interface Region {
+  id: string;
+  name: string;
+  state: AuState;
+  slug: string;
+  created_at: string;
+}
+
+export interface Suburb {
+  id: string;
+  name: string;
+  region_id: string;
+  state: AuState;
+  slug: string;
+  postcode: string | null;
+  lat: number | null;
+  lng: number | null;
+  created_at: string;
+}
+
 export interface Business {
   id: string;
   name: string;
@@ -27,6 +58,17 @@ export interface Business {
   google_place_id: string | null;
   google_rating: number | null;
   google_review_count: number | null;
+  google_business_status: string | null;
+  google_photos: GooglePhotoRef[] | null;
+  google_hours: GoogleHours | null;
+  google_last_checked: string | null;
+  region_id: string | null;
+  suburb_id: string | null;
+  confidence_score: number | null;
+  verification_flags: string[] | null;
+  true_local_found: boolean | null;
+  yellow_pages_found: boolean | null;
+  website_alive: boolean | null;
   status: BusinessStatus;
   is_claimed: boolean;
   claimed_by: string | null;
