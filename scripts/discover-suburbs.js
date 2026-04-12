@@ -20,40 +20,134 @@ requireEnv([
   'GOOGLE_PLACES_API_KEY',
 ]);
 
+// Region definitions.
+//
+// Regions with a `suburbs` array use EXPLICIT suburb lists — discovery
+// geocodes each entry directly instead of letting Google Places text search
+// pick suburbs. This is required for "Melbourne West" / "Adelaide North"
+// style regions where the phrase also happens to be a real suburb name and
+// Places returns the wrong geographic area (e.g. "Melbourne West VIC" matches
+// the suburb "West Melbourne" in the CBD, not Werribee/Altona/Williamstown).
+//
+// Regions without `suburbs` use the Places text search discovery path —
+// works well for distinct place names like Ballarat, Hobart, Bendigo.
 const REGION_CENTRES = {
-  // Phase 0 — regional VIC (pilot territories, already done in Session)
+  // Phase 0 — regional VIC (pilot territories, already done)
   ballarat: { name: 'Ballarat', state: 'VIC', lat: -37.5622, lng: 143.8503, radius: 25000 },
   geelong: { name: 'Geelong', state: 'VIC', lat: -38.1499, lng: 144.3617, radius: 30000 },
 
-  // Phase 1 — Melbourne metro
-  'melbourne-west': { name: 'Melbourne West', state: 'VIC', lat: -37.85, lng: 144.76, radius: 18000 },
-  'melbourne-cbd': { name: 'Melbourne CBD', state: 'VIC', lat: -37.8136, lng: 144.9631, radius: 5000 },
-  'melbourne-inner-north': { name: 'Melbourne Inner North', state: 'VIC', lat: -37.78, lng: 144.98, radius: 6000 },
-  'melbourne-inner-south': { name: 'Melbourne Inner South', state: 'VIC', lat: -37.84, lng: 144.99, radius: 5000 },
-  'melbourne-east': { name: 'Melbourne East', state: 'VIC', lat: -37.82, lng: 145.12, radius: 15000 },
-  'melbourne-north': { name: 'Melbourne North', state: 'VIC', lat: -37.73, lng: 145.05, radius: 15000 },
-  'melbourne-south-east': { name: 'Melbourne South East', state: 'VIC', lat: -37.98, lng: 145.22, radius: 20000 },
-  'mornington-peninsula': { name: 'Mornington Peninsula', state: 'VIC', lat: -38.22, lng: 145.05, radius: 20000 },
-  'yarra-valley': { name: 'Yarra Valley', state: 'VIC', lat: -37.65, lng: 145.52, radius: 20000 },
+  // Phase 1 — Melbourne metro (explicit suburb lists)
+  'melbourne-west': {
+    name: 'Melbourne West', state: 'VIC', lat: -37.85, lng: 144.76, radius: 18000,
+    suburbs: [
+      'Werribee', 'Point Cook', 'Altona', 'Altona North', 'Altona Meadows',
+      'Williamstown', 'Newport', 'Yarraville', 'Seddon', 'Spotswood',
+      'Footscray', 'West Footscray', 'Sunshine', 'Sunshine North', 'Sunshine West',
+      'Hoppers Crossing', 'Tarneit', 'Wyndham Vale', 'Truganina', 'Laverton',
+      'Maidstone', 'Braybrook', 'Kingsville', 'Maribyrnong',
+    ],
+  },
+  'melbourne-cbd': {
+    name: 'Melbourne CBD', state: 'VIC', lat: -37.8136, lng: 144.9631, radius: 5000,
+    suburbs: ['Melbourne', 'Docklands', 'Southbank', 'South Wharf', 'West Melbourne', 'East Melbourne'],
+  },
+  'melbourne-inner-north': {
+    name: 'Melbourne Inner North', state: 'VIC', lat: -37.78, lng: 144.98, radius: 6000,
+    suburbs: [
+      'Fitzroy', 'Fitzroy North', 'Collingwood', 'Abbotsford', 'Brunswick',
+      'Brunswick East', 'Brunswick West', 'Northcote', 'Thornbury', 'Carlton',
+      'Carlton North', 'North Melbourne', 'Parkville', 'Clifton Hill', 'Princes Hill',
+    ],
+  },
+  'melbourne-inner-south': {
+    name: 'Melbourne Inner South', state: 'VIC', lat: -37.84, lng: 144.99, radius: 5000,
+    suburbs: [
+      'St Kilda', 'St Kilda East', 'St Kilda West', 'Balaclava', 'South Yarra',
+      'Prahran', 'Windsor', 'Richmond', 'Cremorne', 'Albert Park', 'Middle Park',
+      'South Melbourne', 'Port Melbourne', 'Elwood', 'Toorak',
+    ],
+  },
+  'melbourne-east': {
+    name: 'Melbourne East', state: 'VIC', lat: -37.82, lng: 145.12, radius: 15000,
+    suburbs: [
+      'Box Hill', 'Doncaster', 'Ringwood', 'Croydon', 'Mitcham', 'Blackburn',
+      'Nunawading', 'Balwyn', 'Camberwell', 'Hawthorn', 'Kew', 'Glen Iris',
+      'Burwood', 'Forest Hill', 'Vermont', 'Bulleen', 'Templestowe', 'Malvern',
+    ],
+  },
+  'melbourne-north': {
+    name: 'Melbourne North', state: 'VIC', lat: -37.73, lng: 145.05, radius: 15000,
+    suburbs: [
+      'Heidelberg', 'Preston', 'Reservoir', 'Epping', 'Bundoora', 'Coburg',
+      'Pascoe Vale', 'Fawkner', 'Broadmeadows', 'Craigieburn', 'Glenroy',
+      'Thomastown', 'Greensborough', 'Eltham', 'Ivanhoe', 'Mill Park', 'South Morang',
+    ],
+  },
+  'melbourne-south-east': {
+    name: 'Melbourne South East', state: 'VIC', lat: -37.98, lng: 145.22, radius: 20000,
+    suburbs: [
+      'Dandenong', 'Dandenong North', 'Frankston', 'Frankston South', 'Cranbourne',
+      'Pakenham', 'Berwick', 'Narre Warren', 'Clayton', 'Oakleigh', 'Springvale',
+      'Chelsea', 'Mentone', 'Cheltenham', 'Moorabbin', 'Bentleigh', 'Caulfield',
+      'Glen Waverley', 'Mount Waverley', 'Carnegie', 'Mulgrave', 'Keysborough',
+    ],
+  },
+  'mornington-peninsula': {
+    name: 'Mornington Peninsula', state: 'VIC', lat: -38.22, lng: 145.05, radius: 20000,
+    suburbs: [
+      'Mornington', 'Rosebud', 'Sorrento', 'Rye', 'Hastings', 'Dromana',
+      'Mount Martha', 'Portsea', 'Balnarring', 'Somerville', 'Mount Eliza',
+      'Tyabb', 'Red Hill', 'Crib Point',
+    ],
+  },
+  'yarra-valley': {
+    name: 'Yarra Valley', state: 'VIC', lat: -37.65, lng: 145.52, radius: 20000,
+    suburbs: [
+      'Healesville', 'Lilydale', 'Yarra Glen', 'Warburton', 'Yarra Junction',
+      'Coldstream', 'Chirnside Park', 'Mooroolbark', 'Seville', 'Woori Yallock',
+      'Monbulk', 'Olinda',
+    ],
+  },
 
-  // Phase 2 — Regional VIC
+  // Phase 2 — Regional VIC (text-search discovery, distinct place names)
   bendigo: { name: 'Bendigo', state: 'VIC', lat: -36.7570, lng: 144.2794, radius: 20000 },
   shepparton: { name: 'Shepparton', state: 'VIC', lat: -36.3833, lng: 145.4000, radius: 15000 },
   warrnambool: { name: 'Warrnambool', state: 'VIC', lat: -38.3817, lng: 142.4856, radius: 15000 },
   mildura: { name: 'Mildura', state: 'VIC', lat: -34.1871, lng: 142.1586, radius: 15000 },
 
-  // Phase 3 — Tasmania
+  // Phase 3 — Tasmania (text-search discovery)
   hobart: { name: 'Hobart', state: 'TAS', lat: -42.8821, lng: 147.3272, radius: 20000 },
   launceston: { name: 'Launceston', state: 'TAS', lat: -41.4332, lng: 147.1441, radius: 20000 },
   devonport: { name: 'Devonport', state: 'TAS', lat: -41.1806, lng: 146.3479, radius: 15000 },
   burnie: { name: 'Burnie', state: 'TAS', lat: -41.0654, lng: 145.9048, radius: 15000 },
 
-  // Phase 4 — South Australia
-  'adelaide-cbd': { name: 'Adelaide CBD', state: 'SA', lat: -34.9285, lng: 138.6007, radius: 5000 },
-  'adelaide-north': { name: 'Adelaide North', state: 'SA', lat: -34.75, lng: 138.62, radius: 15000 },
-  'adelaide-south': { name: 'Adelaide South', state: 'SA', lat: -35.13, lng: 138.51, radius: 15000 },
-  'adelaide-east': { name: 'Adelaide East', state: 'SA', lat: -34.92, lng: 138.68, radius: 10000 },
-  'adelaide-west': { name: 'Adelaide West', state: 'SA', lat: -34.92, lng: 138.52, radius: 10000 },
+  // Phase 4 — South Australia (explicit suburb lists for the 4 quadrants)
+  'adelaide-cbd': {
+    name: 'Adelaide CBD', state: 'SA', lat: -34.9285, lng: 138.6007, radius: 5000,
+    suburbs: ['Adelaide', 'North Adelaide'],
+  },
+  'adelaide-north': {
+    name: 'Adelaide North', state: 'SA', lat: -34.75, lng: 138.62, radius: 15000,
+    suburbs: [
+      'Salisbury', 'Elizabeth', 'Tea Tree Gully', 'Modbury', 'Golden Grove',
+      'Mawson Lakes', 'Parafield Gardens', 'Paralowie', 'Ingle Farm',
+    ],
+  },
+  'adelaide-south': {
+    name: 'Adelaide South', state: 'SA', lat: -35.13, lng: 138.51, radius: 15000,
+    suburbs: [
+      'Morphett Vale', 'Noarlunga Centre', 'Christies Beach', 'Seaford',
+      'Aldinga Beach', 'Brighton', 'Marion', 'Hallett Cove',
+    ],
+  },
+  'adelaide-east': {
+    name: 'Adelaide East', state: 'SA', lat: -34.92, lng: 138.68, radius: 10000,
+    suburbs: ['Norwood', 'Campbelltown', 'Burnside', 'Magill', 'Stepney', 'Kensington', 'Payneham'],
+  },
+  'adelaide-west': {
+    name: 'Adelaide West', state: 'SA', lat: -34.92, lng: 138.52, radius: 10000,
+    suburbs: ['Glenelg', 'West Lakes', 'Henley Beach', 'Semaphore', 'Port Adelaide', 'Findon', 'West Beach'],
+  },
   barossa: { name: 'Barossa Valley', state: 'SA', lat: -34.52, lng: 138.94, radius: 20000 },
   'mount-gambier': { name: 'Mount Gambier', state: 'SA', lat: -37.83, lng: 140.78, radius: 15000 },
 
@@ -142,31 +236,41 @@ async function main() {
   );
   const regionId = reg.rows[0].id;
 
-  const queries = [
-    `hair salon in ${centre.name} ${centre.state}`,
-    `barber in ${centre.name} ${centre.state}`,
-    `hairdresser in ${centre.name} ${centre.state}`,
-  ];
-
   const suburbSet = new Map(); // key: region-scoped slug -> { name, state }
   let apiCalls = 0;
-  for (const q of queries) {
-    console.log(`  → searching: ${q}`);
-    const places = await searchText(q, centre);
-    apiCalls++;
-    places.forEach((p) => {
-      const s = suburbFromPlace(p);
-      if (s) {
-        // Prefix with regionSlug so Richmond in Melbourne and Richmond in Tassie
-        // don't collide on the globally-unique suburbs.slug column.
-        const suburbSlug = slugify(`${regionSlug}-${s}`);
-        suburbSet.set(suburbSlug, { name: s, state: centre.state });
-      }
-    });
-    await sleep(150);
+
+  if (Array.isArray(centre.suburbs) && centre.suburbs.length > 0) {
+    // Explicit suburb list — skip Places text discovery, go straight to geocoding
+    console.log(`  → using explicit suburb list (${centre.suburbs.length} suburbs)`);
+    for (const name of centre.suburbs) {
+      const suburbSlug = slugify(`${regionSlug}-${name}`);
+      suburbSet.set(suburbSlug, { name, state: centre.state });
+    }
+  } else {
+    // Discovery via Google Places text search
+    const queries = [
+      `hair salon in ${centre.name} ${centre.state}`,
+      `barber in ${centre.name} ${centre.state}`,
+      `hairdresser in ${centre.name} ${centre.state}`,
+    ];
+    for (const q of queries) {
+      console.log(`  → searching: ${q}`);
+      const places = await searchText(q, centre);
+      apiCalls++;
+      places.forEach((p) => {
+        const s = suburbFromPlace(p);
+        if (s) {
+          // Prefix with regionSlug so Richmond in Melbourne and Richmond in Tassie
+          // don't collide on the globally-unique suburbs.slug column.
+          const suburbSlug = slugify(`${regionSlug}-${s}`);
+          suburbSet.set(suburbSlug, { name: s, state: centre.state });
+        }
+      });
+      await sleep(150);
+    }
   }
 
-  console.log(`  → found ${suburbSet.size} unique suburbs from Places`);
+  console.log(`  → found ${suburbSet.size} unique suburbs`);
 
   let inserted = 0;
   let skipped = 0;
