@@ -21,13 +21,49 @@ requireEnv([
 ]);
 
 const REGION_CENTRES = {
+  // Phase 0 — regional VIC (pilot territories, already done in Session)
   ballarat: { name: 'Ballarat', state: 'VIC', lat: -37.5622, lng: 143.8503, radius: 25000 },
   geelong: { name: 'Geelong', state: 'VIC', lat: -38.1499, lng: 144.3617, radius: 30000 },
-  bendigo: { name: 'Bendigo', state: 'VIC', lat: -36.757, lng: 144.2794, radius: 20000 },
-  shepparton: { name: 'Shepparton', state: 'VIC', lat: -36.3833, lng: 145.4, radius: 15000 },
+
+  // Phase 1 — Melbourne metro
+  'melbourne-west': { name: 'Melbourne West', state: 'VIC', lat: -37.85, lng: 144.76, radius: 18000 },
+  'melbourne-cbd': { name: 'Melbourne CBD', state: 'VIC', lat: -37.8136, lng: 144.9631, radius: 5000 },
+  'melbourne-inner-north': { name: 'Melbourne Inner North', state: 'VIC', lat: -37.78, lng: 144.98, radius: 6000 },
+  'melbourne-inner-south': { name: 'Melbourne Inner South', state: 'VIC', lat: -37.84, lng: 144.99, radius: 5000 },
+  'melbourne-east': { name: 'Melbourne East', state: 'VIC', lat: -37.82, lng: 145.12, radius: 15000 },
+  'melbourne-north': { name: 'Melbourne North', state: 'VIC', lat: -37.73, lng: 145.05, radius: 15000 },
+  'melbourne-south-east': { name: 'Melbourne South East', state: 'VIC', lat: -37.98, lng: 145.22, radius: 20000 },
+  'mornington-peninsula': { name: 'Mornington Peninsula', state: 'VIC', lat: -38.22, lng: 145.05, radius: 20000 },
+  'yarra-valley': { name: 'Yarra Valley', state: 'VIC', lat: -37.65, lng: 145.52, radius: 20000 },
+
+  // Phase 2 — Regional VIC
+  bendigo: { name: 'Bendigo', state: 'VIC', lat: -36.7570, lng: 144.2794, radius: 20000 },
+  shepparton: { name: 'Shepparton', state: 'VIC', lat: -36.3833, lng: 145.4000, radius: 15000 },
+  warrnambool: { name: 'Warrnambool', state: 'VIC', lat: -38.3817, lng: 142.4856, radius: 15000 },
+  mildura: { name: 'Mildura', state: 'VIC', lat: -34.1871, lng: 142.1586, radius: 15000 },
+
+  // Phase 3 — Tasmania
   hobart: { name: 'Hobart', state: 'TAS', lat: -42.8821, lng: 147.3272, radius: 20000 },
   launceston: { name: 'Launceston', state: 'TAS', lat: -41.4332, lng: 147.1441, radius: 20000 },
+  devonport: { name: 'Devonport', state: 'TAS', lat: -41.1806, lng: 146.3479, radius: 15000 },
+  burnie: { name: 'Burnie', state: 'TAS', lat: -41.0654, lng: 145.9048, radius: 15000 },
+
+  // Phase 4 — South Australia
   'adelaide-cbd': { name: 'Adelaide CBD', state: 'SA', lat: -34.9285, lng: 138.6007, radius: 5000 },
+  'adelaide-north': { name: 'Adelaide North', state: 'SA', lat: -34.75, lng: 138.62, radius: 15000 },
+  'adelaide-south': { name: 'Adelaide South', state: 'SA', lat: -35.13, lng: 138.51, radius: 15000 },
+  'adelaide-east': { name: 'Adelaide East', state: 'SA', lat: -34.92, lng: 138.68, radius: 10000 },
+  'adelaide-west': { name: 'Adelaide West', state: 'SA', lat: -34.92, lng: 138.52, radius: 10000 },
+  barossa: { name: 'Barossa Valley', state: 'SA', lat: -34.52, lng: 138.94, radius: 20000 },
+  'mount-gambier': { name: 'Mount Gambier', state: 'SA', lat: -37.83, lng: 140.78, radius: 15000 },
+
+  // Phase 5 — NSW / QLD / WA / NT / ACT major cities
+  'sydney-cbd': { name: 'Sydney CBD', state: 'NSW', lat: -33.8688, lng: 151.2093, radius: 5000 },
+  'brisbane-cbd': { name: 'Brisbane CBD', state: 'QLD', lat: -27.4698, lng: 153.0251, radius: 5000 },
+  'perth-cbd': { name: 'Perth CBD', state: 'WA', lat: -31.9505, lng: 115.8605, radius: 5000 },
+  canberra: { name: 'Canberra', state: 'ACT', lat: -35.2809, lng: 149.1300, radius: 15000 },
+  'gold-coast': { name: 'Gold Coast', state: 'QLD', lat: -28.0167, lng: 153.4000, radius: 20000 },
+  darwin: { name: 'Darwin', state: 'NT', lat: -12.4634, lng: 130.8456, radius: 15000 },
 };
 
 async function searchText(query, centre) {
@@ -112,7 +148,7 @@ async function main() {
     `hairdresser in ${centre.name} ${centre.state}`,
   ];
 
-  const suburbSet = new Map(); // key: slug -> { name, state }
+  const suburbSet = new Map(); // key: region-scoped slug -> { name, state }
   let apiCalls = 0;
   for (const q of queries) {
     console.log(`  → searching: ${q}`);
@@ -120,7 +156,12 @@ async function main() {
     apiCalls++;
     places.forEach((p) => {
       const s = suburbFromPlace(p);
-      if (s) suburbSet.set(slugify(s), { name: s, state: centre.state });
+      if (s) {
+        // Prefix with regionSlug so Richmond in Melbourne and Richmond in Tassie
+        // don't collide on the globally-unique suburbs.slug column.
+        const suburbSlug = slugify(`${regionSlug}-${s}`);
+        suburbSet.set(suburbSlug, { name: s, state: centre.state });
+      }
     });
     await sleep(150);
   }
