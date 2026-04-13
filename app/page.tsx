@@ -49,18 +49,6 @@ export default async function HomePage() {
             <SearchBar size="lg" />
           </div>
 
-          {/* Popular cities */}
-          <div className="mt-8 flex flex-wrap justify-center gap-2">
-            {POPULAR_CITIES.map((city) => (
-              <Link
-                key={city.name}
-                href={city.href}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-2 text-sm text-[var(--color-ink-light)] transition hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)]"
-              >
-                {city.name}
-              </Link>
-            ))}
-          </div>
         </div>
 
         {/* Subtle bottom edge */}
@@ -208,17 +196,6 @@ export default async function HomePage() {
 }
 
 /* ─── Data ──────────────────────────────────────────────── */
-
-const POPULAR_CITIES = [
-  { name: 'Sydney', href: '/search?q=Sydney' },
-  { name: 'Melbourne', href: '/search?q=Melbourne' },
-  { name: 'Brisbane', href: '/search?q=Brisbane' },
-  { name: 'Perth', href: '/search?q=Perth' },
-  { name: 'Adelaide', href: '/search?q=Adelaide' },
-  { name: 'Hobart', href: '/search?q=Hobart' },
-  { name: 'Gold Coast', href: '/search?q=Gold+Coast' },
-  { name: 'Ballarat', href: '/search?q=Ballarat' },
-];
 
 const STATES: { code: AuState; name: string }[] = [
   { code: 'VIC', name: 'Victoria' },
