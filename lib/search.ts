@@ -60,9 +60,9 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     const q = filters.q;
     const regionMatch = await detectRegionFromQuery(q);
     if (regionMatch) {
-      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%`);
+      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%,postcode.eq.${q}`);
     } else {
-      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%`);
+      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%,postcode.eq.${q}`);
     }
   }
   if (filters.suburb) {
@@ -101,9 +101,9 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
     const q = filters.q;
     const regionMatch = await detectRegionFromQuery(q);
     if (regionMatch) {
-      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%`);
+      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%,postcode.eq.${q}`);
     } else {
-      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%`);
+      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%,postcode.eq.${q}`);
     }
   }
   if (filters.suburb) {
