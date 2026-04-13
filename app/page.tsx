@@ -110,7 +110,7 @@ export default async function HomePage() {
                     </p>
                     {count > 0 && (
                       <p className="text-xs text-[var(--color-ink-muted)] mt-0.5">
-                        {count.toLocaleString()} listings
+                        {count.toLocaleString()} {count === 1 ? 'listing' : 'listings'}
                       </p>
                     )}
                   </div>
