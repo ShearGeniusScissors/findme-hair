@@ -23,14 +23,24 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
 
   if (filters.state) query = query.eq('state', filters.state);
   if (filters.type) query = query.eq('business_type', filters.type);
-  if (filters.q) query = query.ilike('name', `%${filters.q}%`);
+
+  if (filters.q) {
+    // Search across name, suburb, and address — also match by region slug
+    const q = filters.q;
+    const regionMatch = await getRegionBySlug(q.toLowerCase().replace(/\s+/g, '-'));
+    if (regionMatch) {
+      // Query matches a region — return all businesses in that region + name matches
+      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%`);
+    } else {
+      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%`);
+    }
+  }
 
   if (filters.region) {
     const region = await getRegionBySlug(filters.region);
     if (region) query = query.eq('region_id', region.id);
   }
   if (filters.suburb) {
-    // Match by slug or by name ilike
     query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
   }
   if (filters.offset) query = query.range(filters.offset, (filters.offset ?? 0) + (filters.limit ?? 40) - 1);
@@ -49,7 +59,16 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
 
   if (filters.state) query = query.eq('state', filters.state);
   if (filters.type) query = query.eq('business_type', filters.type);
-  if (filters.q) query = query.ilike('name', `%${filters.q}%`);
+
+  if (filters.q) {
+    const q = filters.q;
+    const regionMatch = await getRegionBySlug(q.toLowerCase().replace(/\s+/g, '-'));
+    if (regionMatch) {
+      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%`);
+    } else {
+      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%`);
+    }
+  }
 
   if (filters.region) {
     const region = await getRegionBySlug(filters.region);
