@@ -60,6 +60,56 @@ const SPECIALTY_SLUG: Record<string, string> = {
   'wigs': 'wigs',
 };
 
+// ─── Service quality filter (mirrors scraper logic) ───
+const NAV_JUNK = new Set([
+  'home', 'about', 'contact', 'gallery', 'blog', 'shop', 'menu', 'team', 'faq',
+  'book', 'booking', 'call', 'email', 'instagram', 'facebook', 'gift card',
+  'book now', 'call us', 'contact us', 'our team', 'meet the team', 'find us',
+  'login', 'sign in', 'sign up', 'register', 'cart', 'checkout', 'search',
+  'back to top', 'read more', 'learn more', 'view all', 'see more', 'more info',
+  'privacy', 'terms', 'sitemap', 'careers', 'jobs',
+]);
+const RETAIL_BRANDS = new Set([
+  'biolage', 'matrix', 'kms', 'muk', 'nak', 'goldwell', 'wella', 'schwarzkopf',
+  'kerasilk', 'fanola', 'dermalogica', 'revitafoam', '12 reasons', 'quidad',
+  'mermade hair', 'silver bullet', 'natural look', 'ori lab', 'genetix',
+  'keracolor', 'eco minerals', 'azure tan', 'mine tan', 'the collagen co',
+  'olaplex', 'redken', 'joico', 'milkshake', 'moroccanoil', 'kevin murphy',
+  'de lorenzo', 'aveda', 'pureology', 'loreal', "l'oreal", 'tigi', 'sexy hair',
+  'nak haircare', 'matrix styling', 'nak hair',
+]);
+const NON_HAIR_RE = [
+  /\bwax(ing)?\b/i, /\btann(ing|ed)?\b/i, /\blash(es)?\b/i, /\bbrow(s)?\b/i,
+  /\bfacial(s)?\b/i, /\bmassage\b/i, /\bnails?\b/i, /\bspray tan\b/i,
+  /\bfull brow\b/i, /\bbrow tint\b/i, /\blash lift\b/i, /\blash tint\b/i,
+  /\bmanicure\b/i, /\bpedicure\b/i, /\bgel nails?\b/i, /\bacrylic\b/i,
+];
+const ACCESSORY_RE = [/\bbrush(es)?\b/i, /\baccessori/i, /\bstyling wax\b/i, /\bgift\s*(card|voucher|certificate)/i];
+const HAIR_KW = [
+  /\bcut\b/i, /\btrim\b/i, /\bblow/i, /\bdry\b/i, /\bcolou?r\b/i,
+  /\bhighlight/i, /\bbalayage/i, /\btint\b/i, /\bperm\b/i,
+  /\bstraighten/i, /\bkeratin\b/i, /\btreatment\b/i, /\bstyl(e|ing)\b/i,
+  /\bextension/i, /\bfoil/i, /\btoner\b/i, /\bgloss\b/i,
+  /\bmen/i, /\bwomen/i, /\bkids?\b/i, /\bchild/i, /\bsenior\b/i,
+  /\bwash\b/i, /\bshampoo\b/i, /\bfade\b/i, /\bclipper/i, /\bshave\b/i,
+  /\bbeard\b/i, /\bhair\b/i, /\bfringe/i, /\blayer/i, /\bwave\b/i,
+];
+
+function filterQualityServices(services: string[] | null): string[] {
+  if (!services || services.length === 0) return [];
+  return services.filter((item) => {
+    const lower = item.toLowerCase().trim();
+    if (lower.length < 3 || lower.length > 120) return false;
+    if (NAV_JUNK.has(lower)) return false;
+    if (RETAIL_BRANDS.has(lower)) return false;
+    for (const p of NON_HAIR_RE) if (p.test(lower) && !HAIR_KW.some(h => h.test(lower))) return false;
+    for (const p of ACCESSORY_RE) if (p.test(lower)) return false;
+    if (/\$|from\s+\d|price/i.test(item)) return true;
+    for (const p of HAIR_KW) if (p.test(lower)) return true;
+    return false;
+  });
+}
+
 function PhotoUrl(photoName: string, maxHeight = 600) {
   const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   if (!key) return null;
@@ -375,40 +425,46 @@ export default async function BusinessProfilePage({
               )}
             </section>
 
-            {/* Services section — only shown if booking URL or scraped services exist */}
-            {(business.booking_url || (business.scraped_services && business.scraped_services.length > 0)) && (
-              <section className="mt-10">
-                <h2
-                  className="text-xl text-[var(--color-ink)]"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  Services
-                </h2>
-                {business.booking_url && (
-                  <a
-                    href={business.booking_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 btn-gold inline-flex items-center gap-2 text-base px-8 py-3"
+            {/* Services section */}
+            {(() => {
+              const qualityServices = filterQualityServices(business.scraped_services);
+              const showServices = qualityServices.length >= 3;
+              const showSection = business.booking_url || showServices;
+              if (!showSection) return null;
+              return (
+                <section className="mt-10">
+                  <h2
+                    className="text-xl text-[var(--color-ink)]"
+                    style={{ fontFamily: 'var(--font-serif)' }}
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                    </svg>
-                    Book your appointment online
-                  </a>
-                )}
-                {business.scraped_services && business.scraped_services.length > 0 && (
-                  <ul className="mt-4 space-y-2">
-                    {business.scraped_services.map((s, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-[var(--color-ink-light)]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold)] flex-shrink-0" />
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            )}
+                    {business.booking_url ? 'Book your appointment' : 'Services'}
+                  </h2>
+                  {business.booking_url && (
+                    <a
+                      href={business.booking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 btn-gold inline-flex items-center gap-2 text-base px-8 py-3"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                      </svg>
+                      Book Now
+                    </a>
+                  )}
+                  {showServices && (
+                    <ul className="mt-4 space-y-2">
+                      {qualityServices.map((s, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-[var(--color-ink-light)]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold)] flex-shrink-0" />
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              );
+            })()}
 
             {/* Reviews link */}
             {business.google_rating != null && business.google_review_count != null && (

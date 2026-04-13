@@ -145,6 +145,92 @@ const SPECIALTY_PATTERNS = [
   { tag: 'wigs', patterns: [/\bwigs?\b/i, /topper/i, /hair piece/i, /hairpiece/i] },
 ];
 
+// ─── Service quality filter ──────────────────────────
+const NAV_JUNK = new Set([
+  'home', 'about', 'contact', 'gallery', 'blog', 'shop', 'menu', 'team', 'faq',
+  'book', 'booking', 'call', 'email', 'instagram', 'facebook', 'gift card',
+  'book now', 'call us', 'contact us', 'our team', 'meet the team', 'find us',
+  'login', 'sign in', 'sign up', 'register', 'cart', 'checkout', 'search',
+  'back to top', 'read more', 'learn more', 'view all', 'see more', 'more info',
+  'privacy', 'terms', 'sitemap', 'careers', 'jobs',
+]);
+
+const RETAIL_BRANDS = new Set([
+  'biolage', 'matrix', 'kms', 'muk', 'nak', 'goldwell', 'wella', 'schwarzkopf',
+  'kerasilk', 'fanola', 'dermalogica', 'revitafoam', '12 reasons', 'quidad',
+  'mermade hair', 'silver bullet', 'natural look', 'ori lab', 'genetix',
+  'keracolor', 'eco minerals', 'azure tan', 'mine tan', 'the collagen co',
+  'olaplex', 'redken', 'joico', 'milkshake', 'moroccanoil', 'kevin murphy',
+  'de lorenzo', 'aveda', 'pureology', 'loreal', "l'oreal", 'tigi', 'sexy hair',
+  'nak haircare', 'matrix styling', 'nak hair',
+]);
+
+const NON_HAIR_SERVICES = [
+  /\bwax(ing)?\b/i, /\btann(ing|ed)?\b/i, /\blash(es)?\b/i, /\bbrow(s)?\b/i,
+  /\bfacial(s)?\b/i, /\bmassage\b/i, /\bnails?\b/i, /\bspray tan\b/i,
+  /\bfull brow\b/i, /\bbrow tint\b/i, /\blash lift\b/i, /\blash tint\b/i,
+  /\bmanicure\b/i, /\bpedicure\b/i, /\bgel nails?\b/i, /\bacrylic\b/i,
+  /\bmicroderm/i, /\bbotox\b/i, /\binjectable/i, /\blaser\b/i,
+];
+
+const ACCESSORY_PATTERNS = [
+  /\bbrush(es)?\b/i, /\baccessori/i, /\bstyling wax\b/i,
+  /\bgift\s*(card|voucher|certificate)/i,
+];
+
+const HAIR_SERVICE_KEYWORDS = [
+  /\bcut\b/i, /\btrim\b/i, /\bblow/i, /\bdry\b/i, /\bcolou?r\b/i,
+  /\bhighlight/i, /\bbalayage/i, /\btint\b/i, /\bperm\b/i,
+  /\bstraighten/i, /\bkeratin\b/i, /\btreatment\b/i, /\bstyl(e|ing)\b/i,
+  /\bupstyle/i, /\bextension/i, /\bweave\b/i, /\bfoil/i, /\btoner\b/i,
+  /\bgloss\b/i, /\bmen/i, /\bwomen/i, /\bkids?\b/i, /\bchild/i,
+  /\bsenior\b/i, /\bstudent\b/i, /\bwash\b/i, /\bshampoo\b/i,
+  /\bcondition/i, /\bset\b/i, /\bwave\b/i, /\brelax\b/i, /\bfade\b/i,
+  /\bclipper/i, /\bshave\b/i, /\bbeard\b/i, /\bshape\b/i, /\bhair\b/i,
+  /\bbraid/i, /\bcornrow/i, /\bdread/i, /\bombre/i, /\bvivid/i,
+  /\brebond/i, /\bblowout/i, /\bfringe/i, /\bbang/i, /\blayer/i,
+];
+
+const HAS_PRICE = /\$|from\s+\d|price/i;
+
+function isQualityService(item) {
+  const lower = item.toLowerCase().trim();
+
+  // Too short or too long
+  if (lower.length < 3 || lower.length > 120) return false;
+
+  // Navigation junk (exact match)
+  if (NAV_JUNK.has(lower)) return false;
+
+  // Retail brand (exact match)
+  if (RETAIL_BRANDS.has(lower)) return false;
+
+  // Non-hair service
+  for (const p of NON_HAIR_SERVICES) {
+    if (p.test(lower) && !HAIR_SERVICE_KEYWORDS.some(h => h.test(lower))) return false;
+  }
+
+  // Accessories/retail
+  for (const p of ACCESSORY_PATTERNS) {
+    if (p.test(lower)) return false;
+  }
+
+  // Passes if it has a price or contains a hair keyword
+  if (HAS_PRICE.test(item)) return true;
+  for (const p of HAIR_SERVICE_KEYWORDS) {
+    if (p.test(lower)) return true;
+  }
+
+  // Reject anything that didn't match a hair keyword
+  return false;
+}
+
+function filterServices(services) {
+  if (!services || services.length === 0) return null;
+  const filtered = services.filter(isQualityService);
+  return filtered.length >= 3 ? filtered : null;
+}
+
 // NOT_HAIR indicators — if these dominate, the business is not a hair salon
 const NOT_HAIR_PATTERNS = [
   /\bnails?\b/i, /\bmanicure\b/i, /\bpedicure\b/i, /\bgel nails\b/i,
@@ -454,6 +540,9 @@ async function processBusiness(business) {
       return { contentSource, hasAiDescription: false, specialties: [], excluded: true, flagged: false, excludeReason: classification.reason };
     }
   }
+
+  // Filter services to only real hair services
+  scrapedServices = filterServices(scrapedServices);
 
   // Save scraped data
   const scrapeUpdate = {
