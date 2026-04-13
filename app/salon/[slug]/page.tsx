@@ -233,6 +233,29 @@ export default async function BusinessProfilePage({
               )}
             </section>
 
+            {/* Services placeholder */}
+            <section className="mt-10">
+              <h2
+                className="text-xl text-[var(--color-ink)]"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Services &amp; pricing
+              </h2>
+              <div className="mt-4 rounded-xl border-2 border-dashed border-[var(--color-border)] p-8 text-center">
+                <p className="text-sm text-[var(--color-ink-muted)]">
+                  Services &amp; pricing coming soon
+                </p>
+                {!business.is_claimed && (
+                  <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+                    <Link href={`/claim?salon=${business.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                      Claim this listing
+                    </Link>{' '}
+                    to add your services
+                  </p>
+                )}
+              </div>
+            </section>
+
             {/* Reviews link */}
             {business.google_rating != null && business.google_review_count != null && (
               <section className="mt-10">
@@ -309,6 +332,36 @@ export default async function BusinessProfilePage({
           </aside>
         </div>
       </div>
+
+      {/* ─── Sticky mobile booking CTA ─────────────── */}
+      {(business.booking_url || business.phone) && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-[var(--color-border)] bg-[var(--color-white)] p-3">
+          {business.booking_url ? (
+            <a
+              href={business.booking_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gold w-full text-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              Book appointment
+            </a>
+          ) : business.phone ? (
+            <a href={`tel:${business.phone}`} className="btn-gold w-full text-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+              </svg>
+              Call {business.phone}
+            </a>
+          ) : null}
+        </div>
+      )}
+      {/* Bottom spacer for sticky CTA on mobile */}
+      {(business.booking_url || business.phone) && (
+        <div className="h-16 lg:hidden" />
+      )}
     </main>
   );
 }

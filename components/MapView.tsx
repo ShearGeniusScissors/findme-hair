@@ -6,12 +6,19 @@ import type { Business } from '@/types/database';
 
 interface Props {
   businesses: Business[];
-  height?: number;
+  height?: number | string;
+  className?: string;
 }
 
 let optionsSet = false;
 
-export default function MapView({ businesses, height = 420 }: Props) {
+const GOLD_PIN_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill="#C9A96E" stroke="#1A1A1A" stroke-width="2"/>
+  </svg>`
+)}`;
+
+export default function MapView({ businesses, height = 420, className }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -57,6 +64,11 @@ export default function MapView({ businesses, height = 420 }: Props) {
           position: { lat: b.lat!, lng: b.lng! },
           map,
           title: b.name,
+          icon: {
+            url: GOLD_PIN_SVG,
+            scaledSize: new google.maps.Size(24, 24),
+            anchor: new google.maps.Point(12, 12),
+          },
         });
         const info = new google.maps.InfoWindow({
           content: `<div style="font-family:DM Sans,sans-serif;padding:4px 0"><strong style="color:#1a1a1a">${b.name}</strong><br/><span style="color:#8a8580;font-size:12px">${b.suburb}, ${b.state}</span></div>`,
@@ -75,7 +87,7 @@ export default function MapView({ businesses, height = 420 }: Props) {
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
       <div
-        className="map-container flex items-center justify-center bg-[var(--color-surface-warm)] text-sm text-[var(--color-ink-muted)]"
+        className={`map-container flex items-center justify-center bg-[var(--color-surface-warm)] text-sm text-[var(--color-ink-muted)] ${className ?? ''}`}
         style={{ height }}
       >
         Map unavailable
@@ -83,5 +95,5 @@ export default function MapView({ businesses, height = 420 }: Props) {
     );
   }
 
-  return <div ref={ref} className="map-container" style={{ height }} />;
+  return <div ref={ref} className={`map-container ${className ?? ''}`} style={{ height }} />;
 }

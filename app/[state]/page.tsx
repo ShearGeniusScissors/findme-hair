@@ -2,10 +2,44 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AU_STATES, stateName } from '@/lib/geo';
-import { listRegions, searchBusinesses } from '@/lib/search';
-import type { AuState } from '@/types/database';
+import { listRegions, searchBusinesses, countBusinessesByRegion } from '@/lib/search';
+import type { AuState, Region } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
+
+/* ─── Priority region ordering per state ──────────────── */
+
+const PRIORITY_REGIONS: Record<string, string[]> = {
+  VIC: ['melbourne', 'ballarat', 'geelong'],
+  NSW: ['sydney', 'newcastle', 'wollongong'],
+  QLD: ['brisbane', 'gold-coast', 'sunshine-coast'],
+  WA: ['perth'],
+  SA: ['adelaide'],
+};
+
+function isMelbourneZone(region: Region): boolean {
+  const n = region.name.toLowerCase();
+  return n.startsWith('melbourne') || n === 'melbourne';
+}
+
+function isCityZone(region: Region, city: string): boolean {
+  const n = region.name.toLowerCase();
+  return n.startsWith(city.toLowerCase());
+}
+
+function sortRegions(regions: Region[], stateCode: string): Region[] {
+  const priorities = PRIORITY_REGIONS[stateCode] ?? [];
+  return [...regions].sort((a, b) => {
+    const aSlug = a.slug.toLowerCase();
+    const bSlug = b.slug.toLowerCase();
+    const aIdx = priorities.findIndex((p) => aSlug.startsWith(p));
+    const bIdx = priorities.findIndex((p) => bSlug.startsWith(p));
+    const aPri = aIdx >= 0 ? aIdx : 999;
+    const bPri = bIdx >= 0 ? bIdx : 999;
+    if (aPri !== bPri) return aPri - bPri;
+    return a.name.localeCompare(b.name);
+  });
+}
 
 export async function generateMetadata({
   params,
@@ -31,7 +65,57 @@ export default async function StatePage({
   if (!AU_STATES.some((s) => s.code === code)) notFound();
 
   const name = stateName(code);
-  const regions = await listRegions(code);
+  const allRegions = await listRegions(code);
+
+  // Group Melbourne metro zones into one card (VIC only)
+  const melbourneZones = code === 'VIC' ? allRegions.filter(isMelbourneZone) : [];
+  const nonMelbourneRegions = code === 'VIC' ? allRegions.filter((r) => !isMelbourneZone(r)) : allRegions;
+
+  // Get counts for all regions in parallel
+  const regionIds = allRegions.map((r) => r.id);
+  const countResults = await Promise.all(regionIds.map((id) => countBusinessesByRegion(id)));
+  const countMap = new Map<string, number>();
+  regionIds.forEach((id, i) => countMap.set(id, countResults[i]));
+
+  // Melbourne total
+  const melbourneTotal = melbourneZones.reduce((sum, r) => sum + (countMap.get(r.id) ?? 0), 0);
+
+  // Build display regions
+  interface DisplayRegion {
+    id: string;
+    name: string;
+    slug: string;
+    state: AuState;
+    count: number;
+    href: string;
+  }
+
+  const displayRegions: DisplayRegion[] = [];
+
+  if (melbourneZones.length > 0) {
+    displayRegions.push({
+      id: 'melbourne-metro',
+      name: 'Melbourne',
+      slug: 'melbourne',
+      state: code,
+      count: melbourneTotal,
+      href: `/search?state=VIC&q=Melbourne`,
+    });
+  }
+
+  for (const r of nonMelbourneRegions) {
+    displayRegions.push({
+      id: r.id,
+      name: r.name,
+      slug: r.slug,
+      state: r.state,
+      count: countMap.get(r.id) ?? 0,
+      href: `/search?region=${r.slug}`,
+    });
+  }
+
+  // Sort by priority
+  const sorted = sortDisplayRegions(displayRegions, code);
 
   // Get top rated businesses for this state
   const featured = await searchBusinesses({ state: code, limit: 6 });
@@ -60,7 +144,7 @@ export default async function StatePage({
             Hair salons &amp; barbers in {name}
           </h1>
           <p className="mt-2 text-[var(--color-ink-light)]">
-            Browse {regions.length} {regions.length === 1 ? 'region' : 'regions'} across {name}
+            Browse {sorted.length} {sorted.length === 1 ? 'region' : 'regions'} across {name}
           </p>
         </div>
       </div>
@@ -74,24 +158,40 @@ export default async function StatePage({
           >
             Regions
           </h2>
-          {regions.length === 0 ? (
+          {sorted.length === 0 ? (
             <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
               No regions have been added for {name} yet. Check back soon.
             </p>
           ) : (
             <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {regions.map((r) => (
+              {sorted.map((r) => (
                 <Link
                   key={r.id}
-                  href={`/search?region=${r.slug}`}
-                  className="card flex items-center gap-4 p-5 group"
+                  href={r.href}
+                  className="card group flex items-center gap-4 p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-surface-warm)] text-xs font-bold text-[var(--color-ink-muted)] group-hover:bg-[var(--color-gold-light)] group-hover:text-[var(--color-gold-dark)] transition-colors">
                     {r.state}
                   </span>
-                  <span className="font-medium text-sm text-[var(--color-ink)] group-hover:text-[var(--color-gold-dark)] transition-colors">
-                    {r.name}
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium text-sm text-[var(--color-ink)] group-hover:text-[var(--color-gold-dark)] transition-colors">
+                      {r.name}
+                    </span>
+                    {r.count > 0 && (
+                      <p className="text-xs text-[var(--color-ink-muted)] mt-0.5">
+                        {r.count.toLocaleString()} {r.count === 1 ? 'listing' : 'listings'}
+                      </p>
+                    )}
+                  </div>
+                  <svg
+                    className="w-4 h-4 flex-shrink-0 text-[var(--color-border)] opacity-0 group-hover:opacity-100 group-hover:text-[var(--color-gold)] transition-all duration-200 -translate-x-1 group-hover:translate-x-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
                 </Link>
               ))}
             </div>
@@ -142,6 +242,25 @@ export default async function StatePage({
       </div>
     </main>
   );
+}
+
+/* ─── Helpers ──────────────────────────────────────────── */
+
+function sortDisplayRegions(
+  regions: { id: string; name: string; slug: string; state: AuState; count: number; href: string }[],
+  stateCode: string,
+) {
+  const priorities = PRIORITY_REGIONS[stateCode] ?? [];
+  return [...regions].sort((a, b) => {
+    const aSlug = a.slug.toLowerCase();
+    const bSlug = b.slug.toLowerCase();
+    const aIdx = priorities.findIndex((p) => aSlug.startsWith(p));
+    const bIdx = priorities.findIndex((p) => bSlug.startsWith(p));
+    const aPri = aIdx >= 0 ? aIdx : 999;
+    const bPri = bIdx >= 0 ? bIdx : 999;
+    if (aPri !== bPri) return aPri - bPri;
+    return a.name.localeCompare(b.name);
+  });
 }
 
 function Chevron() {

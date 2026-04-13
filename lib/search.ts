@@ -40,6 +40,41 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
   return (data ?? []) as Business[];
 }
 
+export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit' | 'offset'>): Promise<number> {
+  const supabase = supabaseServerAnon();
+  let query = supabase
+    .from('businesses')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active');
+
+  if (filters.state) query = query.eq('state', filters.state);
+  if (filters.type) query = query.eq('business_type', filters.type);
+  if (filters.q) query = query.ilike('name', `%${filters.q}%`);
+
+  if (filters.region) {
+    const region = await getRegionBySlug(filters.region);
+    if (region) query = query.eq('region_id', region.id);
+  }
+  if (filters.suburb) {
+    query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
+  }
+
+  const { count, error } = await query;
+  if (error) throw error;
+  return count ?? 0;
+}
+
+export async function countBusinessesByRegion(regionId: string): Promise<number> {
+  const supabase = supabaseServerAnon();
+  const { count, error } = await supabase
+    .from('businesses')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .eq('region_id', regionId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
 export async function getBusinessBySlug(slug: string): Promise<Business | null> {
   const supabase = supabaseServerAnon();
   const { data, error } = await supabase

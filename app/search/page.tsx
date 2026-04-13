@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import BusinessCard from '@/components/BusinessCard';
-import MapView from '@/components/MapView';
 import SearchBar from '@/components/SearchBar';
+import SearchResults from '@/components/SearchResults';
 import {
   listRegions,
   listSuburbsInRegion,
   getRegionBySlug,
   searchBusinesses,
+  searchBusinessesCount,
 } from '@/lib/search';
 import type { AuState, BusinessType } from '@/types/database';
 
@@ -18,6 +18,7 @@ interface SearchParams {
   region?: string;
   suburb?: string;
   type?: string;
+  service?: string;
 }
 
 export default async function SearchPage({
@@ -27,14 +28,21 @@ export default async function SearchPage({
 }) {
   const params = await searchParams;
 
-  const [businesses, regions] = await Promise.all([
+  const [businesses, totalCount, regions] = await Promise.all([
     searchBusinesses({
       q: params.q,
       state: params.state as AuState | undefined,
       region: params.region,
       suburb: params.suburb,
       type: params.type as BusinessType | undefined,
-      limit: 40,
+      limit: 20,
+    }),
+    searchBusinessesCount({
+      q: params.q,
+      state: params.state as AuState | undefined,
+      region: params.region,
+      suburb: params.suburb,
+      type: params.type as BusinessType | undefined,
     }),
     listRegions(params.state as AuState | undefined),
   ]);
@@ -48,7 +56,18 @@ export default async function SearchPage({
     }
   }
 
-  const hasFilters = !!(params.q || params.state || params.region || params.suburb || params.type);
+  const hasFilters = !!(params.q || params.state || params.region || params.suburb || params.type || params.service);
+
+  // Build a label for the results heading
+  const queryLabel = params.q || params.suburb || params.region || params.state || null;
+
+  // Params to pass to client for load-more
+  const clientParams: Record<string, string> = {};
+  if (params.q) clientParams.q = params.q;
+  if (params.state) clientParams.state = params.state;
+  if (params.region) clientParams.region = params.region;
+  if (params.suburb) clientParams.suburb = params.suburb;
+  if (params.type) clientParams.type = params.type;
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
@@ -112,6 +131,22 @@ export default async function SearchPage({
               ]}
             />
 
+            <FilterSelect
+              name="service"
+              defaultValue={params.service}
+              label="Service"
+              options={[
+                { value: 'haircut', label: 'Haircut' },
+                { value: 'colour', label: 'Colour & highlights' },
+                { value: 'barber', label: 'Barber' },
+                { value: 'blowdry', label: 'Blowdry' },
+                { value: 'kids', label: 'Kids haircut' },
+                { value: 'extensions', label: 'Extensions' },
+                { value: 'mens', label: 'Mens cut' },
+                { value: 'womens', label: 'Womens cut' },
+              ]}
+            />
+
             <button type="submit" className="btn-gold text-xs !py-2 !px-5">
               Apply
             </button>
@@ -132,34 +167,20 @@ export default async function SearchPage({
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="flex items-baseline justify-between mb-6">
           <h1 className="text-xl font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
-            {businesses.length} {businesses.length === 1 ? 'result' : 'results'}
-            {params.q ? (
+            {totalCount.toLocaleString()} {totalCount === 1 ? 'salon & barber' : 'salons & barbers'}
+            {queryLabel ? (
               <span className="font-normal text-[var(--color-ink-muted)]">
-                {' '}for &ldquo;{params.q}&rdquo;
+                {' '}in {queryLabel}
               </span>
             ) : null}
           </h1>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,480px)]">
-          {/* Listings */}
-          <div>
-            {businesses.length === 0 ? (
-              <EmptyState query={params.q} />
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2">
-                {businesses.map((b) => (
-                  <BusinessCard key={b.id} business={b} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Map sidebar */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-            <MapView businesses={businesses} height={600} />
-          </aside>
-        </div>
+        <SearchResults
+          initialBusinesses={businesses}
+          totalCount={totalCount}
+          searchParams={clientParams}
+        />
       </div>
     </main>
   );
@@ -191,28 +212,5 @@ function FilterSelect({
         </option>
       ))}
     </select>
-  );
-}
-
-function EmptyState({ query }: { query?: string }) {
-  return (
-    <div className="card p-12 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-surface-warm)]">
-        <svg className="w-6 h-6 text-[var(--color-ink-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-        </svg>
-      </div>
-      <h2 className="mt-4 text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
-        No results found
-      </h2>
-      <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
-        {query
-          ? `We couldn't find any hair salons or barber shops matching "${query}".`
-          : 'Try searching by suburb name, salon name, or postcode.'}
-      </p>
-      <p className="mt-4 text-xs text-[var(--color-ink-muted)]">
-        findme.hair is growing &mdash; new suburbs are added weekly.
-      </p>
-    </div>
   );
 }
