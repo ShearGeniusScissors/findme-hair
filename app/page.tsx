@@ -29,7 +29,7 @@ export default async function HomePage() {
     <main>
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className="relative bg-[var(--color-white)]">
-        <div className="mx-auto max-w-3xl px-6 pt-20 pb-24 text-center sm:pt-28 sm:pb-32">
+        <div className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-20 sm:pb-16">
           <p className="text-editorial-overline mb-6">
             Australia&rsquo;s Hair &amp; Barber Directory
           </p>
