@@ -2,10 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
-import type { Business } from '@/types/database';
+
+export interface MapPin {
+  lat: number | null;
+  lng: number | null;
+  name: string;
+  suburb: string;
+  state: string;
+}
 
 interface Props {
-  businesses: Business[];
+  pins: MapPin[];
   height?: number | string;
   className?: string;
 }
@@ -18,14 +25,14 @@ const GOLD_PIN_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   </svg>`
 )}`;
 
-export default function MapView({ businesses, height = 420, className }: Props) {
+export default function MapView({ pins, height = 420, className }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!key || !ref.current) return;
 
-    const withCoords = businesses.filter((b) => b.lat != null && b.lng != null);
+    const withCoords = pins.filter((b) => b.lat != null && b.lng != null);
     if (withCoords.length === 0) return;
 
     if (!optionsSet) {
@@ -82,7 +89,7 @@ export default function MapView({ businesses, height = 420, className }: Props) 
     return () => {
       cancelled = true;
     };
-  }, [businesses]);
+  }, [pins]);
 
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (

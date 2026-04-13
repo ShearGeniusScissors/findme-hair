@@ -324,7 +324,7 @@ export default async function BusinessProfilePage({
 
             {/* Map */}
             <div className="card p-0 overflow-hidden">
-              <MapView businesses={[business]} height={280} />
+              <MapView pins={[business]} height={280} />
             </div>
 
             {/* Claim banner */}

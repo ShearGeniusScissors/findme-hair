@@ -112,7 +112,7 @@ export default async function SuburbDirectoryPage({
               ))}
             </div>
             <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-              <MapView businesses={businesses} height={500} />
+              <MapView pins={businesses} height={500} />
             </aside>
           </div>
         )}

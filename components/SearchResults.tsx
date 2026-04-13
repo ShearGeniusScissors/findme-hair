@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BusinessCard from './BusinessCard';
 import MapView from './MapView';
+import type { MapPin } from './MapView';
 import type { Business } from '@/types/database';
 
 interface Props {
@@ -13,8 +14,18 @@ interface Props {
 
 export default function SearchResults({ initialBusinesses, totalCount, searchParams }: Props) {
   const [businesses, setBusinesses] = useState(initialBusinesses);
+  const [pins, setPins] = useState<MapPin[]>([]);
   const [loading, setLoading] = useState(false);
   const [mobileTab, setMobileTab] = useState<'list' | 'map'>('list');
+
+  // Fetch all map pins on mount
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    fetch(`/api/search/pins?${params.toString()}`)
+      .then((res) => res.json())
+      .then((data) => setPins(data.pins ?? []))
+      .catch(() => {});
+  }, [searchParams]);
 
   const loadMore = async () => {
     setLoading(true);
@@ -96,7 +107,7 @@ export default function SearchResults({ initialBusinesses, totalCount, searchPar
                     disabled={loading}
                     className="btn-outline text-sm !py-2.5 !px-8"
                   >
-                    {loading ? 'Loading…' : 'Load more salons'}
+                    {loading ? 'Loading\u2026' : 'Load more salons'}
                   </button>
                 </div>
               )}
@@ -107,7 +118,7 @@ export default function SearchResults({ initialBusinesses, totalCount, searchPar
         {/* Map sidebar — sticky on desktop, tab on mobile */}
         <aside className={`${mobileTab === 'list' ? 'hidden lg:block' : ''} lg:sticky lg:top-[81px] lg:self-start`}>
           <MapView
-            businesses={businesses}
+            pins={pins}
             height={mobileTab === 'map' ? 'calc(100vh - 200px)' : 'calc(100vh - 100px)'}
             className="!rounded-xl"
           />
