@@ -41,6 +41,14 @@ export default function MapView({ businesses, height = 420 }: Props) {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false,
+        styles: [
+          { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+          { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+          { featureType: 'water', stylers: [{ color: '#dae6f0' }] },
+          { featureType: 'landscape', stylers: [{ color: '#f2efe9' }] },
+          { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+          { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#8a8580' }] },
+        ],
       });
 
       const bounds = new google.maps.LatLngBounds();
@@ -51,7 +59,7 @@ export default function MapView({ businesses, height = 420 }: Props) {
           title: b.name,
         });
         const info = new google.maps.InfoWindow({
-          content: `<strong>${b.name}</strong><br/>${b.suburb}, ${b.state}`,
+          content: `<div style="font-family:DM Sans,sans-serif;padding:4px 0"><strong style="color:#1a1a1a">${b.name}</strong><br/><span style="color:#8a8580;font-size:12px">${b.suburb}, ${b.state}</span></div>`,
         });
         marker.addListener('click', () => info.open({ map, anchor: marker }));
         bounds.extend({ lat: b.lat!, lng: b.lng! });
@@ -67,13 +75,13 @@ export default function MapView({ businesses, height = 420 }: Props) {
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
       <div
-        className="flex items-center justify-center rounded-xl border border-dashed border-neutral-200 bg-neutral-50 text-sm text-neutral-500"
+        className="map-container flex items-center justify-center bg-[var(--color-surface-warm)] text-sm text-[var(--color-ink-muted)]"
         style={{ height }}
       >
-        Map unavailable — set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in .env.local
+        Map unavailable
       </div>
     );
   }
 
-  return <div ref={ref} className="rounded-xl" style={{ height }} />;
+  return <div ref={ref} className="map-container" style={{ height }} />;
 }

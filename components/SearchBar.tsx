@@ -3,7 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
+interface Props {
+  defaultValue?: string;
+  size?: 'lg' | 'md';
+  autoFocus?: boolean;
+}
+
+export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = false }: Props) {
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
 
@@ -14,22 +20,39 @@ export default function SearchBar({ defaultValue = '' }: { defaultValue?: string
     router.push(`/search?${params.toString()}`);
   }
 
+  const isLarge = size === 'lg';
+
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full items-center gap-2 rounded-full border border-neutral-200 bg-white p-2 shadow-sm focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-100"
+      className={`flex w-full items-center bg-[var(--color-white)] border border-[var(--color-border)] transition-colors focus-within:border-[var(--color-gold)] ${
+        isLarge ? 'rounded-xl p-2 shadow-sm' : 'rounded-lg p-1.5'
+      }`}
     >
+      {/* Search icon */}
+      <div className={`flex-shrink-0 text-[var(--color-ink-muted)] ${isLarge ? 'pl-4' : 'pl-3'}`}>
+        <svg className={isLarge ? 'w-5 h-5' : 'w-4 h-4'} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </div>
+
       <input
         type="search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Search a suburb or salon name…"
-        className="flex-1 bg-transparent px-4 py-2 text-base text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-        aria-label="Search"
+        placeholder="Search by suburb, salon name, or postcode..."
+        autoFocus={autoFocus}
+        className={`flex-1 bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-muted)] focus:outline-none ${
+          isLarge ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'
+        }`}
+        aria-label="Search salons and barbers"
       />
+
       <button
         type="submit"
-        className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-rose-400"
+        className={`btn-gold flex-shrink-0 ${
+          isLarge ? '!py-3 !px-7 text-sm' : '!py-2 !px-5 text-xs'
+        }`}
       >
         Search
       </button>

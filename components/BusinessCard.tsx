@@ -1,59 +1,86 @@
 import Link from 'next/link';
 import type { Business } from '@/types/database';
+import StarRating from './StarRating';
 
 const TYPE_LABEL: Record<Business['business_type'], string> = {
-  hair_salon: 'Hair salon',
+  hair_salon: 'Hair Salon',
   barber: 'Barber',
-  unisex: 'Unisex salon',
+  unisex: 'Unisex',
 };
 
+function PhotoUrl(photoName: string) {
+  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  if (!key) return null;
+  return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=400&key=${key}`;
+}
+
 export default function BusinessCard({ business }: { business: Business }) {
+  const photo =
+    business.google_photos && business.google_photos.length > 0
+      ? PhotoUrl(business.google_photos[0].name)
+      : null;
+
   return (
     <Link
       href={`/salon/${business.slug}`}
-      className="group block rounded-xl border border-neutral-200 bg-white p-5 transition hover:border-rose-300 hover:shadow-sm"
+      className="card group block overflow-hidden"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-rose-600">
-            {TYPE_LABEL[business.business_type]}
-          </p>
-          <h3 className="mt-1 text-lg font-semibold text-neutral-900 group-hover:text-rose-600">
-            {business.name}
-          </h3>
-          <p className="mt-1 text-sm text-neutral-600">
-            {business.suburb}, {business.state} {business.postcode}
-          </p>
-        </div>
-        {business.google_rating != null && (
-          <div className="rounded-lg bg-neutral-50 px-2 py-1 text-right">
-            <p className="text-sm font-semibold text-neutral-900">
-              ★ {business.google_rating.toFixed(1)}
-            </p>
-            {business.google_review_count != null && (
-              <p className="text-[11px] text-neutral-500">
-                {business.google_review_count} reviews
-              </p>
-            )}
+      {/* Photo */}
+      <div className="relative h-44 bg-[var(--color-surface-warm)] overflow-hidden">
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            alt={business.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <svg className="w-10 h-10 text-[var(--color-border)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+            </svg>
           </div>
         )}
+
+        {/* Type badge overlay */}
+        <span className="absolute top-3 left-3 badge badge-type backdrop-blur-sm bg-white/90">
+          {TYPE_LABEL[business.business_type]}
+        </span>
       </div>
 
-      {business.description && (
-        <p className="mt-3 line-clamp-2 text-sm text-neutral-600">{business.description}</p>
-      )}
+      {/* Content */}
+      <div className="p-5">
+        <h3 className="text-base font-semibold text-[var(--color-ink)] group-hover:text-[var(--color-gold-dark)] transition-colors leading-snug"
+            style={{ fontFamily: 'var(--font-sans)' }}>
+          {business.name}
+        </h3>
+        <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
+          {business.suburb}, {business.state} {business.postcode}
+        </p>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-neutral-500">
-        {business.is_claimed && (
-          <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
-            Claimed
-          </span>
+        {/* Rating */}
+        {business.google_rating != null && (
+          <div className="mt-2.5">
+            <StarRating
+              rating={business.google_rating}
+              reviewCount={business.google_review_count}
+            />
+          </div>
         )}
-        {business.booking_url && (
-          <span className="rounded-full bg-rose-50 px-2 py-0.5 font-medium text-rose-700">
-            Book online
-          </span>
-        )}
+
+        {/* Badges row */}
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {business.is_claimed && (
+            <span className="badge badge-verified">Claimed</span>
+          )}
+          {business.booking_url && (
+            <span className="badge badge-gold">Book online</span>
+          )}
+          {(business.confidence_score ?? 0) >= 75 && (
+            <span className="badge badge-verified">Verified</span>
+          )}
+        </div>
       </div>
     </Link>
   );

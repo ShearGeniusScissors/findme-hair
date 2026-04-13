@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
+import MapView from '@/components/MapView';
 import { AU_STATES, stateName } from '@/lib/geo';
 import {
   getRegionBySlug,
@@ -28,10 +29,9 @@ export async function generateMetadata({
   const regionRow = await getRegionBySlug(region);
   const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
   const suburbName = suburbRow?.name ?? suburb.replace(/-/g, ' ');
-  const regionName = regionRow?.name ?? region;
   return {
-    title: `Hair Salons & Barbers in ${suburbName}, ${regionName} ${stateCode}`,
-    description: `Find hair salons and barbers in ${suburbName}. Browse verified listings, read reviews, and book online.`,
+    title: `Hair Salons & Barbers in ${suburbName}, ${stateCode} | findme.hair`,
+    description: `Browse verified hair salons and barber shops in ${suburbName}, ${stateName(stateCode)}. Find opening hours, reviews, and booking info.`,
   };
 }
 
@@ -45,59 +45,86 @@ export default async function SuburbDirectoryPage({
   if (!AU_STATES.some((s) => s.code === stateCode)) notFound();
 
   const regionRow = await getRegionBySlug(region);
-  const readable = (await getSuburbByRegionAndSlug(regionRow?.id ?? '', suburb))?.name ??
+  const readable =
+    (await getSuburbByRegionAndSlug(regionRow?.id ?? '', suburb))?.name ??
     suburb.replace(/-/g, ' ');
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
 
   return (
-    <main className="min-h-screen bg-neutral-50">
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto max-w-5xl px-6 py-6">
-          <nav className="text-xs text-neutral-500">
-            <Link href="/" className="hover:text-rose-600">
-              findme.hair
-            </Link>
-            {' / '}
-            <Link href={`/search?state=${stateCode}`} className="hover:text-rose-600">
+    <main className="min-h-screen bg-[var(--color-surface)]">
+      {/* Breadcrumb */}
+      <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
+        <div className="mx-auto max-w-6xl px-6 py-3">
+          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+            <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
+            <Chevron />
+            <Link href={`/${stateCode.toLowerCase()}`} className="hover:text-[var(--color-gold-dark)]">
               {stateName(stateCode)}
             </Link>
             {regionRow && (
               <>
-                {' / '}
-                <Link
-                  href={`/search?region=${region}`}
-                  className="hover:text-rose-600"
-                >
+                <Chevron />
+                <Link href={`/search?region=${region}`} className="hover:text-[var(--color-gold-dark)]">
                   {regionRow.name}
                 </Link>
               </>
             )}
-            {' / '}
-            <span className="capitalize text-neutral-800">{readable}</span>
+            <Chevron />
+            <span className="text-[var(--color-ink)] font-medium capitalize">{readable}</span>
           </nav>
-          <h1 className="mt-4 text-3xl font-semibold capitalize text-neutral-900">
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="bg-[var(--color-white)]">
+        <div className="mx-auto max-w-6xl px-6 py-10">
+          <p className="text-editorial-overline">{regionRow?.name ?? region} &middot; {stateName(stateCode)}</p>
+          <h1
+            className="mt-3 text-3xl capitalize text-[var(--color-ink)] sm:text-4xl"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
             Hair salons &amp; barbers in {readable}
           </h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            {regionRow?.name ?? region}, {stateName(stateCode)}
+          <p className="mt-2 text-[var(--color-ink-light)]">
+            {businesses.length} verified {businesses.length === 1 ? 'listing' : 'listings'}
           </p>
         </div>
-      </header>
+      </div>
 
-      <div className="mx-auto max-w-5xl px-6 py-10">
+      {/* Content */}
+      <div className="mx-auto max-w-6xl px-6 py-10">
         {businesses.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-neutral-200 bg-white p-8 text-center text-sm text-neutral-600">
-            No active listings for {readable} yet.
-          </p>
+          <div className="card p-12 text-center">
+            <h2 className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+              No listings yet
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
+              We haven&rsquo;t found any active hair salons or barbers in {readable} yet.
+              New suburbs are added weekly.
+            </p>
+          </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {businesses.map((b) => (
-              <BusinessCard key={b.id} business={b} />
-            ))}
+          <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,420px)]">
+            <div className="grid gap-5 sm:grid-cols-2 content-start">
+              {businesses.map((b) => (
+                <BusinessCard key={b.id} business={b} />
+              ))}
+            </div>
+            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
+              <MapView businesses={businesses} height={500} />
+            </aside>
           </div>
         )}
       </div>
     </main>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg className="w-3 h-3 text-[var(--color-border)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
   );
 }
