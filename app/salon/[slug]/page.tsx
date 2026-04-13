@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BookingButton from '@/components/BookingButton';
 import ClaimBanner from '@/components/ClaimBanner';
+import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
 import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
@@ -31,9 +32,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const business = await getBusinessBySlug(slug);
   if (!business) return { title: 'Salon not found' };
+  const typeLabel = TYPE_LABEL[business.business_type].toLowerCase();
+  const ratingStr = business.google_rating ? `${business.google_rating}★ from ${business.google_review_count ?? 0} Google reviews. ` : '';
+  const photoUrl = business.google_photos?.[0]?.name
+    ? `https://places.googleapis.com/v1/${business.google_photos[0].name}/media?maxHeightPx=630&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+    : 'https://www.findme.hair/og-image.jpg';
   return {
-    title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb} | findme.hair`,
-    description: `${business.name} is a ${TYPE_LABEL[business.business_type].toLowerCase()} in ${business.suburb}, ${stateName(business.state)}. ${business.google_rating ? `Rated ${business.google_rating}/5` : ''} — find hours, photos, and booking info.`,
+    title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}, ${business.state} | findme.hair`,
+    description: `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online.`,
+    alternates: { canonical: `https://www.findme.hair/salon/${business.slug}` },
+    openGraph: {
+      title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}`,
+      description: `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}`,
+      url: `https://www.findme.hair/salon/${business.slug}`,
+      siteName: 'findme.hair',
+      locale: 'en_AU',
+      type: 'website',
+      images: [{ url: photoUrl, width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -53,6 +69,49 @@ export default async function BusinessProfilePage({
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': business.business_type === 'barber' ? 'BarberShop' : 'HairSalon',
+        name: business.name,
+        url: `https://www.findme.hair/salon/${business.slug}`,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: business.address_line1,
+          addressLocality: business.suburb,
+          addressRegion: business.state,
+          postalCode: business.postcode,
+          addressCountry: 'AU',
+        },
+        ...(business.phone && { telephone: business.phone }),
+        ...(business.website_url && { url: business.website_url }),
+        ...(business.lat && business.lng && {
+          geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng },
+        }),
+        ...(business.google_rating != null && business.google_review_count != null && {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: business.google_rating,
+            reviewCount: business.google_review_count,
+            bestRating: 5,
+          },
+        }),
+        ...(photos.length > 0 && {
+          image: `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,
+        }),
+        priceRange: '$$',
+        currenciesAccepted: 'AUD',
+        paymentAccepted: 'Cash, Credit Card',
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
+          { '@type': 'ListItem', position: 2, name: stateName(business.state), item: `https://www.findme.hair/${business.state.toLowerCase()}` },
+          { '@type': 'ListItem', position: 3, name: business.suburb },
+          { '@type': 'ListItem', position: 4, name: business.name },
+        ],
+      }} />
       {/* ─── Featured banner ─────────────────────────── */}
       {isFeatured && (
         <div className="bg-gradient-to-r from-[var(--color-gold)] to-[#b8942e]">

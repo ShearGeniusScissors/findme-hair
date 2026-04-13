@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import JsonLd from '@/components/JsonLd';
 import { AU_STATES, stateName } from '@/lib/geo';
 import { listRegions, searchBusinesses, countBusinessesByRegion } from '@/lib/search';
 import type { AuState, Region } from '@/types/database';
@@ -50,8 +51,18 @@ export async function generateMetadata({
   const code = state.toUpperCase() as AuState;
   const name = stateName(code);
   return {
-    title: `Hair Salons & Barbers in ${name} | findme.hair`,
-    description: `Browse verified hair salons and barber shops across ${name}. Find opening hours, reviews, and booking info for salons near you.`,
+    title: `Hair Salons & Barbers in ${name} — findme.hair`,
+    description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb. Free listings, real reviews.`,
+    alternates: { canonical: `https://www.findme.hair/${state.toLowerCase()}` },
+    openGraph: {
+      title: `Hair Salons & Barbers in ${name} — findme.hair`,
+      description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb.`,
+      url: `https://www.findme.hair/${state.toLowerCase()}`,
+      siteName: 'findme.hair',
+      locale: 'en_AU',
+      type: 'website',
+      images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -122,6 +133,14 @@ export default async function StatePage({
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
+          { '@type': 'ListItem', position: 2, name },
+        ],
+      }} />
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">

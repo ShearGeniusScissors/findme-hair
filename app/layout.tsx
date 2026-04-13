@@ -18,18 +18,32 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "findme.hair — Australia's Hair Salon & Barber Directory",
+  title: {
+    default: "findme.hair — Australia's Hair Salon & Barber Directory",
+    template: '%s',
+  },
   description:
     "Hand-verified hair salons and barber shops across Australia. Hair and barber only — no beauty, no nails, no spa. Just hair.",
-  metadataBase: new URL("https://findme.hair"),
+  metadataBase: new URL("https://www.findme.hair"),
   openGraph: {
     title: "findme.hair",
     description:
       "Find your next haircut. Australia's premium hair salon & barber directory.",
-    url: "https://findme.hair",
+    url: "https://www.findme.hair",
     siteName: "findme.hair",
     locale: "en_AU",
     type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.jpg"],
+  },
+  other: {
+    "theme-color": "#C9A96E",
+  },
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
@@ -39,7 +53,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
+    <html lang="en-AU" className={`${dmSans.variable} ${dmSerif.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://taxuueemqtquihhzhgnr.supabase.co" />
+        <link rel="alternate" hrefLang="en-AU" href="https://www.findme.hair/" />
+        <meta name="theme-color" content="#C9A96E" />
+      </head>
       <body className="min-h-screen flex flex-col">
         <SiteHeader />
         <div className="flex-1">{children}</div>

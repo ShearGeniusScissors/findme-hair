@@ -1,6 +1,30 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import SearchBar from '@/components/SearchBar';
+import JsonLd from '@/components/JsonLd';
 import { supabaseServerAnon } from '@/lib/supabase';
+
+export const metadata: Metadata = {
+  title: "findme.hair — Australia's Hair Salon & Barber Directory",
+  description:
+    "Find verified hair salons and barbers near you. 13,000+ listings across Australia. Hair only — no beauty, no nails, no spa.",
+  alternates: { canonical: 'https://www.findme.hair/' },
+  openGraph: {
+    title: "findme.hair — Australia's Hair Salon & Barber Directory",
+    description: 'Find verified hair salons and barbers near you. 13,000+ listings across Australia.',
+    url: 'https://www.findme.hair/',
+    siteName: 'findme.hair',
+    locale: 'en_AU',
+    type: 'website',
+    images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "findme.hair — Australia's Hair Salon & Barber Directory",
+    description: 'Find verified hair salons and barbers near you. 13,000+ listings across Australia.',
+    images: ['https://www.findme.hair/og-image.jpg'],
+  },
+};
 
 export default async function HomePage() {
   const supabase = supabaseServerAnon();
@@ -15,6 +39,18 @@ export default async function HomePage() {
 
   return (
     <main>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'findme.hair',
+        url: 'https://www.findme.hair',
+        description: "Australia's hair salon and barber directory",
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://www.findme.hair/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      }} />
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className="relative bg-[var(--color-white)]">
         <div className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-20 sm:pb-16">
