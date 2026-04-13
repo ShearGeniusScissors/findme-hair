@@ -7,6 +7,7 @@ import {
   getRegionBySlug,
   searchBusinesses,
   searchBusinessesCount,
+  detectRegionFromQuery,
 } from '@/lib/search';
 import type { AuState, BusinessType } from '@/types/database';
 
@@ -28,13 +29,23 @@ export default async function SearchPage({
 }) {
   const params = await searchParams;
 
+  // Auto-detect region from query if not explicitly set
+  let effectiveRegion = params.region;
+  if (!effectiveRegion && params.q) {
+    const detected = await detectRegionFromQuery(params.q);
+    if (detected) {
+      effectiveRegion = detected.slug;
+    }
+  }
+
   const [businesses, totalCount, regions] = await Promise.all([
     searchBusinesses({
       q: params.q,
       state: params.state as AuState | undefined,
-      region: params.region,
+      region: params.region, // Use explicit region only for DB query
       suburb: params.suburb,
       type: params.type as BusinessType | undefined,
+      service: params.service,
       limit: 20,
     }),
     searchBusinessesCount({
@@ -43,13 +54,15 @@ export default async function SearchPage({
       region: params.region,
       suburb: params.suburb,
       type: params.type as BusinessType | undefined,
+      service: params.service,
     }),
-    listRegions(params.state as AuState | undefined),
+    listRegions(), // Always load all regions so the dropdown works across states
   ]);
 
   let suburbs: { id: string; name: string; slug: string }[] = [];
-  if (params.region) {
-    const region = await getRegionBySlug(params.region);
+  const activeRegion = effectiveRegion || params.region;
+  if (activeRegion) {
+    const region = await getRegionBySlug(activeRegion);
     if (region) {
       const subs = await listSuburbsInRegion(region.id);
       suburbs = subs.map((s) => ({ id: s.id, name: s.name, slug: s.slug }));
@@ -68,6 +81,7 @@ export default async function SearchPage({
   if (params.region) clientParams.region = params.region;
   if (params.suburb) clientParams.suburb = params.suburb;
   if (params.type) clientParams.type = params.type;
+  if (params.service) clientParams.service = params.service;
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
@@ -75,7 +89,16 @@ export default async function SearchPage({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-white)]">
         <div className="mx-auto max-w-7xl px-6 py-5">
           <div className="max-w-2xl">
-            <SearchBar defaultValue={params.q ?? ''} />
+            <SearchBar
+              defaultValue={params.q ?? ''}
+              preserveParams={{
+                state: params.state,
+                region: params.region,
+                type: params.type,
+                service: params.service,
+                suburb: params.suburb,
+              }}
+            />
           </div>
 
           {/* Filters */}
@@ -100,7 +123,7 @@ export default async function SearchPage({
 
             <FilterSelect
               name="region"
-              defaultValue={params.region}
+              defaultValue={effectiveRegion}
               label="Region"
               options={regions.map((r) => ({
                 value: r.slug,

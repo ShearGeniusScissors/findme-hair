@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     region: params.get('region') ?? undefined,
     suburb: params.get('suburb') ?? undefined,
     type: (params.get('type') as BusinessType) ?? undefined,
+    service: params.get('service') ?? undefined,
     limit: Math.min(Number(params.get('limit')) || 20, 40),
     offset: Number(params.get('offset')) || 0,
   });

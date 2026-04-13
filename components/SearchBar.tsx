@@ -7,9 +7,10 @@ interface Props {
   defaultValue?: string;
   size?: 'lg' | 'md';
   autoFocus?: boolean;
+  preserveParams?: Record<string, string | undefined>;
 }
 
-export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = false }: Props) {
+export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = false, preserveParams }: Props) {
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
 
@@ -17,6 +18,12 @@ export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = 
     e.preventDefault();
     const params = new URLSearchParams();
     if (q.trim()) params.set('q', q.trim());
+    // Preserve active filters when resubmitting search
+    if (preserveParams) {
+      for (const [key, value] of Object.entries(preserveParams)) {
+        if (value) params.set(key, value);
+      }
+    }
     router.push(`/search?${params.toString()}`);
   }
 
