@@ -8,6 +8,7 @@ export interface SearchFilters {
   suburb?: string; // slug OR name (case-insensitive)
   type?: BusinessType;
   service?: string;
+  specialty?: string; // matches specialties[] array column
   limit?: number;
   offset?: number;
 }
@@ -69,6 +70,9 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
   if (filters.suburb) {
     query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
   }
+  if (filters.specialty) {
+    query = query.contains('specialties', [filters.specialty]);
+  }
   if (filters.offset) query = query.range(filters.offset, (filters.offset ?? 0) + (filters.limit ?? 40) - 1);
 
   const { data, error } = await query;
@@ -109,6 +113,9 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
   }
   if (filters.suburb) {
     query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
+  }
+  if (filters.specialty) {
+    query = query.contains('specialties', [filters.specialty]);
   }
 
   const { count, error } = await query;

@@ -18,6 +18,48 @@ const TYPE_LABEL = {
   unisex: 'Unisex Salon',
 } as const;
 
+const SPECIALTY_DISPLAY: Record<string, string> = {
+  'colour-specialist': 'Colour Specialist',
+  'curly-hair': 'Curly Hair',
+  'balayage': 'Balayage',
+  'extensions': 'Extensions',
+  'bridal': 'Bridal Hair',
+  'kids': 'Kids',
+  'mens': 'Mens Cuts',
+  'mobile': 'Mobile',
+  'japanese': 'Japanese',
+  'korean': 'Korean',
+  'keratin': 'Keratin',
+  'highlights': 'Highlights',
+  'organic': 'Organic',
+  'barber': 'Barber',
+  'blow-dry': 'Blow Dry',
+  'afro': 'Textured Hair',
+  'colour-correction': 'Colour Correction',
+  'wigs': 'Wigs',
+};
+
+const SPECIALTY_SLUG: Record<string, string> = {
+  'colour-specialist': 'colour-specialist',
+  'curly-hair': 'curly-hair-specialist',
+  'balayage': 'balayage-specialist',
+  'extensions': 'hair-extensions',
+  'bridal': 'bridal-hair',
+  'kids': 'kids-hairdresser',
+  'mens': 'mens-haircut',
+  'mobile': 'mobile-hairdresser',
+  'japanese': 'japanese-hairdresser',
+  'korean': 'korean-hair-salon',
+  'keratin': 'keratin-treatment',
+  'highlights': 'highlights',
+  'organic': 'organic',
+  'barber': 'barber',
+  'blow-dry': 'blow-dry',
+  'afro': 'afro',
+  'colour-correction': 'colour-correction',
+  'wigs': 'wigs',
+};
+
 function PhotoUrl(photoName: string, maxHeight = 600) {
   const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   if (!key) return null;
@@ -65,7 +107,6 @@ export default async function BusinessProfilePage({
   if (!business) notFound();
 
   const suburbSlug = slugify(business.suburb);
-  const verified = (business.confidence_score ?? 0) >= 75;
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
 
@@ -198,7 +239,6 @@ export default async function BusinessProfilePage({
             {/* Header */}
             <div className="flex flex-wrap items-start gap-3">
               <span className="badge badge-type">{TYPE_LABEL[business.business_type]}</span>
-              {verified && <span className="badge badge-verified">Verified</span>}
               {business.is_claimed && <span className="badge badge-gold">Claimed</span>}
               {isFeatured && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-gold)] px-3 py-1 text-xs font-bold text-white">
@@ -291,10 +331,10 @@ export default async function BusinessProfilePage({
                     {business.specialties.map((s) => (
                       <Link
                         key={s}
-                        href={`/services/${s === 'colour-specialist' ? 'colour-correction' : s === 'curly-hair' ? 'curly-hair-specialist' : s === 'balayage' ? 'balayage-specialist' : s === 'mobile' ? 'mobile-hairdresser' : s === 'mens' ? 'mens-haircut' : s === 'extensions' ? 'hair-extensions' : s === 'bridal' ? 'bridal-hair' : s === 'kids' ? 'kids-hairdresser' : s}`}
+                        href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
                         className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-gold-dark)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
                       >
-                        {s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                        {SPECIALTY_DISPLAY[s] ?? s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                       </Link>
                     ))}
                   </div>
@@ -335,28 +375,40 @@ export default async function BusinessProfilePage({
               )}
             </section>
 
-            {/* Services placeholder */}
-            <section className="mt-10">
-              <h2
-                className="text-xl text-[var(--color-ink)]"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Services &amp; pricing
-              </h2>
-              <div className="mt-4 rounded-xl border-2 border-dashed border-[var(--color-border)] p-8 text-center">
-                <p className="text-sm text-[var(--color-ink-muted)]">
-                  Services &amp; pricing coming soon
-                </p>
-                {!business.is_claimed && (
-                  <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
-                    <Link href={`/claim?salon=${business.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                      Claim this listing
-                    </Link>{' '}
-                    to add your services
-                  </p>
+            {/* Services section — only shown if booking URL or scraped services exist */}
+            {(business.booking_url || (business.scraped_services && business.scraped_services.length > 0)) && (
+              <section className="mt-10">
+                <h2
+                  className="text-xl text-[var(--color-ink)]"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  Services
+                </h2>
+                {business.booking_url && (
+                  <a
+                    href={business.booking_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 btn-gold inline-flex items-center gap-2 text-base px-8 py-3"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    Book your appointment online
+                  </a>
                 )}
-              </div>
-            </section>
+                {business.scraped_services && business.scraped_services.length > 0 && (
+                  <ul className="mt-4 space-y-2">
+                    {business.scraped_services.map((s, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-[var(--color-ink-light)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold)] flex-shrink-0" />
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            )}
 
             {/* Reviews link */}
             {business.google_rating != null && business.google_review_count != null && (
@@ -414,11 +466,6 @@ export default async function BusinessProfilePage({
                 {business.booking_platform !== 'none' && business.booking_platform && (
                   <DetailRow label="Booking">
                     <span className="capitalize">{business.booking_platform}</span>
-                  </DetailRow>
-                )}
-                {business.confidence_score != null && (
-                  <DetailRow label="Confidence">
-                    {business.confidence_score}/100
                   </DetailRow>
                 )}
               </div>

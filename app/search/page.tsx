@@ -20,6 +20,7 @@ interface SearchParams {
   suburb?: string;
   type?: string;
   service?: string;
+  specialty?: string;
 }
 
 export default async function SearchPage({
@@ -46,6 +47,7 @@ export default async function SearchPage({
       suburb: params.suburb,
       type: params.type as BusinessType | undefined,
       service: params.service,
+      specialty: params.specialty,
       limit: 20,
     }),
     searchBusinessesCount({
@@ -55,6 +57,7 @@ export default async function SearchPage({
       suburb: params.suburb,
       type: params.type as BusinessType | undefined,
       service: params.service,
+      specialty: params.specialty,
     }),
     listRegions(), // Always load all regions so the dropdown works across states
   ]);
@@ -69,7 +72,7 @@ export default async function SearchPage({
     }
   }
 
-  const hasFilters = !!(params.q || params.state || params.region || params.suburb || params.type || params.service);
+  const hasFilters = !!(params.q || params.state || params.region || params.suburb || params.type || params.service || params.specialty);
 
   // Build a label for the results heading
   const queryLabel = params.q || params.suburb || params.region || params.state || null;
@@ -82,6 +85,7 @@ export default async function SearchPage({
   if (params.suburb) clientParams.suburb = params.suburb;
   if (params.type) clientParams.type = params.type;
   if (params.service) clientParams.service = params.service;
+  if (params.specialty) clientParams.specialty = params.specialty;
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
@@ -167,6 +171,27 @@ export default async function SearchPage({
                 { value: 'extensions', label: 'Extensions' },
                 { value: 'mens', label: 'Mens cut' },
                 { value: 'womens', label: 'Womens cut' },
+              ]}
+            />
+
+            <FilterSelect
+              name="specialty"
+              defaultValue={params.specialty}
+              label="Specialty"
+              options={[
+                { value: 'colour-specialist', label: 'Colour Specialist' },
+                { value: 'barber', label: 'Barber' },
+                { value: 'curly-hair', label: 'Curly Hair' },
+                { value: 'balayage', label: 'Balayage' },
+                { value: 'extensions', label: 'Extensions' },
+                { value: 'kids', label: 'Kids' },
+                { value: 'bridal', label: 'Bridal' },
+                { value: 'mens', label: 'Mens Cuts' },
+                { value: 'mobile', label: 'Mobile' },
+                { value: 'japanese', label: 'Japanese' },
+                { value: 'korean', label: 'Korean' },
+                { value: 'keratin', label: 'Keratin' },
+                { value: 'organic', label: 'Organic' },
               ]}
             />
 

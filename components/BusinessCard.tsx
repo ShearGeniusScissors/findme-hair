@@ -8,6 +8,27 @@ const TYPE_LABEL: Record<Business['business_type'], string> = {
   unisex: 'Unisex',
 };
 
+const SPECIALTY_DISPLAY: Record<string, string> = {
+  'colour-specialist': 'Colour Specialist',
+  'curly-hair': 'Curly Hair',
+  'balayage': 'Balayage',
+  'extensions': 'Extensions',
+  'bridal': 'Bridal Hair',
+  'kids': 'Kids',
+  'mens': 'Mens Cuts',
+  'mobile': 'Mobile',
+  'japanese': 'Japanese',
+  'korean': 'Korean',
+  'keratin': 'Keratin',
+  'highlights': 'Highlights',
+  'organic': 'Organic',
+  'barber': 'Barber',
+  'blow-dry': 'Blow Dry',
+  'afro': 'Textured Hair',
+  'colour-correction': 'Colour Correction',
+  'wigs': 'Wigs',
+};
+
 function PhotoUrl(photoName: string) {
   const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   if (!key) return null;
@@ -21,14 +42,15 @@ export default function BusinessCard({ business }: { business: Business }) {
       : null;
 
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
+  const specialties = (business.specialties ?? []).slice(0, 4);
 
   return (
     <Link
       href={`/salon/${business.slug}`}
       className={`card group block overflow-hidden ${isFeatured ? 'ring-2 ring-[var(--color-gold)] shadow-md' : ''}`}
     >
-      {/* Photo */}
-      <div className="relative h-44 bg-[var(--color-surface-warm)] overflow-hidden">
+      {/* Photo — 16:9 aspect */}
+      <div className="relative aspect-video bg-[var(--color-surface-warm)] overflow-hidden">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -45,7 +67,7 @@ export default function BusinessCard({ business }: { business: Business }) {
           </div>
         )}
 
-        {/* Type badge overlay */}
+        {/* Type badge overlay — top left */}
         <span className="absolute top-3 left-3 badge badge-type backdrop-blur-sm bg-white/90">
           {TYPE_LABEL[business.business_type]}
         </span>
@@ -79,18 +101,19 @@ export default function BusinessCard({ business }: { business: Business }) {
           </div>
         )}
 
-        {/* Badges row */}
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {business.is_claimed && (
-            <span className="badge badge-verified">Claimed</span>
-          )}
-          {business.booking_url && (
-            <span className="badge badge-gold">Book online</span>
-          )}
-          {(business.confidence_score ?? 0) >= 75 && (
-            <span className="badge badge-verified">Verified</span>
-          )}
-        </div>
+        {/* Specialty tags */}
+        {specialties.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {specialties.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--color-gold-dark)]"
+              >
+                {SPECIALTY_DISPLAY[tag] ?? tag.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </Link>
   );
