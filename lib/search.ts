@@ -36,6 +36,7 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     .from('businesses')
     .select('*')
     .eq('status', 'active')
+    .order('featured_until', { ascending: false, nullsFirst: false })
     .order('confidence_score', { ascending: false, nullsFirst: false })
     .order('google_rating', { ascending: false, nullsFirst: false })
     .limit(filters.limit ?? 40);
