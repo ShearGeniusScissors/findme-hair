@@ -46,7 +46,7 @@ export default async function HomePage() {
           </p>
 
           <div className="mx-auto mt-10 max-w-xl">
-            <SearchBar size="lg" autoFocus />
+            <SearchBar size="lg" />
           </div>
 
           {/* Popular cities */}
