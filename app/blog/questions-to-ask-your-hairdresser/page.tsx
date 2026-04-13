@@ -39,6 +39,27 @@ export default function QuestionsArticle() {
           { '@type': 'ListItem', position: 3, name: '10 Questions to Ask Your Hairdresser' },
         ],
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What questions should I ask my hairdresser before a haircut?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Ask about recommendations for your hair type, how much maintenance the style needs, how often you will need to come back, the total cost, and whether the desired result is achievable in one session.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Should I bring reference photos to my hairdresser?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. Words like "a little off the top" mean different things to different people. Reference photos eliminate miscommunication and help your stylist understand exactly what you want.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'What happens if I am not happy with my haircut?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Good salons have a redo policy, typically offering a free adjustment within 7-14 days. Ask about this upfront before your appointment. A confident stylist will not be offended by the question.' },
+          },
+        ],
+      }} />
 
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-3xl px-6 py-3">

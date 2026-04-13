@@ -181,13 +181,22 @@ export default async function SuburbDirectoryPage({
           </h2>
           <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--color-ink-light)]">
             {businesses.length > 0 ? (
-              <p>
-                There {businesses.length === 1 ? 'is' : 'are'} {businesses.length} verified hair{' '}
-                {businesses.length === 1 ? 'salon' : 'salons'} and{' '}
-                {businesses.length === 1 ? 'barber' : 'barbers'} in {readable},{' '}
-                {fullState}. Every listing on findme.hair is hand-verified against
-                Google, TrueLocal, and Yellow Pages.
-              </p>
+              <>
+                <p>
+                  {businesses.length} hair salons and barbers in {readable}.
+                  {businesses.length >= 3
+                    ? ` Top rated: ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.`
+                    : businesses.length > 0
+                    ? ` Top rated: ${businesses.map((b) => b.name).join(', ')}.`
+                    : ''}
+                  {' '}Popular services include haircuts, colour treatments and barber services.
+                </p>
+                <p>
+                  Every listing on findme.hair is hand-verified against
+                  Google, TrueLocal, and Yellow Pages. Browse {readable}&rsquo;s verified
+                  salons and barbers with real Google reviews, hours, and Book Now links.
+                </p>
+              </>
             ) : (
               <p>
                 {readable} is a suburb in {regionRow?.name ?? region},{' '}

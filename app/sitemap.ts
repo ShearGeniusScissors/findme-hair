@@ -86,8 +86,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // City guide pages
-  const cities = ['melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra'];
+  // City guide pages (8 capitals + 8 regional)
+  const cities = [
+    'melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra',
+    'ballarat', 'geelong', 'newcastle', 'wollongong', 'gold-coast', 'sunshine-coast', 'townsville', 'cairns',
+  ];
   const cityGuidePages: MetadataRoute.Sitemap = cities.map((c) => ({
     url: `${base}/best-hairdresser/${c}`,
     lastModified: new Date(),
@@ -103,8 +106,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/blog/questions-to-ask-your-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
   ];
 
-  // Service filter pages
-  const services = ['mobile-hairdresser', 'balayage-specialist', 'curly-hair-specialist', 'colour-correction', 'barber', 'bridal-hair'];
+  // Service filter pages (6 original + 6 new)
+  const services = [
+    'mobile-hairdresser', 'balayage-specialist', 'curly-hair-specialist', 'colour-correction', 'barber', 'bridal-hair',
+    'kids-hairdresser', 'mens-haircut', 'hair-extensions', 'japanese-hairdresser', 'korean-hair-salon', 'wedding-hair',
+  ];
   const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${base}/services/${s}`,
     lastModified: new Date(),
@@ -112,5 +118,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...blogPages, ...servicePages];
+  // About page
+  const aboutPage: MetadataRoute.Sitemap = [
+    { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
+  ];
+
+  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...blogPages, ...servicePages, ...aboutPage];
 }

@@ -224,6 +224,16 @@ function SiteFooter() {
                   Bridal Hair
                 </Link>
               </li>
+              <li>
+                <Link href="/services/hair-extensions" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Hair Extensions
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/mens-haircut" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Men&rsquo;s Haircuts
+                </Link>
+              </li>
             </ul>
           </div>
 

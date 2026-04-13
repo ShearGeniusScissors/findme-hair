@@ -74,6 +74,63 @@ const CITIES: CityConfig[] = [
     suburbs: ['canberra', 'braddon', 'kingston', 'manuka', 'woden', 'belconnen', 'civic', 'dickson', 'fyshwick', 'griffith'],
     description: 'Canberra\'s hairdressing scene is concentrated in key hubs like Braddon, Kingston, and Manuka. The city offers a mix of modern, boutique salons and established family-run barber shops.',
   },
+  // Regional cities
+  {
+    name: 'Ballarat',
+    slug: 'ballarat',
+    state: 'VIC',
+    suburbs: ['ballarat', 'ballarat central', 'ballarat east', 'ballarat north', 'wendouree', 'lake wendouree', 'alfredton', 'mount pleasant', 'sebastopol', 'buninyong'],
+    description: 'Ballarat is one of Victoria\'s largest regional cities with a thriving hairdressing scene. From heritage-listed Sturt Street to the buzzing CBD, Ballarat offers quality salons and barbers with a friendly, small-city vibe.',
+  },
+  {
+    name: 'Geelong',
+    slug: 'geelong',
+    state: 'VIC',
+    suburbs: ['geelong', 'geelong west', 'newtown', 'belmont', 'highton', 'pakington street', 'ocean grove', 'leopold', 'corio', 'grovedale'],
+    description: 'Geelong\'s hairdressing scene has boomed alongside the city\'s growth. Pakington Street and the CBD are home to stylish salons, while the Bellarine Peninsula offers beachy, relaxed styling options.',
+  },
+  {
+    name: 'Newcastle',
+    slug: 'newcastle',
+    state: 'NSW',
+    suburbs: ['newcastle', 'newcastle east', 'hamilton', 'charlestown', 'lambton', 'merewether', 'adamstown', 'the junction', 'darby street', 'beaumont street'],
+    description: 'Newcastle combines surf culture with urban style, and its hairdressers reflect that mix. From Darby Street\'s trendy salons to Hamilton\'s Beaumont Street strip, Newcastle has a strong independent salon culture.',
+  },
+  {
+    name: 'Wollongong',
+    slug: 'wollongong',
+    state: 'NSW',
+    suburbs: ['wollongong', 'fairy meadow', 'corrimal', 'thirroul', 'figtree', 'shellharbour', 'unanderra', 'dapto', 'bulli', 'austinmer'],
+    description: 'Wollongong\'s coastal lifestyle shapes its hairdressing scene. Salons here specialise in low-maintenance, beach-ready styles. The CBD and northern suburbs like Thirroul and Bulli are popular for quality hair services.',
+  },
+  {
+    name: 'Gold Coast',
+    slug: 'gold-coast',
+    state: 'QLD',
+    suburbs: ['gold coast', 'surfers paradise', 'broadbeach', 'burleigh heads', 'palm beach', 'coolangatta', 'robina', 'southport', 'mermaid beach', 'currumbin'],
+    description: 'The Gold Coast is home to some of Queensland\'s most stylish salons. Burleigh Heads and Broadbeach lead the way with beachy balayage and sun-kissed colour, while Robina and Southport offer family-friendly options.',
+  },
+  {
+    name: 'Sunshine Coast',
+    slug: 'sunshine-coast',
+    state: 'QLD',
+    suburbs: ['sunshine coast', 'maroochydore', 'noosa', 'mooloolaba', 'caloundra', 'buderim', 'nambour', 'coolum', 'noosaville', 'alexandra headland'],
+    description: 'The Sunshine Coast\'s relaxed lifestyle extends to its hairdressing culture. Noosa and Mooloolaba are known for premium salons, while Maroochydore and Caloundra offer a wide range of affordable options.',
+  },
+  {
+    name: 'Townsville',
+    slug: 'townsville',
+    state: 'QLD',
+    suburbs: ['townsville', 'north ward', 'south townsville', 'cranbrook', 'kirwan', 'aitkenvale', 'hyde park', 'pimlico', 'castletown', 'belgian gardens'],
+    description: 'Townsville is North Queensland\'s hairdressing hub, with salons that understand tropical hair care. The Palmer Street precinct and Aitkenvale shopping area are popular destinations for quality cuts and colour.',
+  },
+  {
+    name: 'Cairns',
+    slug: 'cairns',
+    state: 'QLD',
+    suburbs: ['cairns', 'cairns north', 'edge hill', 'parramatta park', 'manunda', 'westcourt', 'earlville', 'smithfield', 'palm cove', 'trinity beach'],
+    description: 'Cairns\' tropical setting means salons here specialise in humidity-proof styles and treatments. The Esplanade and Shields Street areas are home to the city\'s top-rated hairdressers and barbers.',
+  },
 ];
 
 export function generateStaticParams() {
@@ -164,6 +221,27 @@ export default async function CityGuidePage({
           name: 'findme.hair',
           url: 'https://www.findme.hair',
         },
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: `Who are the best hairdressers in ${config.name}?`,
+            acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists the top-rated hairdressers in ${config.name} based on verified Google reviews. ${businesses.length > 0 ? `Top rated include ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.` : `Browse our ${config.name} listings for the latest recommendations.`}` },
+          },
+          {
+            '@type': 'Question',
+            name: `How much does a haircut cost in ${config.name}?`,
+            acceptedAnswer: { '@type': 'Answer', text: `Haircut prices in ${config.name} vary by salon type. Men's barber cuts typically range from $25-$45, while women's salon cuts start from $60. Premium salons in ${config.suburbs[1] ? config.suburbs.slice(1, 3).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' and ') : config.name} may charge more.` },
+          },
+          {
+            '@type': 'Question',
+            name: `What are the most popular suburbs for hair salons in ${config.name}?`,
+            acceptedAnswer: { '@type': 'Answer', text: `Popular suburbs for hair salons in ${config.name} include ${config.suburbs.slice(0, 5).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')}. Each area has its own character, from boutique studios to high-volume salons.` },
+          },
+        ],
       }} />
 
       {/* Breadcrumb */}

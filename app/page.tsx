@@ -136,6 +136,92 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ─── Popular searches ──────────────────────────────── */}
+      <section className="bg-[var(--color-white)]">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="text-center">
+            <p className="text-editorial-overline">Popular searches</p>
+            <h2
+              className="mt-3 text-3xl text-[var(--color-ink)] sm:text-4xl"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              Find hair salons &amp; barbers
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-8 sm:grid-cols-3">
+            {/* By city */}
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">By city</h3>
+              <ul className="space-y-2">
+                {[
+                  { name: 'Melbourne', href: '/best-hairdresser/melbourne' },
+                  { name: 'Sydney', href: '/best-hairdresser/sydney' },
+                  { name: 'Brisbane', href: '/best-hairdresser/brisbane' },
+                  { name: 'Perth', href: '/best-hairdresser/perth' },
+                  { name: 'Adelaide', href: '/best-hairdresser/adelaide' },
+                  { name: 'Gold Coast', href: '/best-hairdresser/gold-coast' },
+                  { name: 'Newcastle', href: '/best-hairdresser/newcastle' },
+                  { name: 'Geelong', href: '/best-hairdresser/geelong' },
+                ].map((c) => (
+                  <li key={c.href}>
+                    <Link href={c.href} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                      Best hairdressers in {c.name} &rarr;
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* By service */}
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">By service</h3>
+              <ul className="space-y-2">
+                {[
+                  { name: 'Mobile Hairdressers', href: '/services/mobile-hairdresser' },
+                  { name: 'Balayage Specialists', href: '/services/balayage-specialist' },
+                  { name: 'Curly Hair Specialists', href: '/services/curly-hair-specialist' },
+                  { name: 'Barber Shops', href: '/services/barber' },
+                  { name: 'Bridal Hair', href: '/services/bridal-hair' },
+                  { name: 'Hair Extensions', href: '/services/hair-extensions' },
+                  { name: 'Japanese Hairdressers', href: '/services/japanese-hairdresser' },
+                  { name: 'Korean Hair Salons', href: '/services/korean-hair-salon' },
+                ].map((s) => (
+                  <li key={s.href}>
+                    <Link href={s.href} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                      {s.name} &rarr;
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* By state */}
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">By state</h3>
+              <ul className="space-y-2">
+                {[
+                  { name: 'Victoria', href: '/vic' },
+                  { name: 'New South Wales', href: '/nsw' },
+                  { name: 'Queensland', href: '/qld' },
+                  { name: 'Western Australia', href: '/wa' },
+                  { name: 'South Australia', href: '/sa' },
+                  { name: 'Tasmania', href: '/tas' },
+                  { name: 'Northern Territory', href: '/nt' },
+                  { name: 'ACT', href: '/act' },
+                ].map((s) => (
+                  <li key={s.href}>
+                    <Link href={s.href} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                      {s.name} &rarr;
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── CTA for salon owners ─────────────────────────── */}
       <section className="bg-[var(--color-ink)]">
         <div className="mx-auto max-w-5xl px-6 py-20 text-center">

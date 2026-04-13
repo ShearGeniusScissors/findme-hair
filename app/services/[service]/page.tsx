@@ -138,6 +138,120 @@ const SERVICES: ServiceConfig[] = [
       closing: 'Book your bridal stylist early — the best specialists are booked 6-12 months in advance, especially during peak wedding season (October to April in Australia).',
     },
   },
+  {
+    slug: 'kids-hairdresser',
+    name: 'Kids Hairdressers',
+    h1: 'Kids Hairdressers in Australia',
+    description: 'Child-friendly hair salons',
+    metaDescription: 'Find kids hairdressers near you. Child-friendly salons with experience cutting children\'s hair across Australia. Patient stylists, fun environments.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['kids', 'children', 'child', 'junior', 'little'],
+    content: {
+      intro: 'Getting a child\'s hair cut can be stressful for both parent and child. Kids hairdressers specialise in making the experience fun, fast, and tear-free. They understand how to work with wiggly toddlers and nervous first-timers.',
+      whatToLook: [
+        'Look for salons with entertainment — iPads, toys, or themed chairs help keep kids calm',
+        'Ask if they offer first-haircut certificates or keepsakes',
+        'Check if appointments are short (15-20 minutes is ideal for young children)',
+        'Ask about experience with sensory-sensitive children',
+      ],
+      closing: 'Many regular salons also welcome children, but a dedicated kids hairdresser makes the experience smoother. Check reviews from other parents before booking.',
+    },
+  },
+  {
+    slug: 'mens-haircut',
+    name: 'Men\'s Haircuts',
+    h1: 'Men\'s Haircut Specialists in Australia',
+    description: 'Barbers and salons for men',
+    metaDescription: 'Find men\'s haircut specialists near you. Barbers and salons offering fades, clipper cuts, and modern men\'s styling across Australia.',
+    businessTypes: ['barber', 'unisex'],
+    nameKeywords: ['men', 'gents', 'gentleman'],
+    content: {
+      intro: 'Whether you want a classic short back and sides, a modern skin fade, or a textured crop, finding the right barber or stylist for men\'s hair makes all the difference. Australia has a thriving men\'s grooming scene with options for every style and budget.',
+      whatToLook: [
+        'Decide between a traditional barber (walk-in, quick, affordable) or a salon stylist (appointment, detailed, higher-end)',
+        'Ask about beard grooming services if you need them — not all barbers offer razor shaves',
+        'Check if they offer scalp treatments or hair loss consultations',
+        'Look at photos of recent work, especially for fades and detailed cuts',
+      ],
+      closing: 'Men\'s haircuts in Australia typically range from $25 for a basic barber cut to $70+ at premium salons. Regular visits every 3-4 weeks keep fades and short styles looking sharp.',
+    },
+  },
+  {
+    slug: 'hair-extensions',
+    name: 'Hair Extension Specialists',
+    h1: 'Hair Extension Specialists in Australia',
+    description: 'Tape-in, clip-in, and bonded extensions',
+    metaDescription: 'Find hair extension specialists near you. Tape-in, micro-bead, and bonded extension experts across Australia with verified reviews.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['extension', 'extensions', 'tape-in', 'tape in'],
+    content: {
+      intro: 'Hair extensions can add length, volume, or both — but they require a specialist touch. Poorly applied extensions can damage your natural hair, while well-fitted ones look completely seamless. The key is finding an experienced extension technician.',
+      whatToLook: [
+        'Ask what method they use — tape-in, micro-bead, keratin bond, and clip-in all have different pros and cons',
+        'Check the quality of hair they supply — 100% Remy human hair is the gold standard',
+        'Ask about maintenance visits — most extensions need adjustment every 6-8 weeks',
+        'Request before-and-after photos of their extension work',
+      ],
+      closing: 'Extensions are an investment — expect to pay $500-$2,000+ depending on the method and amount of hair. Always choose quality over price to protect your natural hair.',
+    },
+  },
+  {
+    slug: 'japanese-hairdresser',
+    name: 'Japanese Hairdressers',
+    h1: 'Japanese Hairdressers in Australia',
+    description: 'Japanese-trained stylists and salons',
+    metaDescription: 'Find Japanese hairdressers near you. Japanese-trained stylists offering precision cuts, Japanese straightening, and Asian hair expertise across Australia.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['japanese', 'japan'],
+    content: {
+      intro: 'Japanese hairdressers are renowned for their precision cutting, attention to detail, and expertise with Asian hair types. Japanese-trained stylists often spend years in apprenticeship before cutting clients, resulting in exceptional technical skill.',
+      whatToLook: [
+        'Ask if the stylist trained in Japan — Japanese salon apprenticeships are among the most rigorous in the world',
+        'Japanese stylists excel at layering and texturising for movement and natural fall',
+        'Enquire about Japanese thermal straightening (also called Yuko or thermal reconditioning)',
+        'Many Japanese salons include a head spa or scalp treatment with every service',
+      ],
+      closing: 'Japanese hairdressers in Australia are particularly popular in Sydney and Melbourne, where there are established communities. Their attention to detail and customer service is consistently rated highly.',
+    },
+  },
+  {
+    slug: 'korean-hair-salon',
+    name: 'Korean Hair Salons',
+    h1: 'Korean Hair Salons in Australia',
+    description: 'Korean-style salons and stylists',
+    metaDescription: 'Find Korean hair salons near you. Korean-trained stylists offering K-style cuts, perms, and colour across Australia.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['korean', 'korea', 'k-beauty'],
+    content: {
+      intro: 'Korean hair salons bring the latest K-beauty trends to Australia. Known for their expertise in volume perms, root perms, and the coveted "Korean glass hair" look, these salons stay ahead of trends through close connection to Seoul\'s style scene.',
+      whatToLook: [
+        'Korean salons are known for "see-through bangs" and layered cuts that frame the face',
+        'Ask about their perm techniques — Korean down perms and C-curl perms are signature services',
+        'Many Korean salons offer colour techniques popular in Korea like "inner colour" and "balayage highlights"',
+        'Check if they offer hair and scalp treatments — Korean salons often provide comprehensive care',
+      ],
+      closing: 'Korean hair salons are growing rapidly in Australian cities, especially Sydney\'s Strathfield and Melbourne\'s CBD. They offer a different approach to styling that many clients find refreshing.',
+    },
+  },
+  {
+    slug: 'wedding-hair',
+    name: 'Wedding Hair Stylists',
+    h1: 'Wedding Hair Stylists in Australia',
+    description: 'On-location wedding and bridal party hair',
+    metaDescription: 'Find wedding hair stylists near you. On-location bridal and bridal party styling with trials across Australia. Book early for peak season.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['wedding', 'bridal', 'bride'],
+    content: {
+      intro: 'Your wedding hair needs to be picture-perfect from the first look to the last dance. Wedding hair stylists specialise in styles that photograph beautifully, stay put all day, and work with your dress, veil, and accessories.',
+      whatToLook: [
+        'Book a trial 4-8 weeks before the wedding to test your style with your accessories',
+        'Confirm they offer on-location service — most wedding stylists travel to your venue or getting-ready location',
+        'Ask about bridal party packages for bridesmaids, mother of the bride, and flower girls',
+        'Discuss timeline — an experienced wedding stylist knows how to schedule multiple styles on the morning',
+      ],
+      closing: 'Peak wedding season in Australia runs October to April. The best wedding hair stylists book 6-12 months in advance, so start your search early. Always read reviews from other brides.',
+    },
+  },
 ];
 
 export function generateStaticParams() {
@@ -329,10 +443,10 @@ export default async function ServicePage({
             Find by city
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {['Melbourne', 'Sydney', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Darwin', 'Canberra'].map((city) => (
+            {['Melbourne', 'Sydney', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast', 'Newcastle', 'Geelong', 'Hobart', 'Darwin', 'Canberra', 'Cairns'].map((city) => (
               <Link
                 key={city}
-                href={`/best-hairdresser/${city.toLowerCase()}`}
+                href={`/best-hairdresser/${city.toLowerCase().replace(/ /g, '-')}`}
                 className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
               >
                 {city}

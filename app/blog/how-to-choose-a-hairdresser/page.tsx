@@ -39,6 +39,32 @@ export default function HowToChooseArticle() {
           { '@type': 'ListItem', position: 3, name: 'How to Choose a Hairdresser' },
         ],
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'How do I choose the right hairdresser?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Start with your hair type, check Google reviews (look for 20+ reviews with consistent feedback), ask about consultations, and consider practical details like location, parking, and online booking availability.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'What should I look for on my first salon visit?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Look for a stylist who asks about your lifestyle, explains what they are doing, keeps a clean and organised salon, recommends products without being pushy, and is honest about what is achievable with your hair.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'How many hairdressers should I try before choosing one?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Most people find their ideal stylist after trying 2-3 different hairdressers. Do not be afraid to move on if you are not happy with the results.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Should I book a consultation before a major hair change?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. The best salons offer free consultations before major services like colour changes, chemical straightening, or extensions. This lets you assess whether the stylist understands your vision.' },
+          },
+        ],
+      }} />
 
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">

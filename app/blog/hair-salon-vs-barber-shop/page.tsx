@@ -39,6 +39,32 @@ export default function SalonVsBarberArticle() {
           { '@type': 'ListItem', position: 3, name: 'Hair Salon vs Barber Shop' },
         ],
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the difference between a hair salon and a barber shop?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Barber shops focus on men\'s haircuts, fades, and shaves. Hair salons offer a broader range including colouring, chemical treatments, extensions, and styling for all hair types and lengths. Unisex salons combine both.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is a barber cheaper than a hair salon?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Generally yes. Men\'s barber cuts typically range from $25-$45 in Australia, while women\'s salon cuts usually start from $60 due to longer appointment times and more complex techniques.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can women go to a barber shop?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes, though barber shops primarily specialise in short hair and men\'s styles. For colour, long-hair styling, or chemical treatments, a hair salon or unisex salon is usually a better choice.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Do barbers do colour?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Most traditional barbers do not offer colour services. Some modern barber shops offer basic colour, but for highlights, balayage, or colour correction, a hair salon is recommended.' },
+          },
+        ],
+      }} />
 
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-3xl px-6 py-3">
