@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 import { supabaseServerAnon } from '@/lib/supabase';
-import type { AuState } from '@/types/database';
 
 export default async function HomePage() {
   const supabase = supabaseServerAnon();
@@ -11,17 +10,6 @@ export default async function HomePage() {
     .from('businesses')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'active');
-
-  // Fetch per-state counts
-  const { data: stateRows } = await supabase
-    .from('businesses')
-    .select('state')
-    .eq('status', 'active');
-
-  const stateCountMap: Record<string, number> = {};
-  for (const r of (stateRows ?? []) as { state: string }[]) {
-    stateCountMap[r.state] = (stateCountMap[r.state] || 0) + 1;
-  }
 
   const total = totalCount ?? 0;
 
@@ -63,57 +51,6 @@ export default async function HomePage() {
             <ProofStat value="8" label="States & territories" />
             <ProofStat value="Hair only" label="No beauty, nails, or spa" />
             <ProofStat value="Free" label="Claim your listing" />
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Browse by State ──────────────────────────────── */}
-      <section className="bg-[var(--color-white)]">
-        <div className="mx-auto max-w-6xl px-6 pt-16 pb-10">
-          <div className="text-center">
-            <p className="text-editorial-overline">Explore</p>
-            <h2
-              className="mt-3 text-3xl text-[var(--color-ink)] sm:text-4xl"
-              style={{ fontFamily: 'var(--font-serif)' }}
-            >
-              Browse by state
-            </h2>
-          </div>
-
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-            {STATES.map((s) => {
-              const count = stateCountMap[s.code] ?? 0;
-              return (
-                <Link
-                  key={s.code}
-                  href={`/${s.code.toLowerCase()}`}
-                  className="group card flex items-center gap-4 p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--color-surface-warm)] text-sm font-bold text-[var(--color-ink-light)] group-hover:bg-[var(--color-gold-light)] group-hover:text-[var(--color-gold-dark)] transition-colors">
-                    {s.code}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[var(--color-ink)] text-sm group-hover:text-[var(--color-gold-dark)] transition-colors">
-                      {s.name}
-                    </p>
-                    {count > 0 && (
-                      <p className="text-xs text-[var(--color-ink-muted)] mt-0.5">
-                        {count.toLocaleString()} {count === 1 ? 'listing' : 'listings'}
-                      </p>
-                    )}
-                  </div>
-                  <svg
-                    className="w-4 h-4 flex-shrink-0 text-[var(--color-border)] opacity-0 group-hover:opacity-100 group-hover:text-[var(--color-gold)] transition-all duration-200 -translate-x-1 group-hover:translate-x-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </Link>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -196,17 +133,6 @@ export default async function HomePage() {
 }
 
 /* ─── Data ──────────────────────────────────────────────── */
-
-const STATES: { code: AuState; name: string }[] = [
-  { code: 'VIC', name: 'Victoria' },
-  { code: 'NSW', name: 'New South Wales' },
-  { code: 'QLD', name: 'Queensland' },
-  { code: 'WA', name: 'Western Australia' },
-  { code: 'SA', name: 'South Australia' },
-  { code: 'TAS', name: 'Tasmania' },
-  { code: 'NT', name: 'Northern Territory' },
-  { code: 'ACT', name: 'ACT \u2014 Canberra' },
-];
 
 /* ─── Sub-components ────────────────────────────────────── */
 
