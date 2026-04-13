@@ -73,6 +73,13 @@ export interface Business {
   is_claimed: boolean;
   claimed_by: string | null;
   featured_until: string | null;
+  ai_description: string | null;
+  specialties: string[] | null;
+  content_source: string | null;
+  content_generated_at: string | null;
+  scraped_services: string[] | null;
+  scraped_about: string | null;
+  scraped_at: string | null;
   created_at: string;
   updated_at: string;
 }

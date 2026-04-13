@@ -39,7 +39,9 @@ export async function generateMetadata({
     : 'https://www.findme.hair/og-image.jpg';
   return {
     title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}, ${business.state} | findme.hair`,
-    description: `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online.`,
+    description: business.ai_description
+      ? `${business.ai_description.slice(0, 155)}…`
+      : `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online.`,
     alternates: { canonical: `https://www.findme.hair/salon/${business.slug}` },
     openGraph: {
       title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}`,
@@ -266,7 +268,7 @@ export default async function BusinessProfilePage({
             <div className="my-10 h-px bg-[var(--color-border)]" />
 
             {/* Description */}
-            {business.description && (
+            {(business.ai_description || business.description) && (
               <section>
                 <h2
                   className="text-xl text-[var(--color-ink)]"
@@ -274,9 +276,29 @@ export default async function BusinessProfilePage({
                 >
                   About {business.name}
                 </h2>
-                <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed whitespace-pre-wrap">
-                  {business.description}
-                </p>
+                {business.ai_description && (
+                  <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed">
+                    {business.ai_description}
+                  </p>
+                )}
+                {business.description && (
+                  <p className={`${business.ai_description ? 'mt-3' : 'mt-4'} text-[var(--color-ink-light)] leading-relaxed whitespace-pre-wrap`}>
+                    {business.description}
+                  </p>
+                )}
+                {business.specialties && business.specialties.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {business.specialties.map((s) => (
+                      <Link
+                        key={s}
+                        href={`/services/${s === 'colour-specialist' ? 'colour-correction' : s === 'curly-hair' ? 'curly-hair-specialist' : s === 'balayage' ? 'balayage-specialist' : s === 'mobile' ? 'mobile-hairdresser' : s === 'mens' ? 'mens-haircut' : s === 'extensions' ? 'hair-extensions' : s === 'bridal' ? 'bridal-hair' : s === 'kids' ? 'kids-hairdresser' : s}`}
+                        className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-gold-dark)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
+                      >
+                        {s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
 
