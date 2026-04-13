@@ -1,0 +1,354 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import BusinessCard from '@/components/BusinessCard';
+import JsonLd from '@/components/JsonLd';
+import { stateName, titleCase } from '@/lib/geo';
+import { supabaseServerAnon } from '@/lib/supabase';
+import type { Business, BusinessType } from '@/types/database';
+
+export const dynamic = 'force-dynamic';
+
+interface ServiceConfig {
+  slug: string;
+  name: string;
+  h1: string;
+  description: string;
+  metaDescription: string;
+  businessTypes: BusinessType[];
+  nameKeywords?: string[]; // search business names for these keywords
+  content: {
+    intro: string;
+    whatToLook: string[];
+    closing: string;
+  };
+}
+
+const SERVICES: ServiceConfig[] = [
+  {
+    slug: 'mobile-hairdresser',
+    name: 'Mobile Hairdressers',
+    h1: 'Mobile Hairdressers in Australia',
+    description: 'Hair stylists who come to you',
+    metaDescription: 'Find mobile hairdressers near you. Stylists who come to your home or office across Australia. Verified listings with reviews.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['mobile'],
+    content: {
+      intro: 'Mobile hairdressers bring the salon experience to your home, office, or event. They\'re ideal for busy professionals, new parents, people with mobility challenges, or anyone who prefers the convenience of at-home service.',
+      whatToLook: [
+        'Check if they bring their own equipment (basin, chair, dryer)',
+        'Ask about travel fees — most charge extra beyond a certain radius',
+        'Verify they carry professional-grade products',
+        'Confirm they have public liability insurance',
+      ],
+      closing: 'Mobile hairdressing is one of the fastest-growing segments of the Australian hair industry. Many experienced salon stylists now offer mobile services alongside their regular bookings.',
+    },
+  },
+  {
+    slug: 'balayage-specialist',
+    name: 'Balayage Specialists',
+    h1: 'Balayage Specialists in Australia',
+    description: 'Expert balayage colourists',
+    metaDescription: 'Find balayage specialists near you. Expert colourists across Australia with verified reviews and online booking.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['balayage', 'colour', 'color'],
+    content: {
+      intro: 'Balayage is a freehand colour technique that creates natural, sun-kissed highlights. Unlike traditional foil highlights, balayage is painted directly onto the hair for a softer, more blended result. It\'s one of the most requested services in Australian salons.',
+      whatToLook: [
+        'Ask to see their portfolio — balayage is a skill that varies hugely between stylists',
+        'Check if they offer a consultation before booking (essential for colour changes)',
+        'Ask about maintenance — good balayage grows out gracefully over 8-12 weeks',
+        'Enquire about the products they use (Olaplex, Redken, etc.)',
+      ],
+      closing: 'The best balayage stylists have years of colour training and regularly update their techniques. Look for salons that specifically list balayage as a service, not just general colouring.',
+    },
+  },
+  {
+    slug: 'curly-hair-specialist',
+    name: 'Curly Hair Specialists',
+    h1: 'Curly Hair Specialists in Australia',
+    description: 'Stylists trained in curly and textured hair',
+    metaDescription: 'Find curly hair specialists near you. Stylists trained in DevaCurl, curly cuts, and textured hair across Australia.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['curl', 'curly', 'texture', 'natural'],
+    content: {
+      intro: 'Curly hair needs a specialist touch. Standard cutting techniques designed for straight hair can ruin curl patterns and create unwanted bulk. Curly hair specialists understand curl types, shrinkage, and how to cut for shape and bounce.',
+      whatToLook: [
+        'Ask if they cut curly hair dry — this is the gold standard for curly cuts',
+        'Check if they\'re trained in specific methods (DevaCurl, Lorraine Massey, Ouidad)',
+        'Look for stylists who understand different curl types (2A through 4C)',
+        'Ask about their experience with chemical-free styling and diffusing techniques',
+      ],
+      closing: 'The curly hair movement in Australia has grown significantly, and more stylists are specialising in textured hair. If you\'ve had bad experiences with hairdressers who don\'t understand your curls, a specialist will change your perspective.',
+    },
+  },
+  {
+    slug: 'colour-correction',
+    name: 'Colour Correction Specialists',
+    h1: 'Colour Correction Specialists in Australia',
+    description: 'Fixing hair colour gone wrong',
+    metaDescription: 'Find colour correction specialists near you. Expert colourists who fix colour disasters across Australia. Verified reviews.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['colour', 'color', 'correction'],
+    content: {
+      intro: 'Colour correction is the process of fixing hair colour that hasn\'t turned out as expected — whether from a salon mistake, at-home dye, or accumulated colour build-up. It\'s one of the most technically demanding services in hairdressing.',
+      whatToLook: [
+        'Always book a consultation first — good colourists won\'t commit to a fix without seeing your hair',
+        'Expect multiple sessions for major corrections (dark to light can take 3-4 visits)',
+        'Ask about pricing upfront — corrections are charged by time, typically $100-$200/hour',
+        'Check their reviews specifically for colour correction work',
+      ],
+      closing: 'Colour correction requires deep knowledge of chemistry and colour theory. It\'s not a service to bargain-hunt for — an experienced colourist who charges more will almost certainly deliver a better result and preserve your hair\'s health.',
+    },
+  },
+  {
+    slug: 'barber',
+    name: 'Barber Shops',
+    h1: 'Barber Shops in Australia',
+    description: 'Traditional and modern barber shops',
+    metaDescription: 'Find barber shops near you. Men\'s haircuts, fades, and traditional shaves across Australia. Verified listings with reviews.',
+    businessTypes: ['barber'],
+    content: {
+      intro: 'Australian barber shops range from traditional old-school shops with hot towel shaves to modern style bars offering fades, designs, and grooming services. Whether you want a classic short back and sides or a contemporary skin fade, there\'s a barber for you.',
+      whatToLook: [
+        'Walk-in vs booking — some barbers are walk-in only, while others take appointments',
+        'Ask about their specialties — fades, razor work, and beard grooming are all distinct skills',
+        'Check if they offer hot towel shaves (not all barbers do anymore)',
+        'Look at recent reviews mentioning the specific barber you\'d see',
+      ],
+      closing: 'The Australian barbering scene has experienced a renaissance, with a new generation of skilled barbers blending traditional techniques with modern trends. Visit our directory to find the highest-rated barbers in your area.',
+    },
+  },
+  {
+    slug: 'bridal-hair',
+    name: 'Bridal Hair Specialists',
+    h1: 'Bridal Hair Specialists in Australia',
+    description: 'Wedding and event hair stylists',
+    metaDescription: 'Find bridal hair specialists near you. Wedding hairstylists with trials, on-location service, and bridal party packages across Australia.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['bridal', 'wedding', 'event'],
+    content: {
+      intro: 'Your wedding day hairstyle needs to last from morning to midnight, look perfect in photos, and make you feel incredible. Bridal hair specialists understand the unique demands of wedding styling — from updos that survive dancing to styles that complement your veil and dress.',
+      whatToLook: [
+        'Always book a trial run 4-6 weeks before the wedding',
+        'Ask if they offer on-location service (most bridal stylists do)',
+        'Check bridal party pricing — packages for bridesmaids and mothers are common',
+        'Ask about their experience with veils, hairpieces, and accessories',
+      ],
+      closing: 'Book your bridal stylist early — the best specialists are booked 6-12 months in advance, especially during peak wedding season (October to April in Australia).',
+    },
+  },
+];
+
+export function generateStaticParams() {
+  return SERVICES.map((s) => ({ service: s.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ service: string }>;
+}): Promise<Metadata> {
+  const { service } = await params;
+  const config = SERVICES.find((s) => s.slug === service);
+  if (!config) return {};
+
+  return {
+    title: `${config.name} Near You — findme.hair`,
+    description: config.metaDescription,
+    alternates: { canonical: `https://www.findme.hair/services/${config.slug}` },
+    openGraph: {
+      title: `${config.name} — findme.hair`,
+      description: config.metaDescription,
+      url: `https://www.findme.hair/services/${config.slug}`,
+      siteName: 'findme.hair',
+      locale: 'en_AU',
+      type: 'website',
+    },
+  };
+}
+
+async function getServiceBusinesses(config: ServiceConfig): Promise<Business[]> {
+  const supabase = supabaseServerAnon();
+
+  if (config.businessTypes.length === 1 && !config.nameKeywords) {
+    // Simple type filter (e.g. barber)
+    const { data } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('status', 'active')
+      .eq('business_type', config.businessTypes[0])
+      .order('featured_until', { ascending: false, nullsFirst: false })
+      .order('google_rating', { ascending: false, nullsFirst: false })
+      .order('google_review_count', { ascending: false, nullsFirst: false })
+      .limit(24);
+    return (data ?? []) as Business[];
+  }
+
+  // Name keyword search within type
+  const typeFilter = config.businessTypes.length === 1
+    ? `business_type.eq.${config.businessTypes[0]}`
+    : config.businessTypes.map((t) => `business_type.eq.${t}`).join(',');
+
+  const nameFilter = (config.nameKeywords ?? [])
+    .map((k) => `name.ilike.%${k}%`)
+    .join(',');
+
+  const { data } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('status', 'active')
+    .or(typeFilter)
+    .or(nameFilter)
+    .order('featured_until', { ascending: false, nullsFirst: false })
+    .order('google_rating', { ascending: false, nullsFirst: false })
+    .limit(24);
+
+  return (data ?? []) as Business[];
+}
+
+export default async function ServicePage({
+  params,
+}: {
+  params: Promise<{ service: string }>;
+}) {
+  const { service } = await params;
+  const config = SERVICES.find((s) => s.slug === service);
+  if (!config) notFound();
+
+  const businesses = await getServiceBusinesses(config);
+
+  return (
+    <main className="min-h-screen bg-[var(--color-surface)]">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.findme.hair/search' },
+          { '@type': 'ListItem', position: 3, name: config.name },
+        ],
+      }} />
+
+      {/* Breadcrumb */}
+      <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
+        <div className="mx-auto max-w-6xl px-6 py-3">
+          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+            <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
+            <ChevronIcon />
+            <Link href="/search" className="hover:text-[var(--color-gold-dark)]">Browse</Link>
+            <ChevronIcon />
+            <span className="text-[var(--color-ink)] font-medium">{config.name}</span>
+          </nav>
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="bg-[var(--color-white)]">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <p className="text-editorial-overline">Australia-wide</p>
+          <h1
+            className="mt-3 text-3xl text-[var(--color-ink)] sm:text-4xl"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            {config.h1}
+          </h1>
+          <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
+            {config.content.intro}
+          </p>
+        </div>
+      </div>
+
+      {/* Listings */}
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        {businesses.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {businesses.map((b) => (
+              <BusinessCard key={b.id} business={b} />
+            ))}
+          </div>
+        ) : (
+          <div className="card p-12 text-center">
+            <p className="text-[var(--color-ink-muted)]">
+              We&rsquo;re building our {config.name.toLowerCase()} listings. Browse all salons below.
+            </p>
+            <Link href="/search" className="mt-4 inline-block btn-gold text-sm !py-2 !px-5">
+              Browse all listings
+            </Link>
+          </div>
+        )}
+
+        {/* What to look for */}
+        <section className="mt-14 card p-8">
+          <h2
+            className="text-xl text-[var(--color-ink)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            What to look for in {config.name.toLowerCase()}
+          </h2>
+          <ul className="mt-4 space-y-2 text-sm text-[var(--color-ink-light)]">
+            {config.content.whatToLook.map((item, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <span className="text-[var(--color-gold)] mt-0.5">&#10003;</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-[var(--color-ink-light)] leading-relaxed">
+            {config.content.closing}
+          </p>
+        </section>
+
+        {/* Cross-links to other services */}
+        <section className="mt-8 card p-8">
+          <h2
+            className="text-lg text-[var(--color-ink)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            Browse by service type
+          </h2>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {SERVICES.filter((s) => s.slug !== config.slug).map((s) => (
+              <Link
+                key={s.slug}
+                href={`/services/${s.slug}`}
+                className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
+              >
+                {s.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* City links */}
+        <section className="mt-8 card p-8">
+          <h2
+            className="text-lg text-[var(--color-ink)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            Find by city
+          </h2>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['Melbourne', 'Sydney', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Darwin', 'Canberra'].map((city) => (
+              <Link
+                key={city}
+                href={`/best-hairdresser/${city.toLowerCase()}`}
+                className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
+              >
+                {city}
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg className="w-3 h-3 text-[var(--color-border)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
+  );
+}

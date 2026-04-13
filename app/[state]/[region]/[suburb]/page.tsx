@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
-import { AU_STATES, stateName } from '@/lib/geo';
+import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import {
   getRegionBySlug,
   getSuburbBusinesses,
@@ -30,14 +30,20 @@ export async function generateMetadata({
   const stateCode = state.toUpperCase() as AuState;
   const regionRow = await getRegionBySlug(region);
   const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
-  const suburbName = suburbRow?.name ?? suburb.replace(/-/g, ' ');
+  const suburbName = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
   const postcode = suburbRow?.postcode ?? '';
   const fullState = stateName(stateCode);
-  const regionName = regionRow?.name ?? region.replace(/-/g, ' ');
+  const regionName = titleCase(regionRow?.name ?? region.replace(/-/g, ' '));
+
+  // Check if suburb has active listings — noindex empty pages
+  const businesses = await getSuburbBusinesses(stateCode, region, suburb);
+  const hasListings = businesses.length > 0;
+
   return {
     title: `Hair Salons & Barbers in ${suburbName}, ${regionName} ${stateCode} — findme.hair`,
     description: `Find hair salons and barbers in ${suburbName}${postcode ? ` ${postcode}` : ''}, ${fullState}. Verified listings with real Google reviews, hours, and Book Now links.`,
     alternates: { canonical: `https://www.findme.hair/${state.toLowerCase()}/${region}/${suburb}` },
+    ...(!hasListings && { robots: { index: false, follow: true } }),
     openGraph: {
       title: `Hair Salons & Barbers in ${suburbName} — findme.hair`,
       description: `Find hair salons and barbers in ${suburbName}, ${fullState}. Verified listings with reviews and booking.`,
@@ -60,9 +66,10 @@ export default async function SuburbDirectoryPage({
   if (!AU_STATES.some((s) => s.code === stateCode)) notFound();
 
   const regionRow = await getRegionBySlug(region);
-  const readable =
+  const readable = titleCase(
     (await getSuburbByRegionAndSlug(regionRow?.id ?? '', suburb))?.name ??
-    suburb.replace(/-/g, ' ');
+    suburb.replace(/-/g, ' ')
+  );
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
 
@@ -126,7 +133,7 @@ export default async function SuburbDirectoryPage({
       {/* Header */}
       <div className="bg-[var(--color-white)]">
         <div className="mx-auto max-w-6xl px-6 py-10">
-          <p className="text-editorial-overline">{regionRow?.name ?? region} &middot; {stateName(stateCode)}</p>
+          <p className="text-editorial-overline">{titleCase(regionRow?.name ?? region)} &middot; {stateName(stateCode)}</p>
           <h1
             className="mt-3 text-3xl capitalize text-[var(--color-ink)] sm:text-4xl"
             style={{ fontFamily: 'var(--font-serif)' }}
@@ -164,16 +171,16 @@ export default async function SuburbDirectoryPage({
           </div>
         )}
 
-        {/* SEO content section */}
-        {businesses.length > 0 && (
-          <section className="mt-14 card p-8">
-            <h2
-              className="text-xl text-[var(--color-ink)]"
-              style={{ fontFamily: 'var(--font-serif)' }}
-            >
-              About hair salons in {readable}
-            </h2>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--color-ink-light)]">
+        {/* SEO content section — always shown for internal linking + content */}
+        <section className="mt-14 card p-8">
+          <h2
+            className="text-xl text-[var(--color-ink)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            About hair salons in {readable}
+          </h2>
+          <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--color-ink-light)]">
+            {businesses.length > 0 ? (
               <p>
                 There {businesses.length === 1 ? 'is' : 'are'} {businesses.length} verified hair{' '}
                 {businesses.length === 1 ? 'salon' : 'salons'} and{' '}
@@ -181,30 +188,37 @@ export default async function SuburbDirectoryPage({
                 {fullState}. Every listing on findme.hair is hand-verified against
                 Google, TrueLocal, and Yellow Pages.
               </p>
+            ) : (
               <p>
-                Popular services in {readable} include haircuts, colour treatments,
-                balayage, blowdries, and barber services. Many salons offer online
-                booking — look for the &ldquo;Book online&rdquo; badge above.
+                {readable} is a suburb in {regionRow?.name ?? region},{' '}
+                {fullState}. While there are no hair salons or barbers listed here yet,
+                new businesses are added weekly. Check nearby suburbs below for
+                salons and barbers close to {readable}.
               </p>
-              {nearbySuburbs.length > 0 && (
-                <p>
-                  Nearby suburbs:{' '}
-                  {nearbySuburbs.map((s, i) => (
-                    <span key={s.slug}>
-                      {i > 0 && ', '}
-                      <Link
-                        href={`/${stateCode.toLowerCase()}/${region}/${s.slug}`}
-                        className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
-                      >
-                        {s.name}
-                      </Link>
-                    </span>
-                  ))}
-                </p>
-              )}
-            </div>
-          </section>
-        )}
+            )}
+            <p>
+              Popular services in {readable} include haircuts, colour treatments,
+              balayage, blowdries, and barber services. Many salons in {fullState}{' '}
+              offer online booking — look for the &ldquo;Book online&rdquo; badge on listings.
+            </p>
+            {nearbySuburbs.length > 0 && (
+              <p>
+                Nearby suburbs:{' '}
+                {nearbySuburbs.map((s, i) => (
+                  <span key={s.slug}>
+                    {i > 0 && ', '}
+                    <Link
+                      href={`/${stateCode.toLowerCase()}/${region}/${s.slug}`}
+                      className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                    >
+                      {titleCase(s.name)}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
+        </section>
       </div>
     </main>
   );

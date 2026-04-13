@@ -96,6 +96,12 @@ function SiteHeader() {
             For Salons
           </Link>
           <Link
+            href="/blog"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-ink)]"
+          >
+            Blog
+          </Link>
+          <Link
             href="/search"
             className="btn-gold text-sm !py-2 !px-5"
           >
@@ -130,7 +136,7 @@ function SiteFooter() {
   return (
     <footer className="border-t border-[var(--color-border)] bg-[var(--color-white)]">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-4">
+        <div className="grid gap-12 md:grid-cols-5">
           {/* Brand */}
           <div className="md:col-span-1">
             <p
@@ -189,6 +195,38 @@ function SiteFooter() {
             </ul>
           </div>
 
+          {/* Services */}
+          <div>
+            <p className="text-editorial-overline mb-4">Services</p>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/services/mobile-hairdresser" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Mobile Hairdressers
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/balayage-specialist" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Balayage Specialists
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/curly-hair-specialist" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Curly Hair Specialists
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/barber" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Barber Shops
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/bridal-hair" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Bridal Hair
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* About */}
           <div>
             <p className="text-editorial-overline mb-4">About</p>
@@ -201,6 +239,11 @@ function SiteFooter() {
               <li>
                 <Link href="/claim" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
                   Claim Your Listing
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Blog
                 </Link>
               </li>
               <li>

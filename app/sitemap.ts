@@ -24,22 +24,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  // Region pages — fetch all regions
-  const { data: regions } = await supabase.from('regions').select('slug, state');
-  const regionPages: MetadataRoute.Sitemap = (regions ?? []).map((r) => ({
+  // Region pages — fetch all regions (default limit is 1000, paginate to be safe)
+  const allRegions: any[] = [];
+  let regionOffset = 0;
+  while (true) {
+    const { data } = await supabase.from('regions').select('slug, state').range(regionOffset, regionOffset + 999);
+    if (!data || data.length === 0) break;
+    allRegions.push(...data);
+    if (data.length < 1000) break;
+    regionOffset += 1000;
+  }
+  const regionPages: MetadataRoute.Sitemap = allRegions.map((r) => ({
     url: `${base}/search?region=${r.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
-  // Suburb pages — fetch all suburbs with their region
-  const { data: suburbs } = await supabase
-    .from('suburbs')
-    .select('slug, state, region_id, regions!inner(slug)')
-    .limit(10000);
+  // Suburb pages — paginate to get all suburbs
+  const allSuburbs: any[] = [];
+  let suburbOffset = 0;
+  const suburbBatch = 1000;
+  while (true) {
+    const { data } = await supabase
+      .from('suburbs')
+      .select('slug, state, region_id, regions!inner(slug)')
+      .range(suburbOffset, suburbOffset + suburbBatch - 1);
+    if (!data || data.length === 0) break;
+    allSuburbs.push(...data);
+    if (data.length < suburbBatch) break;
+    suburbOffset += suburbBatch;
+  }
 
-  const suburbPages: MetadataRoute.Sitemap = (suburbs ?? []).map((s: any) => ({
+  const suburbPages: MetadataRoute.Sitemap = allSuburbs.map((s: any) => ({
     url: `${base}/${s.state.toLowerCase()}/${s.regions.slug}/${s.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
@@ -69,5 +86,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages];
+  // City guide pages
+  const cities = ['melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra'];
+  const cityGuidePages: MetadataRoute.Sitemap = cities.map((c) => ({
+    url: `${base}/best-hairdresser/${c}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
+  }));
+
+  // Blog pages
+  const blogPages: MetadataRoute.Sitemap = [
+    { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${base}/blog/how-to-choose-a-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
+    { url: `${base}/blog/hair-salon-vs-barber-shop`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
+    { url: `${base}/blog/questions-to-ask-your-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
+  ];
+
+  // Service filter pages
+  const services = ['mobile-hairdresser', 'balayage-specialist', 'curly-hair-specialist', 'colour-correction', 'barber', 'bridal-hair'];
+  const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
+    url: `${base}/services/${s}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.75,
+  }));
+
+  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...blogPages, ...servicePages];
 }

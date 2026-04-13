@@ -15,6 +15,13 @@ export function stateName(code: AuState): string {
   return AU_STATES.find((s) => s.code === code)?.name ?? code;
 }
 
+/** Title-case a suburb or region name (e.g. "south yarra" → "South Yarra"). */
+export function titleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 /** Slugify a suburb or business name for URLs. */
 export function slugify(value: string): string {
   return value
