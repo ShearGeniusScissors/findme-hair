@@ -106,10 +106,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/blog/questions-to-ask-your-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
   ];
 
-  // Service filter pages (6 original + 6 new)
+  // Service filter pages (12 original + 3 new specialty-driven)
   const services = [
     'mobile-hairdresser', 'balayage-specialist', 'curly-hair-specialist', 'colour-correction', 'barber', 'bridal-hair',
     'kids-hairdresser', 'mens-haircut', 'hair-extensions', 'japanese-hairdresser', 'korean-hair-salon', 'wedding-hair',
+    'colour-specialist', 'keratin-treatment', 'highlights',
   ];
   const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${base}/services/${s}`,

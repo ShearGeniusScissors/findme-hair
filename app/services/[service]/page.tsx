@@ -17,6 +17,7 @@ interface ServiceConfig {
   metaDescription: string;
   businessTypes: BusinessType[];
   nameKeywords?: string[]; // search business names for these keywords
+  specialtyTag?: string; // matches businesses.specialties[] column
   content: {
     intro: string;
     whatToLook: string[];
@@ -33,6 +34,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find mobile hairdressers near you. Stylists who come to your home or office across Australia. Verified listings with reviews.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['mobile'],
+    specialtyTag: 'mobile',
     content: {
       intro: 'Mobile hairdressers bring the salon experience to your home, office, or event. They\'re ideal for busy professionals, new parents, people with mobility challenges, or anyone who prefers the convenience of at-home service.',
       whatToLook: [
@@ -52,6 +54,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find balayage specialists near you. Expert colourists across Australia with verified reviews and online booking.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['balayage', 'colour', 'color'],
+    specialtyTag: 'balayage',
     content: {
       intro: 'Balayage is a freehand colour technique that creates natural, sun-kissed highlights. Unlike traditional foil highlights, balayage is painted directly onto the hair for a softer, more blended result. It\'s one of the most requested services in Australian salons.',
       whatToLook: [
@@ -71,6 +74,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find curly hair specialists near you. Stylists trained in DevaCurl, curly cuts, and textured hair across Australia.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['curl', 'curly', 'texture', 'natural'],
+    specialtyTag: 'curly-hair',
     content: {
       intro: 'Curly hair needs a specialist touch. Standard cutting techniques designed for straight hair can ruin curl patterns and create unwanted bulk. Curly hair specialists understand curl types, shrinkage, and how to cut for shape and bounce.',
       whatToLook: [
@@ -90,6 +94,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find colour correction specialists near you. Expert colourists who fix colour disasters across Australia. Verified reviews.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['colour', 'color', 'correction'],
+    specialtyTag: 'colour-correction',
     content: {
       intro: 'Colour correction is the process of fixing hair colour that hasn\'t turned out as expected — whether from a salon mistake, at-home dye, or accumulated colour build-up. It\'s one of the most technically demanding services in hairdressing.',
       whatToLook: [
@@ -108,6 +113,7 @@ const SERVICES: ServiceConfig[] = [
     description: 'Traditional and modern barber shops',
     metaDescription: 'Find barber shops near you. Men\'s haircuts, fades, and traditional shaves across Australia. Verified listings with reviews.',
     businessTypes: ['barber'],
+    specialtyTag: 'barber',
     content: {
       intro: 'Australian barber shops range from traditional old-school shops with hot towel shaves to modern style bars offering fades, designs, and grooming services. Whether you want a classic short back and sides or a contemporary skin fade, there\'s a barber for you.',
       whatToLook: [
@@ -127,6 +133,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find bridal hair specialists near you. Wedding hairstylists with trials, on-location service, and bridal party packages across Australia.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['bridal', 'wedding', 'event'],
+    specialtyTag: 'bridal',
     content: {
       intro: 'Your wedding day hairstyle needs to last from morning to midnight, look perfect in photos, and make you feel incredible. Bridal hair specialists understand the unique demands of wedding styling — from updos that survive dancing to styles that complement your veil and dress.',
       whatToLook: [
@@ -146,6 +153,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find kids hairdressers near you. Child-friendly salons with experience cutting children\'s hair across Australia. Patient stylists, fun environments.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['kids', 'children', 'child', 'junior', 'little'],
+    specialtyTag: 'kids',
     content: {
       intro: 'Getting a child\'s hair cut can be stressful for both parent and child. Kids hairdressers specialise in making the experience fun, fast, and tear-free. They understand how to work with wiggly toddlers and nervous first-timers.',
       whatToLook: [
@@ -165,6 +173,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find men\'s haircut specialists near you. Barbers and salons offering fades, clipper cuts, and modern men\'s styling across Australia.',
     businessTypes: ['barber', 'unisex'],
     nameKeywords: ['men', 'gents', 'gentleman'],
+    specialtyTag: 'mens',
     content: {
       intro: 'Whether you want a classic short back and sides, a modern skin fade, or a textured crop, finding the right barber or stylist for men\'s hair makes all the difference. Australia has a thriving men\'s grooming scene with options for every style and budget.',
       whatToLook: [
@@ -184,6 +193,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find hair extension specialists near you. Tape-in, micro-bead, and bonded extension experts across Australia with verified reviews.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['extension', 'extensions', 'tape-in', 'tape in'],
+    specialtyTag: 'extensions',
     content: {
       intro: 'Hair extensions can add length, volume, or both — but they require a specialist touch. Poorly applied extensions can damage your natural hair, while well-fitted ones look completely seamless. The key is finding an experienced extension technician.',
       whatToLook: [
@@ -203,6 +213,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find Japanese hairdressers near you. Japanese-trained stylists offering precision cuts, Japanese straightening, and Asian hair expertise across Australia.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['japanese', 'japan'],
+    specialtyTag: 'japanese',
     content: {
       intro: 'Japanese hairdressers are renowned for their precision cutting, attention to detail, and expertise with Asian hair types. Japanese-trained stylists often spend years in apprenticeship before cutting clients, resulting in exceptional technical skill.',
       whatToLook: [
@@ -222,6 +233,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find Korean hair salons near you. Korean-trained stylists offering K-style cuts, perms, and colour across Australia.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['korean', 'korea', 'k-beauty'],
+    specialtyTag: 'korean',
     content: {
       intro: 'Korean hair salons bring the latest K-beauty trends to Australia. Known for their expertise in volume perms, root perms, and the coveted "Korean glass hair" look, these salons stay ahead of trends through close connection to Seoul\'s style scene.',
       whatToLook: [
@@ -241,6 +253,7 @@ const SERVICES: ServiceConfig[] = [
     metaDescription: 'Find wedding hair stylists near you. On-location bridal and bridal party styling with trials across Australia. Book early for peak season.',
     businessTypes: ['hair_salon', 'unisex'],
     nameKeywords: ['wedding', 'bridal', 'bride'],
+    specialtyTag: 'bridal',
     content: {
       intro: 'Your wedding hair needs to be picture-perfect from the first look to the last dance. Wedding hair stylists specialise in styles that photograph beautifully, stay put all day, and work with your dress, veil, and accessories.',
       whatToLook: [
@@ -250,6 +263,66 @@ const SERVICES: ServiceConfig[] = [
         'Discuss timeline — an experienced wedding stylist knows how to schedule multiple styles on the morning',
       ],
       closing: 'Peak wedding season in Australia runs October to April. The best wedding hair stylists book 6-12 months in advance, so start your search early. Always read reviews from other brides.',
+    },
+  },
+  {
+    slug: 'colour-specialist',
+    name: 'Colour Specialists',
+    h1: 'Hair Colour Specialists in Australia',
+    description: 'Expert hair colourists near you',
+    metaDescription: 'Find hair colour specialists near you. Expert colourists offering balayage, highlights, full colour, and toning across Australia. Verified reviews.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['colour', 'color', 'colourist', 'colorist'],
+    specialtyTag: 'colour-specialist',
+    content: {
+      intro: 'Hair colour is both an art and a science. A skilled colour specialist understands colour theory, chemistry, and how different products interact with your natural hair. Whether you want a subtle refresh, dramatic transformation, or corrective work, finding the right colourist makes all the difference.',
+      whatToLook: [
+        'Always book a consultation before your first colour appointment — a good colourist will assess your hair health and history',
+        'Ask to see their portfolio on Instagram or in-salon — colour work varies hugely between stylists',
+        'Discuss maintenance expectations upfront — some techniques grow out gracefully, others need regular touch-ups',
+        'Ask about the products they use — professional-grade colour brands matter for hair health and longevity',
+      ],
+      closing: 'Australia has some of the world\'s best colourists, with many salons specialising in techniques like balayage, lived-in colour, and fashion colours. Find your perfect match in our directory.',
+    },
+  },
+  {
+    slug: 'keratin-treatment',
+    name: 'Keratin Treatment Specialists',
+    h1: 'Keratin Treatment Specialists in Australia',
+    description: 'Smoothing and anti-frizz treatments',
+    metaDescription: 'Find keratin treatment specialists near you. Professional smoothing treatments, Brazilian blowouts, and anti-frizz services across Australia.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['keratin', 'smoothing', 'brazilian'],
+    specialtyTag: 'keratin',
+    content: {
+      intro: 'Keratin treatments smooth and strengthen hair by infusing it with a protective protein layer. They\'re ideal for frizzy, unruly, or damaged hair, and can cut styling time in half. Results typically last 3-6 months depending on the treatment and your hair type.',
+      whatToLook: [
+        'Ask about the specific product used — formaldehyde-free options are safer and now widely available',
+        'Discuss your expectations honestly — keratin treatments reduce frizz but won\'t make curly hair poker-straight',
+        'Ask about aftercare requirements — most treatments require sulfate-free shampoo and a 48-72 hour setting period',
+        'Check if the treatment is compatible with colour-treated or highlighted hair',
+      ],
+      closing: 'Keratin treatments have evolved significantly in recent years, with newer formulations offering better results with fewer chemicals. A specialist who stays current with the latest products will deliver the best outcome for your hair type.',
+    },
+  },
+  {
+    slug: 'highlights',
+    name: 'Highlights Specialists',
+    h1: 'Hair Highlights Specialists in Australia',
+    description: 'Foil highlights, lowlights, and dimension',
+    metaDescription: 'Find highlights specialists near you. Foil highlights, lowlights, and multi-tonal colour experts across Australia. Verified reviews and online booking.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['highlight', 'highlights', 'foils'],
+    specialtyTag: 'highlights',
+    content: {
+      intro: 'Highlights add dimension, movement, and brightness to your hair. From subtle babylights to bold chunky foils, there are dozens of techniques to choose from. A skilled highlights specialist can create a completely customised look that flatters your skin tone and features.',
+      whatToLook: [
+        'Bring reference photos — the same word ("highlights") can mean very different things to different people',
+        'Ask about the technique they recommend for your hair — foils, balayage, babylights, and cap highlights all create different effects',
+        'Discuss placement carefully — face-framing highlights suit almost everyone and brighten the complexion',
+        'Ask about toner — most highlight services need a toner to achieve the final shade',
+      ],
+      closing: 'Well-placed highlights can make hair look thicker, healthier, and more vibrant. Find a specialist who takes the time to customise your placement and formulation rather than using a one-size-fits-all approach.',
     },
   },
 ];
@@ -284,6 +357,20 @@ export async function generateMetadata({
 
 async function getServiceBusinesses(config: ServiceConfig): Promise<Business[]> {
   const supabase = supabaseServerAnon();
+
+  // If we have a specialty tag, prefer that — it's the most accurate filter
+  if (config.specialtyTag) {
+    const { data } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('status', 'active')
+      .contains('specialties', [config.specialtyTag])
+      .order('featured_until', { ascending: false, nullsFirst: false })
+      .order('google_rating', { ascending: false, nullsFirst: false })
+      .order('google_review_count', { ascending: false, nullsFirst: false })
+      .limit(24);
+    return (data ?? []) as Business[];
+  }
 
   if (config.businessTypes.length === 1 && !config.nameKeywords) {
     // Simple type filter (e.g. barber)

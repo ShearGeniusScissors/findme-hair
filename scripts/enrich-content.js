@@ -137,7 +137,21 @@ const SPECIALTY_PATTERNS = [
   { tag: 'korean', patterns: [/korean/i, /k.?beauty/i] },
   { tag: 'organic', patterns: [/organic/i, /chemical.?free/i, /natural product/i, /vegan/i] },
   { tag: 'mobile', patterns: [/mobile/i, /home visit/i, /at.?home/i] },
-  { tag: 'afro', patterns: [/afro/i, /african/i, /braids?/i, /locs?/i, /dreadlock/i] },
+  { tag: 'afro', patterns: [/afro/i, /african hair/i, /\blocs?\b/i, /dreadlock/i, /textured.?hair/i] },
+  { tag: 'colour-correction', patterns: [/colou?r.?correction/i] },
+  { tag: 'keratin', patterns: [/keratin/i, /smoothing treatment/i] },
+  { tag: 'highlights', patterns: [/highlight/i, /lowlight/i, /foil/i] },
+  { tag: 'blow-dry', patterns: [/blow.?dry/i, /blowout/i] },
+  { tag: 'wigs', patterns: [/\bwigs?\b/i, /topper/i, /hair piece/i, /hairpiece/i] },
+];
+
+// NOT_HAIR indicators — if these dominate, the business is not a hair salon
+const NOT_HAIR_PATTERNS = [
+  /\bnails?\b/i, /\bmanicure\b/i, /\bpedicure\b/i, /\bgel nails\b/i,
+  /\blash(es)?\b/i, /\bbrow(s)?\b/i, /\bwaxing\b/i, /\bmassage\b/i,
+  /\bfacial(s)?\b/i, /\bskin\b/i, /\bbeauty therap/i, /\bday spa\b/i,
+  /\btattoo\b/i, /\bpiercing\b/i, /\bcosmetic\b/i, /\bbotox\b/i,
+  /\binjectable/i, /\blaser\b/i, /\bmicroderm/i, /\bdermal/i,
 ];
 
 // ─── Helpers ───────────────────────────────────────────
@@ -149,6 +163,61 @@ function log(msg) {
 
 function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
+}
+
+// ─── Business type verification ────────────────────────
+function classifyBusinessType(business, scrapedAbout, scrapedServices, fullPageText) {
+  const corpus = [
+    scrapedAbout || '',
+    (scrapedServices || []).join(' '),
+    fullPageText || '',
+    business.name || '',
+  ].join(' ');
+
+  // Count hair-related signals
+  const hairSignals = [
+    /\bhair/i, /\bsalon\b/i, /\bbarber/i, /\bhairdress/i, /\bhaircut/i,
+    /\bcolou?r\b/i, /\bstyl(e|ing|ist)/i, /\bbalayage/i, /\bfoil/i,
+    /\bblowdr/i, /\btrim\b/i, /\bfade\b/i, /\bbeard/i, /\bshave\b/i,
+    /\bcurl/i, /\bextension/i, /\bkeratin/i, /\btoner\b/i, /\bperm\b/i,
+  ];
+  let hairCount = 0;
+  for (const p of hairSignals) if (p.test(corpus)) hairCount++;
+
+  // Count NOT_HAIR signals
+  let notHairCount = 0;
+  const notHairReasons = [];
+  for (const p of NOT_HAIR_PATTERNS) {
+    if (p.test(corpus)) {
+      notHairCount++;
+      notHairReasons.push(p.source.replace(/\\b/g, '').replace(/[()]/g, ''));
+    }
+  }
+
+  // Decision: if NOT_HAIR signals dominate and hair signals are weak
+  if (notHairCount >= 3 && hairCount <= 1) {
+    return { isHair: false, reason: `primarily ${notHairReasons.slice(0, 3).join(', ')}` };
+  }
+
+  // Name-based checks for businesses without websites
+  const nameLower = business.name.toLowerCase();
+  const nameNotHair = [
+    /\bnail/i, /\bbeauty\b/i, /\blash/i, /\bspa\b/i, /\bskin\b/i,
+    /\btattoo/i, /\bpiercing/i, /\bcosmetic/i, /\bmassage/i,
+  ];
+  let nameNotHairCount = 0;
+  for (const p of nameNotHair) if (p.test(nameLower)) nameNotHairCount++;
+
+  const nameHair = [/hair/i, /barber/i, /salon/i, /styl/i, /cut/i];
+  let nameHairCount = 0;
+  for (const p of nameHair) if (p.test(nameLower)) nameHairCount++;
+
+  // If name strongly suggests non-hair and no website to verify
+  if (nameNotHairCount >= 1 && nameHairCount === 0 && !scrapedAbout && !scrapedServices) {
+    return { isHair: false, reason: `name suggests non-hair: "${business.name}"`, uncertain: true };
+  }
+
+  return { isHair: true };
 }
 
 // ─── Website scraping ──────────────────────────────────
@@ -240,10 +309,14 @@ async function scrapeWebsite(url) {
     // Dedupe services
     services = [...new Set(services)].slice(0, 30);
 
+    // Get full page text for classification (truncated)
+    const fullPageText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 3000);
+
     return {
       aboutText: aboutText.replace(/\s+/g, ' ').trim().slice(0, 1000) || null,
       services: services.length > 0 ? services : null,
       source: isFresha ? 'fresha' : isFacebook ? 'facebook' : isInstagram ? 'instagram' : 'website',
+      fullPageText,
     };
   } catch (err) {
     return null;
@@ -331,6 +404,7 @@ async function processBusiness(business) {
   let scrapedAbout = null;
   let scrapedServices = null;
   let contentSource = 'minimal';
+  let fullPageText = null;
 
   // TIER 1: Has website
   if (business.website_url) {
@@ -339,6 +413,7 @@ async function processBusiness(business) {
       scrapedAbout = scraped.aboutText;
       scrapedServices = scraped.services;
       contentSource = scraped.source;
+      fullPageText = scraped.fullPageText;
       log(`  Scraped ${business.name} → ${scraped.source} (about: ${scrapedAbout?.length || 0} chars, services: ${scrapedServices?.length || 0})`);
     } else {
       log(`  Scrape failed for ${business.name} (${business.website_url})`);
@@ -352,6 +427,32 @@ async function processBusiness(business) {
   // TIER 3: Minimal
   else {
     contentSource = 'minimal';
+  }
+
+  // ─── Business type verification ────────────────────
+  const classification = classifyBusinessType(business, scrapedAbout, scrapedServices, fullPageText);
+  if (!classification.isHair) {
+    if (classification.uncertain) {
+      // Flag for manual review
+      const flags = business.verification_flags || [];
+      if (!flags.includes('needs_manual_review')) flags.push('needs_manual_review');
+      await supabase
+        .from('businesses')
+        .update({ verification_flags: flags, scraped_at: new Date().toISOString() })
+        .eq('id', business.id);
+      log(`  ⚠ FLAGGED for review: ${business.name} — ${classification.reason}`);
+      return { contentSource, hasAiDescription: false, specialties: [], excluded: false, flagged: true, excludeReason: classification.reason };
+    } else {
+      // Exclude — not a hair business
+      const flags = business.verification_flags || [];
+      if (!flags.includes('excluded_not_hair')) flags.push('excluded_not_hair');
+      await supabase
+        .from('businesses')
+        .update({ status: 'excluded', verification_flags: flags, scraped_at: new Date().toISOString() })
+        .eq('id', business.id);
+      log(`  ✗ EXCLUDED: ${business.name} (${business.suburb}) — ${classification.reason}`);
+      return { contentSource, hasAiDescription: false, specialties: [], excluded: true, flagged: false, excludeReason: classification.reason };
+    }
   }
 
   // Save scraped data
@@ -389,6 +490,8 @@ async function processBusiness(business) {
     contentSource,
     hasAiDescription: !!aiDescription,
     specialties,
+    excluded: false,
+    flagged: false,
   };
 }
 
@@ -426,6 +529,10 @@ async function processTerritory(territory) {
     googleOnly: 0,
     minimal: 0,
     aiGenerated: 0,
+    excluded: 0,
+    flagged: 0,
+    excludedList: [],
+    flaggedList: [],
     specialtiesFound: {},
   };
 
@@ -435,6 +542,17 @@ async function processTerritory(territory) {
 
     try {
       const result = await processBusiness(biz);
+
+      if (result.excluded) {
+        stats.excluded++;
+        stats.excludedList.push({ name: biz.name, suburb: biz.suburb, reason: result.excludeReason });
+        continue;
+      }
+      if (result.flagged) {
+        stats.flagged++;
+        stats.flaggedList.push({ name: biz.name, suburb: biz.suburb, reason: result.excludeReason });
+        continue;
+      }
 
       if (result.contentSource === 'website' || result.contentSource === 'fresha' || result.contentSource === 'facebook' || result.contentSource === 'instagram') {
         stats.websiteScraped++;
@@ -464,6 +582,18 @@ async function processTerritory(territory) {
   log(`\nTerritory ${territory.name} complete:`);
   log(`  Total: ${stats.total}, Website: ${stats.websiteScraped}, Google: ${stats.googleOnly}, Minimal: ${stats.minimal}`);
   log(`  AI descriptions generated: ${stats.aiGenerated}`);
+  log(`  Excluded (NOT_HAIR): ${stats.excluded}`);
+  if (stats.excludedList.length > 0) {
+    for (const e of stats.excludedList) {
+      log(`    ✗ ${e.name} (${e.suburb}) — ${e.reason}`);
+    }
+  }
+  log(`  Flagged for review: ${stats.flagged}`);
+  if (stats.flaggedList.length > 0) {
+    for (const f of stats.flaggedList) {
+      log(`    ⚠ ${f.name} (${f.suburb}) — ${f.reason}`);
+    }
+  }
   log(`  Specialties: ${JSON.stringify(stats.specialtiesFound)}`);
 
   return stats;
@@ -494,34 +624,38 @@ async function main() {
   log('FINAL REPORT');
   log('═'.repeat(60));
 
-  log('\nTerritory | Total | Website | Google | Minimal | AI Generated');
-  log('-'.repeat(70));
+  log('\nTerritory                | Total | Website | Google | Minimal | AI Gen | Excluded | Flagged');
+  log('-'.repeat(95));
 
-  let grandTotal = 0, grandWebsite = 0, grandGoogle = 0, grandMinimal = 0, grandAi = 0;
+  let grandTotal = 0, grandWebsite = 0, grandGoogle = 0, grandMinimal = 0, grandAi = 0, grandExcluded = 0, grandFlagged = 0;
   const allSpecialties = {};
 
   for (const s of allStats) {
-    log(`${s.name.padEnd(25)} | ${String(s.total).padStart(5)} | ${String(s.websiteScraped).padStart(7)} | ${String(s.googleOnly).padStart(6)} | ${String(s.minimal).padStart(7)} | ${String(s.aiGenerated).padStart(12)}`);
+    log(`${s.name.padEnd(25)}| ${String(s.total).padStart(5)} | ${String(s.websiteScraped).padStart(7)} | ${String(s.googleOnly).padStart(6)} | ${String(s.minimal).padStart(7)} | ${String(s.aiGenerated).padStart(6)} | ${String(s.excluded).padStart(8)} | ${String(s.flagged).padStart(7)}`);
     grandTotal += s.total;
     grandWebsite += s.websiteScraped;
     grandGoogle += s.googleOnly;
     grandMinimal += s.minimal;
     grandAi += s.aiGenerated;
+    grandExcluded += s.excluded;
+    grandFlagged += s.flagged;
     for (const [k, v] of Object.entries(s.specialtiesFound)) {
       allSpecialties[k] = (allSpecialties[k] || 0) + v;
     }
   }
 
-  log('-'.repeat(70));
-  log(`${'TOTAL'.padEnd(25)} | ${String(grandTotal).padStart(5)} | ${String(grandWebsite).padStart(7)} | ${String(grandGoogle).padStart(6)} | ${String(grandMinimal).padStart(7)} | ${String(grandAi).padStart(12)}`);
+  log('-'.repeat(95));
+  log(`${'TOTAL'.padEnd(25)}| ${String(grandTotal).padStart(5)} | ${String(grandWebsite).padStart(7)} | ${String(grandGoogle).padStart(6)} | ${String(grandMinimal).padStart(7)} | ${String(grandAi).padStart(6)} | ${String(grandExcluded).padStart(8)} | ${String(grandFlagged).padStart(7)}`);
 
   log('\nTop specialties found:');
   const sorted = Object.entries(allSpecialties).sort((a, b) => b[1] - a[1]);
-  for (const [tag, count] of sorted.slice(0, 15)) {
+  for (const [tag, count] of sorted.slice(0, 20)) {
     log(`  ${tag}: ${count}`);
   }
 
   log(`\nTotal AI descriptions generated: ${grandAi}`);
+  log(`Total excluded (NOT_HAIR): ${grandExcluded}`);
+  log(`Total flagged for manual review: ${grandFlagged}`);
   log(`Completed at ${new Date().toISOString()}`);
 }
 
