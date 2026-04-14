@@ -82,8 +82,8 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
   const [walkIns, setWalkIns] = useState(currentWalkIns === 'true');
   const [minRating, setMinRating] = useState(currentMinRating);
 
-  // Count active filters (excluding q and type which are always visible)
-  const activeFilterCount = [specialty, walkIns ? 'true' : '', minRating, state, region, suburb]
+  // Count active filters (excluding q which is always visible)
+  const activeFilterCount = [type, specialty, walkIns ? 'true' : '', minRating, state, region, suburb]
     .filter(Boolean).length;
 
   // Build URL and navigate
@@ -119,7 +119,8 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
   // Remove single filter chip
   function removeFilter(key: string) {
     const overrides: Record<string, string> = { [key]: '' };
-    if (key === 'walk_ins') { setWalkIns(false); overrides.walk_ins = ''; }
+    if (key === 'type') setType('');
+    else if (key === 'walk_ins') { setWalkIns(false); overrides.walk_ins = ''; }
     else if (key === 'specialty') setSpecialty('');
     else if (key === 'min_rating') setMinRating('');
     else if (key === 'state') { setState(''); overrides.region = ''; overrides.suburb = ''; setRegion(''); setSuburb(''); }
@@ -130,6 +131,7 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
 
   // Active filter chips for display
   const chips: { key: string; label: string }[] = [];
+  if (type) chips.push({ key: 'type', label: TYPES.find(t => t.value === type)?.label || type });
   if (specialty) chips.push({ key: 'specialty', label: SPECIALTIES.find(s => s.value === specialty)?.label || specialty });
   if (walkIns) chips.push({ key: 'walk_ins', label: 'Walk-ins welcome' });
   if (minRating) chips.push({ key: 'min_rating', label: `${minRating}+ stars` });
@@ -157,24 +159,6 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
               placeholder="Search suburb or salon..."
               className="flex-1 bg-transparent text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-muted)] focus:outline-none px-3 py-0.5"
             />
-          </div>
-
-          {/* Type pills */}
-          <div className="hidden md:flex items-center gap-1">
-            {TYPES.map((t) => (
-              <button
-                key={t.value}
-                type="button"
-                onClick={() => { setType(t.value); applyFilters({ type: t.value }); }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  type === t.value
-                    ? 'bg-[var(--color-ink)] text-white'
-                    : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] hover:bg-[var(--color-border)]'
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
           </div>
 
           {/* Filters button */}
@@ -226,6 +210,25 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
         {/* ─── Filter panel (slides down) ─────────── */}
         {open && (
           <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+            {/* Type pills row */}
+            <div className="flex items-center gap-1.5 mb-5">
+              <span className="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider mr-2">Type</span>
+              {TYPES.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => setType(t.value)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    type === t.value
+                      ? 'bg-[var(--color-ink)] text-white'
+                      : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] hover:bg-[var(--color-border)]'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {/* Specialty */}
               <div>
