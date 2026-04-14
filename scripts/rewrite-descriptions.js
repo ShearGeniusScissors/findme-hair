@@ -44,13 +44,13 @@ const SKIP_SLUGS = new Set([
 const TERRITORY_REGIONS = [
   { name: 'Ballarat', slugs: ['ballarat', 'ballarat-surrounds'] },
   { name: 'Geelong & Surf Coast', slugs: ['geelong', 'geelong-surrounds', 'surf-coast', 'bellarine'] },
-  { name: 'Melbourne West', slugs: ['melton-bacchus-marsh', 'wyndham', 'hobsons-bay-williamstown', 'maribyrnong-footscray'] },
-  { name: 'Tasmania', slugs: ['hobart', 'hobart-surrounds', 'launceston', 'launceston-surrounds', 'north-west-tas', 'devonport-burnie'] },
-  { name: 'Horsham & Maryborough', slugs: ['horsham', 'maryborough-goldfields', 'macedon-ranges-kyneton'] },
+  { name: 'Melbourne West', slugs: ['melbourne-west', 'melton', 'bacchus-marsh', 'caroline-springs', 'deer-park', 'laverton-north'] },
+  { name: 'Tasmania', slugs: ['hobart', 'launceston', 'devonport', 'burnie'] },
+  { name: 'Horsham & Maryborough', slugs: ['horsham', 'maryborough-vic', 'kyneton', 'castlemaine', 'daylesford'] },
   { name: 'Mildura', slugs: ['mildura'] },
-  { name: 'Warrnambool & Mt Gambier', slugs: ['warrnambool', 'mount-gambier', 'colac-otway', 'western-district'] },
-  { name: 'Bendigo', slugs: ['bendigo', 'bendigo-surrounds'] },
-  { name: 'Sunbury', slugs: ['sunbury-macedon'] },
+  { name: 'Warrnambool & Mt Gambier', slugs: ['warrnambool', 'mount-gambier', 'colac', 'hamilton', 'portland'] },
+  { name: 'Bendigo', slugs: ['bendigo'] },
+  { name: 'Sunbury', slugs: ['sunbury', 'gisborne', 'woodend'] },
 ];
 
 function log(msg) {
@@ -323,9 +323,16 @@ async function processTerritory(territory) {
 
   if (error) { log(`  ERROR: ${error.message}`); return { name: territory.name, total: 0, rewritten: 0 }; }
 
-  // Filter out skip list
-  const toProcess = businesses.filter(b => !SKIP_SLUGS.has(b.slug));
-  log(`Found ${businesses.length} businesses, processing ${toProcess.length} (skipping ${businesses.length - toProcess.length} approved)`);
+  // Filter out skip list and already-rewritten (catchup mode)
+  const catchup = process.argv[4] === '--catchup';
+  const today = new Date().toISOString().slice(0, 10);
+  const toProcess = businesses.filter(b => {
+    if (SKIP_SLUGS.has(b.slug)) return false;
+    if (catchup && b.content_generated_at && b.content_generated_at.startsWith(today)) return false;
+    return true;
+  });
+  const skipped = businesses.length - toProcess.length;
+  log(`Found ${businesses.length} businesses, processing ${toProcess.length} (skipping ${skipped}${catchup ? ' incl. already done today' : ''})`);
 
   let rewritten = 0;
   let walkInsFound = 0;
