@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
     suburb: params.get('suburb') ?? undefined,
     type: (params.get('type') as BusinessType) ?? undefined,
     service: params.get('service') ?? undefined,
+    specialty: params.get('specialty') ?? undefined,
+    walk_ins: params.get('walk_ins') === 'true' ? true : undefined,
+    min_rating: params.get('min_rating') ? parseFloat(params.get('min_rating')!) : undefined,
     limit: Math.min(Number(params.get('limit')) || 20, 40),
     offset: Number(params.get('offset')) || 0,
   });

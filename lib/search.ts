@@ -9,6 +9,8 @@ export interface SearchFilters {
   type?: BusinessType;
   service?: string;
   specialty?: string; // matches specialties[] array column
+  walk_ins?: boolean;
+  min_rating?: number;
   limit?: number;
   offset?: number;
 }
@@ -73,6 +75,12 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
   }
+  if (filters.walk_ins) {
+    query = query.eq('walk_ins_welcome', true);
+  }
+  if (filters.min_rating) {
+    query = query.gte('google_rating', filters.min_rating);
+  }
   if (filters.offset) query = query.range(filters.offset, (filters.offset ?? 0) + (filters.limit ?? 40) - 1);
 
   const { data, error } = await query;
@@ -116,6 +124,12 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
   }
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
+  }
+  if (filters.walk_ins) {
+    query = query.eq('walk_ins_welcome', true);
+  }
+  if (filters.min_rating) {
+    query = query.gte('google_rating', filters.min_rating);
   }
 
   const { count, error } = await query;

@@ -42,7 +42,8 @@ export default function BusinessCard({ business }: { business: Business }) {
       : null;
 
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
-  const specialties = (business.specialties ?? []).slice(0, 4);
+  const maxTags = business.walk_ins_welcome ? 3 : 4;
+  const specialties = (business.specialties ?? []).slice(0, maxTags);
 
   return (
     <Link
@@ -101,8 +102,8 @@ export default function BusinessCard({ business }: { business: Business }) {
           </div>
         )}
 
-        {/* Specialty tags */}
-        {specialties.length > 0 && (
+        {/* Specialty + walk-ins tags */}
+        {(specialties.length > 0 || business.walk_ins_welcome) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {specialties.map((tag) => (
               <span
@@ -112,6 +113,11 @@ export default function BusinessCard({ business }: { business: Business }) {
                 {SPECIALTY_DISPLAY[tag] ?? tag.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
               </span>
             ))}
+            {business.walk_ins_welcome && (
+              <span className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2.5 py-0.5 text-[11px] font-medium text-green-700">
+                Walk-ins welcome
+              </span>
+            )}
           </div>
         )}
       </div>

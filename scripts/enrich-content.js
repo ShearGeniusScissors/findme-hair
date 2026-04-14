@@ -485,6 +485,23 @@ function detectSpecialties(business, scrapedAbout, scrapedServices, aiDescriptio
   return [...specialties];
 }
 
+// ─── Walk-ins detection ──────────────────────────────────
+const WALKINS_PATTERNS = [
+  /walk.?in/i, /no appointment/i, /no booking required/i, /drop.?in/i,
+  /come on in/i, /just come in/i, /open to walk/i, /accept walk/i,
+];
+const APPT_ONLY_PATTERNS = [
+  /appointment only/i, /by appointment/i, /bookings? essential/i,
+  /booking required/i, /booking only/i, /appointments only/i,
+  /please book/i, /book online to avoid/i,
+];
+
+function detectWalkIns(corpus) {
+  for (const p of WALKINS_PATTERNS) if (p.test(corpus)) return true;
+  for (const p of APPT_ONLY_PATTERNS) if (p.test(corpus)) return false;
+  return null;
+}
+
 // ─── Process single business ───────────────────────────
 async function processBusiness(business) {
   let scrapedAbout = null;
@@ -563,11 +580,16 @@ async function processBusiness(business) {
   // Detect specialties
   const specialties = detectSpecialties(business, scrapedAbout, scrapedServices, aiDescription);
 
+  // Detect walk-ins
+  const walkInsCorpus = [scrapedAbout || '', aiDescription || '', (scrapedServices || []).join(' ')].join(' ');
+  const walkIns = detectWalkIns(walkInsCorpus);
+
   // Save AI content
   const contentUpdate = {
     ai_description: aiDescription,
     specialties: specialties.length > 0 ? specialties : null,
     content_generated_at: new Date().toISOString(),
+    ...(walkIns !== null && { walk_ins_welcome: walkIns, walk_ins_source: 'scraped' }),
   };
 
   await supabase
