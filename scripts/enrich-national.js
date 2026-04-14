@@ -32,10 +32,39 @@ const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 if (!SUPABASE_URL || !SUPABASE_KEY) { console.error('Missing SUPABASE env'); process.exit(1); }
 if (!ANTHROPIC_KEY) { console.error('Missing ANTHROPIC_API_KEY'); process.exit(1); }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: false },
+  global: { fetch: (...args) => fetch(...args) },
+});
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY });
 
 const LOG_FILE = '/tmp/enrich-national.log';
+
+// Retry wrapper for Supabase queries — handles fetch failures
+async function supabaseQuery(fn, label, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const result = await fn();
+      // Check if Supabase returned an error object (vs thrown error)
+      if (result && result.error) {
+        throw new Error(result.error.message || JSON.stringify(result.error));
+      }
+      return result;
+    } catch (err) {
+      if (attempt === retries) {
+        log(`  FAILED after ${retries} retries for ${label}: ${err.message}`);
+        return { data: null, error: { message: err.message } };
+      }
+      log(`  Retry ${attempt}/${retries} for ${label}: ${err.message}`);
+      // Recreate client on connection failure
+      supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: false },
+        global: { fetch: (...args) => fetch(...args) },
+      });
+      await sleep(3000 * attempt);
+    }
+  }
+}
 
 const STATE_ORDER = ['VIC', 'NSW', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
@@ -272,7 +301,7 @@ async function processBusiness(business) {
   const webText = websiteContent?.text || '';
   if (isNotHairBusiness(business, webText)) {
     log(`  ⚠ NOT_HAIR excluded: ${business.name}`);
-    await supabase.from('businesses').update({ status: 'excluded' }).eq('id', business.id);
+    await supabaseQuery(() => supabase.from('businesses').update({ status: 'excluded' }).eq('id', business.id), 'exclude update');
     return { result: 'excluded' };
   }
 
@@ -306,7 +335,7 @@ async function processBusiness(business) {
     update.walk_ins_source = 'scraped';
   }
 
-  await supabase.from('businesses').update(update).eq('id', business.id);
+  await supabaseQuery(() => supabase.from('businesses').update(update).eq('id', business.id), 'business update');
   return { result: 'ok', walkIns, specialties };
 }
 
@@ -356,11 +385,10 @@ async function processState(state, resume) {
   log(`${'═'.repeat(60)}`);
 
   // Get all regions in this state with unenriched businesses
-  const { data: regions } = await supabase
-    .from('regions')
-    .select('id, name, slug')
-    .eq('state', state)
-    .order('name');
+  const { data: regions } = await supabaseQuery(
+    () => supabase.from('regions').select('id, name, slug').eq('state', state).order('name'),
+    `regions for ${state}`
+  );
 
   if (!regions || regions.length === 0) {
     log(`  No regions found for ${state}`);
@@ -378,21 +406,27 @@ async function processState(state, resume) {
     let offset = 0;
     const pageSize = 500;
     while (true) {
-      let query = supabase
-        .from('businesses')
-        .select('*')
-        .eq('status', 'active')
-        .eq('region_id', region.id)
-        .is('ai_description', null)
-        .order('google_rating', { ascending: false, nullsFirst: false })
-        .range(offset, offset + pageSize - 1);
-
-      const { data, error } = await query;
-      if (error) { log(`  ERROR querying ${region.name}: ${error.message}`); break; }
-      if (!data || data.length === 0) break;
-      allBusinesses = allBusinesses.concat(data);
-      if (data.length < pageSize) break;
-      offset += pageSize;
+      try {
+        const { data, error } = await supabaseQuery(
+          () => supabase
+            .from('businesses')
+            .select('*')
+            .eq('status', 'active')
+            .eq('region_id', region.id)
+            .is('ai_description', null)
+            .order('google_rating', { ascending: false, nullsFirst: false })
+            .range(offset, offset + pageSize - 1),
+          `businesses in ${region.name}`
+        );
+        if (error) { log(`  ERROR querying ${region.name}: ${error.message}`); break; }
+        if (!data || data.length === 0) break;
+        allBusinesses = allBusinesses.concat(data);
+        if (data.length < pageSize) break;
+        offset += pageSize;
+      } catch (err) {
+        log(`  ERROR querying ${region.name}: ${err.message}`);
+        break;
+      }
     }
 
     if (allBusinesses.length === 0) continue;
