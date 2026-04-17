@@ -142,7 +142,16 @@ export default function QuestionsArticle() {
           <h2>8. &ldquo;Do you have experience with [specific technique]?&rdquo;</h2>
           <p>
             If you want balayage, ask if they specialise in it. If you have curly hair, ask how
-            many curly clients they see per week. Specificity gets you honest answers.
+            many curly clients they see per week. Specificity gets you honest answers. You can
+            also look at their tools — professionals who invest in quality Japanese{' '}
+            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              hairdressing scissors
+            </a>{' '}
+            and keep them{' '}
+            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              professionally sharpened
+            </a>{' '}
+            tend to take their craft seriously.
           </p>
 
           <h2>9. &ldquo;What happens if I&rsquo;m not happy with the result?&rdquo;</h2>

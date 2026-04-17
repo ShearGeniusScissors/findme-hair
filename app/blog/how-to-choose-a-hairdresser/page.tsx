@@ -143,6 +143,11 @@ export default function HowToChooseArticle() {
             <li>Does the stylist ask about your lifestyle and daily routine?</li>
             <li>Do they explain what they&rsquo;re doing and why?</li>
             <li>Is the salon clean, organised, and professional?</li>
+            <li>Do they use quality{' '}
+              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                professional hairdressing scissors
+              </a>
+              ? Japanese steel scissors are the industry standard.</li>
             <li>Do they recommend products without being pushy?</li>
             <li>Are they honest about what&rsquo;s achievable with your hair?</li>
           </ul>
