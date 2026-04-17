@@ -26,6 +26,55 @@ interface BlogPost {
 
 const POSTS: BlogPost[] = [
   {
+    slug: 'how-much-does-a-haircut-cost-in-australia',
+    title: 'How Much Does a Haircut Cost in Australia? (2026 Guide)',
+    excerpt:
+      'From $25 barber cuts to $120+ salon styles — a complete breakdown of haircut prices across Australia, plus what drives the cost and how to save.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'what-is-balayage',
+    title: 'What Is Balayage? Everything You Need to Know',
+    excerpt:
+      'Balayage is everywhere, but what actually is it? We explain the technique, how it differs from highlights, what it costs, and how to find a specialist.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'how-to-find-a-good-barber',
+    title: 'How to Find a Good Barber Near You',
+    excerpt:
+      'A great barber is hard to find and harder to leave. Here\'s what to look for — from tools and technique to reviews and red flags.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'what-to-do-if-you-hate-your-haircut',
+    title: 'What to Do If You Hate Your Haircut',
+    excerpt:
+      'Don\'t panic. A bad haircut is fixable — here\'s exactly what to do, what to say to your stylist, and how to prevent it next time.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'how-often-should-you-get-a-haircut',
+    title: 'How Often Should You Get a Haircut?',
+    excerpt:
+      'The answer depends on your style, hair type, and goals. Here\'s a practical guide to haircut frequency for every length and texture.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'tipping-your-hairdresser-in-australia',
+    title: 'Tipping Your Hairdresser in Australia: What You Need to Know',
+    excerpt:
+      'Is tipping expected in Australia? How much? When? We break down the unwritten rules of tipping at salons and barber shops.',
+    date: '2026-04-17',
+  },
+  {
+    slug: 'how-to-prepare-for-a-hair-appointment',
+    title: 'How to Prepare for Your Hair Appointment',
+    excerpt:
+      'A little preparation goes a long way. From reference photos to what to wear — here\'s how to set yourself up for a great result.',
+    date: '2026-04-17',
+  },
+  {
     slug: 'how-to-choose-a-hairdresser',
     title: 'How to Choose the Right Hairdresser for You',
     excerpt:
