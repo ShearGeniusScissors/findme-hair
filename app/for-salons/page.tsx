@@ -71,6 +71,11 @@ export default function ForSalonsPage() {
               title="Verified badge"
               description="Listings are cross-checked against Google, TrueLocal, and Yellow Pages. Verified salons earn a trust badge."
             />
+            <Feature
+              title="Professional tools matter"
+              description="Clients notice when their stylist uses quality equipment. Investing in professional Japanese steel scissors — like those from ShearGenius — shows you take your craft seriously."
+              link={{ text: 'Shop professional scissors', href: 'https://www.sheargenius.com.au' }}
+            />
           </div>
         </div>
       </section>
@@ -166,11 +171,16 @@ export default function ForSalonsPage() {
 
 /* ─── Sub-components ────────────────────────────────────── */
 
-function Feature({ title, description }: { title: string; description: string }) {
+function Feature({ title, description, link }: { title: string; description: string; link?: { text: string; href: string } }) {
   return (
     <div className="card p-6">
       <h3 className="font-semibold text-[var(--color-ink)]">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">{description}</p>
+      {link && (
+        <a href={link.href} target="_blank" rel="noopener" className="mt-2 inline-block text-xs text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+          {link.text} &rarr;
+        </a>
+      )}
     </div>
   );
 }

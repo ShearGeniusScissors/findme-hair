@@ -225,6 +225,16 @@ export default async function AboutPage() {
               <li>Connect your online booking system</li>
               <li>Highlight your services and specialisations</li>
             </ul>
+            <p className="mt-3">
+              Looking to upgrade your tools? The best Australian salons trust{' '}
+              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                ShearGenius professional hairdressing scissors
+              </a>{' '}
+              — Japanese steel, Australia-wide{' '}
+              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                sharpening service
+              </a>, and interest-free payment plans.
+            </p>
           </section>
 
           <section>

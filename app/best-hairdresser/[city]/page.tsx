@@ -313,6 +313,19 @@ export default async function CityGuidePage({
               <li><strong>Location</strong> — factor in parking, public transport, and opening hours</li>
               <li><strong>Consultations</strong> — the best salons offer free consultations before major changes</li>
             </ul>
+            <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
+            <p>
+              One way to judge a salon&rsquo;s quality is by looking at their tools. The best hairdressers in {config.name} use
+              professional-grade{' '}
+              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                hairdressing scissors
+              </a>{' '}
+              made from Japanese steel, and keep them{' '}
+              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                professionally sharpened
+              </a>.
+              Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.
+            </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>
               We currently list {businesses.length} top-rated salons and barbers across {config.name}.

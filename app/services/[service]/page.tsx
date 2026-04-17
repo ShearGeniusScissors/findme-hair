@@ -22,6 +22,7 @@ interface ServiceConfig {
     intro: string;
     whatToLook: string[];
     closing: string;
+    proTip?: { text: string; linkText: string; linkHref: string };
   };
 }
 
@@ -44,6 +45,7 @@ const SERVICES: ServiceConfig[] = [
         'Confirm they have public liability insurance',
       ],
       closing: 'Mobile hairdressing is one of the fastest-growing segments of the Australian hair industry. Many experienced salon stylists now offer mobile services alongside their regular bookings.',
+      proTip: { text: 'Mobile stylists need reliable tools that stay sharp between salon visits. Professional scissors benefit from regular sharpening —', linkText: 'ShearGenius offers Australia-wide mail-in sharpening', linkHref: 'https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service' },
     },
   },
   {
@@ -123,6 +125,7 @@ const SERVICES: ServiceConfig[] = [
         'Look at recent reviews mentioning the specific barber you\'d see',
       ],
       closing: 'The Australian barbering scene has experienced a renaissance, with a new generation of skilled barbers blending traditional techniques with modern trends. Visit our directory to find the highest-rated barbers in your area.',
+      proTip: { text: 'A great barber invests in quality tools. Professional Japanese steel barber scissors make a noticeable difference in cut precision — look for brands like', linkText: 'ShearGenius', linkHref: 'https://www.sheargenius.com.au/pages/barber-scissors' },
     },
   },
   {
@@ -183,6 +186,7 @@ const SERVICES: ServiceConfig[] = [
         'Look at photos of recent work, especially for fades and detailed cuts',
       ],
       closing: 'Men\'s haircuts in Australia typically range from $25 for a basic barber cut to $70+ at premium salons. Regular visits every 3-4 weeks keep fades and short styles looking sharp.',
+      proTip: { text: 'The best barbers and stylists maintain their scissors with regular professional sharpening. Quality hairdressing scissors from Japanese steel last decades with proper care —', linkText: 'ShearGenius offers scissors and sharpening Australia-wide', linkHref: 'https://www.sheargenius.com.au' },
     },
   },
   {
@@ -223,6 +227,7 @@ const SERVICES: ServiceConfig[] = [
         'Many Japanese salons include a head spa or scalp treatment with every service',
       ],
       closing: 'Japanese hairdressers in Australia are particularly popular in Sydney and Melbourne, where there are established communities. Their attention to detail and customer service is consistently rated highly.',
+      proTip: { text: 'Japanese-trained stylists demand the best tools. Most use scissors forged from Japanese Hitachi steel — the same ATS-314 alloy used by', linkText: 'ShearGenius professional hairdressing scissors', linkHref: 'https://www.sheargenius.com.au' },
     },
   },
   {
@@ -498,6 +503,14 @@ export default async function ServicePage({
           <p className="mt-4 text-sm text-[var(--color-ink-light)] leading-relaxed">
             {config.content.closing}
           </p>
+          {config.content.proTip && (
+            <p className="mt-3 text-sm text-[var(--color-ink-muted)] italic">
+              {config.content.proTip.text}{' '}
+              <a href={config.content.proTip.linkHref} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic">
+                {config.content.proTip.linkText}
+              </a>.
+            </p>
+          )}
         </section>
 
         {/* Cross-links to other services */}
