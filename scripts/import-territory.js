@@ -61,14 +61,27 @@ async function searchText(query) {
   return json.places ?? [];
 }
 
+const STATE_ABBREV = {
+  'victoria': 'VIC', 'new south wales': 'NSW', 'queensland': 'QLD',
+  'south australia': 'SA', 'western australia': 'WA', 'tasmania': 'TAS',
+  'northern territory': 'NT', 'australian capital territory': 'ACT',
+};
+
+function normaliseState(raw) {
+  if (!raw) return null;
+  const abbrev = STATE_ABBREV[raw.toLowerCase()];
+  return abbrev ?? raw.toUpperCase();
+}
+
 function addressBits(place, fallbackSuburb, fallbackState) {
   const comps = place.addressComponents ?? [];
   const find = (t) => comps.find((c) => (c.types ?? []).includes(t))?.longText;
   const line1 = [find('street_number'), find('route')].filter(Boolean).join(' ') || place.formattedAddress || '';
+  const rawState = find('administrative_area_level_1') ?? fallbackState;
   return {
     line1,
     suburb: find('locality') ?? find('sublocality') ?? fallbackSuburb,
-    state: find('administrative_area_level_1') ?? fallbackState,
+    state: normaliseState(rawState),
     postcode: find('postal_code') ?? '',
   };
 }
