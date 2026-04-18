@@ -1,0 +1,10 @@
+operator,date,territory,source_doc
+Test Operator,2026-04-18,Geelong VIC,test-run-sheet.csv
+
+business_name,address,suburb,postcode,outcome,type,notes,is_mobile
+Curl Up & Dye,123 Main Street,Geelong,3220,ACTIVE,Hair Salon,Open and busy — 3 stylists working,false
+Joe's Barber Shop,456 High Street,Geelong,3220,ACTIVE,Barber,Cash only sign on door. Queue of 4 customers.,false
+Snip & Style Mobile,N/A (home-based),Geelong,3220,ACTIVE,Hair Salon,Works from home — confirmed via business card,true
+Nails & Beauty Palace,789 Pakington Street,Geelong West,3218,NOT_HAIR,,Beauty salon — nails and lashes only. No hair services.,false
+Geelong Barber Co,12 Ryrie Street,Geelong,3220,ACTIVE,Both,"Busy barber and hair salon combo. New ownership, still trading.",false
+Phantom Salon,999 Nowhere Lane,Geelong,3220,CANNOT_CONFIRM,,Could not locate premises — may have closed or moved,false
