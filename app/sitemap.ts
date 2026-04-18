@@ -99,11 +99,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Blog pages
+  const blogSlugs = [
+    'how-to-choose-a-hairdresser',
+    'hair-salon-vs-barber-shop',
+    'questions-to-ask-your-hairdresser',
+    'how-much-does-a-haircut-cost-in-australia',
+    'what-is-balayage',
+    'how-to-find-a-good-barber',
+    'tipping-your-hairdresser-in-australia',
+    'how-often-should-you-get-a-haircut',
+    'what-to-do-if-you-hate-your-haircut',
+    'how-to-prepare-for-a-hair-appointment',
+  ];
   const blogPages: MetadataRoute.Sitemap = [
     { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
-    { url: `${base}/blog/how-to-choose-a-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
-    { url: `${base}/blog/hair-salon-vs-barber-shop`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
-    { url: `${base}/blog/questions-to-ask-your-hairdresser`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
+    ...blogSlugs.map((slug) => ({
+      url: `${base}/blog/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.65,
+    })),
   ];
 
   // Service filter pages (12 original + 3 new specialty-driven)
