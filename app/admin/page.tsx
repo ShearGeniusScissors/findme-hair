@@ -5,7 +5,17 @@ import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase';
 import type { Business, Territory } from '@/types/database';
 
-type Tab = 'pending' | 'active' | 'territories' | 'flags';
+type Tab = 'pending' | 'active' | 'territories' | 'flags' | 'recency';
+
+interface RecencyRow {
+  id: string;
+  name: string;
+  suburb: string;
+  state: string;
+  last_verified: string | null;
+  recency_label: string;
+  recency_score: number;
+}
 
 const CONFIDENCE_COLOURS = {
   green: 'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -20,6 +30,13 @@ function confidenceBadge(score: number | null) {
   return { label: s, cls: CONFIDENCE_COLOURS.red };
 }
 
+const RECENCY_COLOURS: Record<string, string> = {
+  fresh: 'bg-emerald-100 text-emerald-800',
+  aging: 'bg-amber-100 text-amber-800',
+  stale: 'bg-red-100 text-red-800',
+  never: 'bg-neutral-100 text-neutral-600',
+};
+
 export default function AdminPage() {
   const supabase = supabaseBrowser();
   const [loading, setLoading] = useState(true);
@@ -27,6 +44,8 @@ export default function AdminPage() {
   const [tab, setTab] = useState<Tab>('pending');
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [territories, setTerritories] = useState<Territory[]>([]);
+  const [recency, setRecency] = useState<RecencyRow[]>([]);
+  const [recencyFilter, setRecencyFilter] = useState<string>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
 
@@ -37,6 +56,16 @@ export default function AdminPage() {
       if (t === 'territories') {
         const { data } = await supabase.from('territories').select('*').order('state').order('name');
         setTerritories((data ?? []) as Territory[]);
+        return;
+      }
+      if (t === 'recency') {
+        const { data } = await supabase
+          .from('business_verification_recency')
+          .select('*')
+          .order('recency_score', { ascending: true })
+          .order('last_verified', { ascending: true, nullsFirst: true })
+          .limit(500);
+        setRecency((data ?? []) as RecencyRow[]);
         return;
       }
       let query = supabase.from('businesses').select('*').limit(250);
@@ -94,6 +123,12 @@ export default function AdminPage() {
     setSelected(ids);
   }
 
+  const filteredRecency = recencyFilter === 'all'
+    ? recency
+    : recency.filter((r) => r.recency_label === recencyFilter);
+
+  const staleCount = recency.filter((r) => r.recency_label === 'stale' || r.recency_label === 'never').length;
+
   if (loading) return <Shell><p className="text-sm text-neutral-500">Loading…</p></Shell>;
 
   if (!authed) {
@@ -113,7 +148,7 @@ export default function AdminPage() {
       </div>
 
       <nav className="mt-6 flex gap-2 border-b border-neutral-200">
-        {(['pending', 'active', 'territories', 'flags'] as Tab[]).map((t) => (
+        {(['pending', 'active', 'territories', 'flags', 'recency'] as Tab[]).map((t) => (
           <button
             key={t}
             type="button"
@@ -156,6 +191,67 @@ export default function AdminPage() {
             ))}
           </tbody>
         </table>
+      )}
+
+      {tab === 'recency' && (
+        <div className="mt-6">
+          {staleCount > 0 && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              ⚠️ <strong>{staleCount}</strong> listings are stale (&gt;6 months) or never verified — field visits needed.
+            </div>
+          )}
+
+          <div className="mb-4 flex flex-wrap gap-2">
+            {(['all', 'stale', 'never', 'aging', 'fresh'] as const).map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setRecencyFilter(f)}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold capitalize ${
+                  recencyFilter === f
+                    ? 'border-rose-400 bg-rose-50 text-rose-700'
+                    : 'border-neutral-200 text-neutral-600 hover:bg-neutral-50'
+                }`}
+              >
+                {f === 'all' ? `All (${recency.length})` : `${f} (${recency.filter((r) => r.recency_label === f).length})`}
+              </button>
+            ))}
+          </div>
+
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-neutral-200 text-left text-xs uppercase text-neutral-500">
+                <th className="pb-2">Business</th>
+                <th>Suburb</th>
+                <th>State</th>
+                <th>Last verified</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRecency.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-neutral-500">No rows.</td>
+                </tr>
+              )}
+              {filteredRecency.map((r) => (
+                <tr key={r.id} className="border-b border-neutral-100">
+                  <td className="py-3 font-medium">{r.name}</td>
+                  <td className="py-3">{r.suburb}</td>
+                  <td className="py-3">{r.state}</td>
+                  <td className="py-3 text-xs text-neutral-500">
+                    {r.last_verified ? new Date(r.last_verified).toLocaleDateString('en-AU') : '—'}
+                  </td>
+                  <td className="py-3">
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold capitalize ${RECENCY_COLOURS[r.recency_label] ?? 'bg-neutral-100 text-neutral-600'}`}>
+                      {r.recency_label}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {(tab === 'pending' || tab === 'active' || tab === 'flags') && (

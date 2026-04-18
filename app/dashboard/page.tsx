@@ -1,16 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase';
-import type { Business } from '@/types/database';
+import type { Business, OpeningHours } from '@/types/database';
+
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function defaultHours(businessId: string): OpeningHours[] {
+  return DAYS.map((_, i) => ({
+    id: '',
+    business_id: businessId,
+    day_of_week: i,
+    open_time: i === 0 ? null : '09:00',
+    close_time: i === 0 ? null : '17:00',
+    is_closed: i === 0, // closed Sunday by default
+  }));
+}
 
 export default function DashboardPage() {
   const supabase = supabaseBrowser();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [listings, setListings] = useState<Business[]>([]);
+  const [hours, setHours] = useState<Record<string, OpeningHours[]>>({});
   const [status, setStatus] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const loadHours = useCallback(async (businessId: string) => {
+    const { data } = await supabase
+      .from('opening_hours')
+      .select('*')
+      .eq('business_id', businessId)
+      .order('day_of_week');
+    if (data && data.length === 7) {
+      setHours((prev) => ({ ...prev, [businessId]: data as OpeningHours[] }));
+    } else {
+      setHours((prev) => ({ ...prev, [businessId]: defaultHours(businessId) }));
+    }
+  }, [supabase]);
 
   useEffect(() => {
     (async () => {
@@ -37,14 +65,62 @@ export default function DashboardPage() {
     location.href = '/';
   }
 
-  async function updateDescription(id: string, description: string) {
-    setStatus('Saving…');
+  function flash(msg: string) {
+    setStatus(msg);
+    setTimeout(() => setStatus(null), 2500);
+  }
+
+  async function updateField(id: string, field: string, value: string | boolean | null) {
+    flash('Saving…');
     const { error } = await supabase
       .from('businesses')
-      .update({ description, updated_at: new Date().toISOString() })
+      .update({ [field]: value, updated_at: new Date().toISOString() })
       .eq('id', id);
-    setStatus(error ? `Error: ${error.message}` : 'Saved');
-    setTimeout(() => setStatus(null), 2000);
+    flash(error ? `Error: ${error.message}` : 'Saved ✓');
+    if (!error) {
+      setListings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, [field]: value } : b))
+      );
+    }
+  }
+
+  async function saveHours(businessId: string) {
+    flash('Saving hours…');
+    const rows = hours[businessId];
+    if (!rows) return;
+
+    const upsertRows = rows.map((h) => ({
+      business_id: businessId,
+      day_of_week: h.day_of_week,
+      open_time: h.is_closed ? null : h.open_time,
+      close_time: h.is_closed ? null : h.close_time,
+      is_closed: h.is_closed,
+    }));
+
+    const { error } = await supabase
+      .from('opening_hours')
+      .upsert(upsertRows, { onConflict: 'business_id,day_of_week' });
+    flash(error ? `Error: ${error.message}` : 'Hours saved ✓');
+  }
+
+  function updateHoursLocal(businessId: string, dayIndex: number, patch: Partial<OpeningHours>) {
+    setHours((prev) => ({
+      ...prev,
+      [businessId]: prev[businessId].map((h) =>
+        h.day_of_week === dayIndex ? { ...h, ...patch } : h
+      ),
+    }));
+  }
+
+  async function toggleExpand(id: string) {
+    if (expandedId === id) {
+      setExpandedId(null);
+      return;
+    }
+    setExpandedId(id);
+    if (!hours[id]) {
+      await loadHours(id);
+    }
   }
 
   if (loading) {
@@ -55,9 +131,7 @@ export default function DashboardPage() {
     return (
       <Shell>
         <h1 className="text-2xl font-semibold text-neutral-900">Not signed in</h1>
-        <p className="mt-2 text-neutral-600">
-          You need to claim a listing first.
-        </p>
+        <p className="mt-2 text-neutral-600">You need to claim a listing first.</p>
         <Link
           href="/claim"
           className="mt-4 inline-flex items-center justify-center rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-rose-400"
@@ -85,9 +159,7 @@ export default function DashboardPage() {
       </div>
 
       {status && (
-        <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-800">
-          {status}
-        </p>
+        <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-800">{status}</p>
       )}
 
       <h2 className="mt-10 text-sm font-semibold uppercase tracking-wide text-neutral-500">
@@ -101,31 +173,142 @@ export default function DashboardPage() {
       ) : (
         <ul className="mt-4 space-y-4">
           {listings.map((b) => (
-            <li key={b.id} className="rounded-xl border border-neutral-200 bg-white p-5">
-              <div className="flex items-start justify-between gap-4">
+            <li key={b.id} className="rounded-xl border border-neutral-200 bg-white">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4 p-5">
                 <div>
                   <h3 className="text-lg font-semibold text-neutral-900">{b.name}</h3>
                   <p className="text-sm text-neutral-600">
                     {b.suburb}, {b.state} {b.postcode}
                   </p>
                 </div>
-                <Link
-                  href={`/salon/${b.slug}`}
-                  className="text-xs font-semibold text-rose-600 hover:text-rose-500"
-                >
-                  View public page →
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/salon/${b.slug}`}
+                    className="text-xs font-semibold text-rose-600 hover:text-rose-500"
+                  >
+                    View public page →
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(b.id)}
+                    className="rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
+                  >
+                    {expandedId === b.id ? 'Collapse' : 'Edit listing'}
+                  </button>
+                </div>
               </div>
-              <label className="mt-4 block text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                Description
-              </label>
-              <textarea
-                defaultValue={b.description ?? ''}
-                rows={3}
-                className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-rose-400 focus:outline-none"
-                onBlur={(e) => updateDescription(b.id, e.target.value)}
-              />
-              <p className="mt-1 text-[11px] text-neutral-400">Saved on blur.</p>
+
+              {expandedId === b.id && (
+                <div className="border-t border-neutral-100 px-5 pb-5 pt-4 space-y-5">
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                      Description
+                    </label>
+                    <textarea
+                      key={`desc-${b.id}`}
+                      defaultValue={b.description ?? ''}
+                      rows={3}
+                      className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-rose-400 focus:outline-none"
+                      onBlur={(e) => updateField(b.id, 'description', e.target.value)}
+                    />
+                    <p className="mt-0.5 text-[11px] text-neutral-400">Saved on blur.</p>
+                  </div>
+
+                  {/* Booking URL */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                      Booking URL
+                    </label>
+                    <input
+                      type="url"
+                      key={`booking-${b.id}`}
+                      defaultValue={b.booking_url ?? ''}
+                      placeholder="https://your-booking-link.com"
+                      className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-rose-400 focus:outline-none"
+                      onBlur={(e) => updateField(b.id, 'booking_url', e.target.value || null)}
+                    />
+                    <p className="mt-0.5 text-[11px] text-neutral-400">Fresha, Kitomba, Timely, or any direct link. Saved on blur.</p>
+                  </div>
+
+                  {/* Walk-ins */}
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={b.walk_ins_welcome ?? false}
+                        onChange={(e) => updateField(b.id, 'walk_ins_welcome', e.target.checked)}
+                        className="h-4 w-4 rounded border-neutral-300 text-rose-500 focus:ring-rose-400"
+                      />
+                      <span className="text-sm font-medium text-neutral-700">
+                        Walk-ins welcome
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Opening hours */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                        Opening hours
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => saveHours(b.id)}
+                        className="rounded-full bg-rose-500 px-4 py-1.5 text-xs font-semibold text-white hover:bg-rose-400"
+                      >
+                        Save hours
+                      </button>
+                    </div>
+                    {hours[b.id] ? (
+                      <div className="mt-2 space-y-2">
+                        {hours[b.id].map((h) => (
+                          <div key={h.day_of_week} className="flex items-center gap-3">
+                            <span className="w-24 text-sm text-neutral-700">{DAYS[h.day_of_week]}</span>
+                            <label className="flex items-center gap-1.5">
+                              <input
+                                type="checkbox"
+                                checked={h.is_closed}
+                                onChange={(e) =>
+                                  updateHoursLocal(b.id, h.day_of_week, { is_closed: e.target.checked })
+                                }
+                                className="h-3.5 w-3.5"
+                              />
+                              <span className="text-xs text-neutral-500">Closed</span>
+                            </label>
+                            {!h.is_closed && (
+                              <>
+                                <input
+                                  type="time"
+                                  value={h.open_time ?? '09:00'}
+                                  onChange={(e) =>
+                                    updateHoursLocal(b.id, h.day_of_week, { open_time: e.target.value })
+                                  }
+                                  className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                                />
+                                <span className="text-xs text-neutral-400">–</span>
+                                <input
+                                  type="time"
+                                  value={h.close_time ?? '17:00'}
+                                  onChange={(e) =>
+                                    updateHoursLocal(b.id, h.day_of_week, { close_time: e.target.value })
+                                  }
+                                  className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                                />
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs text-neutral-400">Loading hours…</p>
+                    )}
+                  </div>
+
+                </div>
+              )}
             </li>
           ))}
         </ul>
