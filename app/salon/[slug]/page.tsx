@@ -8,9 +8,10 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
+import ShearGeniusBadge from '@/components/ShearGeniusBadge';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR — regenerate at most once per hour
 
 const TYPE_LABEL = {
   hair_salon: 'Hair Salon',
@@ -546,6 +547,9 @@ export default async function BusinessProfilePage({
           </aside>
         </div>
       </div>
+
+      {/* ─── ShearGenius supplier badge ─────────────── */}
+      <ShearGeniusBadge />
 
       {/* ─── Sticky mobile booking CTA ─────────────── */}
       {(business.booking_url || business.phone) && (

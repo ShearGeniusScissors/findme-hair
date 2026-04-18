@@ -13,7 +13,7 @@ import {
 } from '@/lib/search';
 import type { AuState } from '@/types/database';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR — regenerate at most once per hour
 
 interface Params {
   state: string;

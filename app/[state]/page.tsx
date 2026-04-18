@@ -6,7 +6,7 @@ import { AU_STATES, stateName } from '@/lib/geo';
 import { listRegions, searchBusinesses, countBusinessesByRegion } from '@/lib/search';
 import type { AuState, Region } from '@/types/database';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR — regenerate at most once per hour
 
 /* ─── Priority region ordering per state ──────────────── */
 
