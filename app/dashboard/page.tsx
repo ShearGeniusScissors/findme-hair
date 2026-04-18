@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase';
-import type { Business, OpeningHours } from '@/types/database';
+import type { Business, BusinessMedia, OpeningHours } from '@/types/database';
+
+const BUCKET = 'business-photos';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -22,10 +24,61 @@ export default function DashboardPage() {
   const supabase = supabaseBrowser();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [listings, setListings] = useState<Business[]>([]);
   const [hours, setHours] = useState<Record<string, OpeningHours[]>>({});
+  const [media, setMedia] = useState<Record<string, BusinessMedia[]>>({});
   const [status, setStatus] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const loadMedia = useCallback(async (businessId: string) => {
+    const { data } = await supabase
+      .from('business_media')
+      .select('*')
+      .eq('business_id', businessId)
+      .order('sort_order');
+    setMedia((prev) => ({ ...prev, [businessId]: (data ?? []) as BusinessMedia[] }));
+  }, [supabase]);
+
+  function photoUrl(storagePath: string) {
+    const { data } = supabaseBrowser().storage.from(BUCKET).getPublicUrl(storagePath);
+    return data.publicUrl;
+  }
+
+  async function uploadPhoto(businessId: string, file: File) {
+    if (!token) return;
+    flash('Uploading photo…');
+    const form = new FormData();
+    form.append('file', file);
+    form.append('businessId', businessId);
+    form.append('mediaType', 'gallery');
+    const res = await fetch('/api/photos', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+    const json = await res.json();
+    if (!res.ok) { flash(`Upload error: ${json.error}`); return; }
+    flash('Photo uploaded ✓');
+    await loadMedia(businessId);
+  }
+
+  async function deletePhoto(businessId: string, mediaId: string) {
+    if (!token) return;
+    flash('Deleting…');
+    const res = await fetch('/api/photos', {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mediaId }),
+    });
+    if (!res.ok) { flash('Delete failed'); return; }
+    flash('Deleted ✓');
+    setMedia((prev) => ({
+      ...prev,
+      [businessId]: (prev[businessId] ?? []).filter((m) => m.id !== mediaId),
+    }));
+  }
 
   const loadHours = useCallback(async (businessId: string) => {
     const { data } = await supabase
@@ -49,6 +102,8 @@ export default function DashboardPage() {
         return;
       }
       setEmail(user.email ?? null);
+      const { data: sess } = await supabase.auth.getSession();
+      setToken(sess.session?.access_token ?? null);
       const { data } = await supabase
         .from('businesses')
         .select('*')
@@ -118,9 +173,8 @@ export default function DashboardPage() {
       return;
     }
     setExpandedId(id);
-    if (!hours[id]) {
-      await loadHours(id);
-    }
+    if (!hours[id]) await loadHours(id);
+    if (!media[id]) await loadMedia(id);
   }
 
   if (loading) {
@@ -246,6 +300,57 @@ export default function DashboardPage() {
                         Walk-ins welcome
                       </span>
                     </label>
+                  </div>
+
+                  {/* Photos */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                        Photos
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRefs.current[b.id]?.click()}
+                        className="rounded-full bg-rose-500 px-4 py-1.5 text-xs font-semibold text-white hover:bg-rose-400"
+                      >
+                        + Add photo
+                      </button>
+                      <input
+                        ref={(el) => { fileInputRefs.current[b.id] = el; }}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadPhoto(b.id, file);
+                          e.target.value = '';
+                        }}
+                      />
+                    </div>
+                    {(media[b.id] ?? []).length === 0 ? (
+                      <p className="mt-2 text-xs text-neutral-400">No photos yet. Add up to 10 images (JPEG/PNG/WebP, max 5 MB each).</p>
+                    ) : (
+                      <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                        {(media[b.id] ?? []).map((m) => (
+                          <div key={m.id} className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photoUrl(m.storage_path)}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => deletePhoto(b.id, m.id)}
+                              className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white group-hover:flex items-center justify-center text-xs leading-none"
+                              aria-label="Delete photo"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Opening hours */}

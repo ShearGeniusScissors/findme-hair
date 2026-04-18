@@ -7,7 +7,7 @@ import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerAnon } from '@/lib/supabase';
 import type { AuState, Business } from '@/types/database';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR — regenerate at most once per hour
 
 interface CityConfig {
   name: string;
