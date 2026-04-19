@@ -190,7 +190,7 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
               <button
                 key={chip.key}
                 onClick={() => removeFilter(chip.key)}
-                className="inline-flex items-center gap-1 rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-gold-dark)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
+                className="inline-flex items-center gap-1 rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
               >
                 {chip.label}
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>

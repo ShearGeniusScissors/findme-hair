@@ -383,7 +383,7 @@ export default async function BusinessProfilePage({
                       <Link
                         key={s}
                         href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
-                        className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-gold-dark)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
+                        className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
                       >
                         {SPECIALTY_DISPLAY[s] ?? s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                       </Link>
