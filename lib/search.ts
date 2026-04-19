@@ -92,7 +92,7 @@ export async function detectRegionFromQuery(q: string): Promise<Region | null> {
 }
 
 export type QueryResolution =
-  | { kind: 'suburb'; name: string }
+  | { kind: 'suburb'; pattern: string } // ILIKE '%pattern%' against suburb column
   | { kind: 'region'; id: string; slug: string }
   | { kind: 'postcode'; code: string }
   | { kind: 'text'; value: string };
@@ -113,14 +113,15 @@ export async function resolveQuery(q: string): Promise<QueryResolution> {
 
   const supabase = supabaseServerAnon();
 
-  // Exact suburb name (case-insensitive). Works across states — caller applies
-  // the filter with `.ilike('suburb', name)` which catches NSW + VIC Newtowns together.
+  // Any suburb whose name contains the query (case-insensitive).
+  // Catches variants: "bondi" → Bondi + Bondi Beach + Bondi Junction + North Bondi.
+  // "perth" → Perth + East/North/South/West Perth. "newtown" → all states.
   const { data: subs } = await supabase
     .from('suburbs')
     .select('name')
-    .ilike('name', trimmed)
+    .ilike('name', `%${trimmed}%`)
     .limit(1);
-  if (subs && subs.length > 0) return { kind: 'suburb', name: subs[0].name };
+  if (subs && subs.length > 0) return { kind: 'suburb', pattern: trimmed };
 
   // Region by slug (spaces → dashes)
   const slug = trimmed.toLowerCase().replace(/\s+/g, '-');
@@ -156,7 +157,7 @@ async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any
     const resolved = await resolveQuery(filters.q);
     switch (resolved.kind) {
       case 'suburb':
-        query = query.ilike('suburb', resolved.name);
+        query = query.ilike('suburb', `%${resolved.pattern}%`);
         break;
       case 'region':
         query = query.eq('region_id', resolved.id);

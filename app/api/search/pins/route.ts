@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
   } else if (q) {
     const resolved = await resolveQuery(q);
     switch (resolved.kind) {
-      case 'suburb': query = query.ilike('suburb', resolved.name); break;
+      case 'suburb': query = query.ilike('suburb', `%${resolved.pattern}%`); break;
       case 'region': query = query.eq('region_id', resolved.id); break;
       case 'postcode': query = query.eq('postcode', resolved.code); break;
       case 'text': query = query.or(`name.ilike.%${resolved.value}%,suburb.ilike.%${resolved.value}%`); break;
