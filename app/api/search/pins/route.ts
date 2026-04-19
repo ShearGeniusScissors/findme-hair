@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServerAnon } from '@/lib/supabase';
+import { resolveQuery } from '@/lib/search';
 import type { AuState, BusinessType } from '@/types/database';
 
 const SERVICE_TO_TYPES: Record<string, BusinessType[]> = {
@@ -51,7 +52,6 @@ export async function GET(request: NextRequest) {
   }
 
   if (region) {
-    // Look up region id
     const { data: regionData } = await supabase
       .from('regions')
       .select('id')
@@ -59,21 +59,17 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
     if (regionData) query = query.eq('region_id', regionData.id);
   } else if (q) {
-    const slug = q.toLowerCase().trim().replace(/\s+/g, '-');
-    const { data: regionData } = await supabase
-      .from('regions')
-      .select('id')
-      .eq('slug', slug)
-      .maybeSingle();
-    if (regionData) {
-      query = query.or(`region_id.eq.${regionData.id},name.ilike.%${q}%,suburb.ilike.%${q}%,postcode.eq.${q}`);
-    } else {
-      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%,postcode.eq.${q}`);
+    const resolved = await resolveQuery(q);
+    switch (resolved.kind) {
+      case 'suburb': query = query.ilike('suburb', resolved.name); break;
+      case 'region': query = query.eq('region_id', resolved.id); break;
+      case 'postcode': query = query.eq('postcode', resolved.code); break;
+      case 'text': query = query.or(`name.ilike.%${resolved.value}%,suburb.ilike.%${resolved.value}%`); break;
     }
   }
 
   if (suburb) {
-    query = query.or(`suburb.ilike.${suburb},suburb.ilike.${suburb.replace(/-/g, ' ')}`);
+    query = query.ilike('suburb', suburb.replace(/-/g, ' '));
   }
 
   const { data, error } = await query;

@@ -47,7 +47,7 @@ export default async function SearchPage({
   const filters = {
     q: params.q,
     state: params.state as AuState | undefined,
-    region: params.region,
+    region: effectiveRegion,
     suburb: params.suburb,
     type: params.type as BusinessType | undefined,
     service: params.service,

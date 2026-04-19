@@ -91,6 +91,93 @@ export async function detectRegionFromQuery(q: string): Promise<Region | null> {
   return getRegionBySlug(slug);
 }
 
+export type QueryResolution =
+  | { kind: 'suburb'; name: string }
+  | { kind: 'region'; id: string; slug: string }
+  | { kind: 'postcode'; code: string }
+  | { kind: 'text'; value: string };
+
+/**
+ * Resolve a free-text query into the most specific geographic entity we know about.
+ * Preference order: postcode → suburb (exact name) → region (slug or name) → plain text.
+ *
+ * Returning a specific kind lets the caller apply a strict filter (e.g. region_id = X)
+ * instead of an OR across region + name + address that contaminates results with
+ * unrelated featured listings.
+ */
+export async function resolveQuery(q: string): Promise<QueryResolution> {
+  const trimmed = q.trim();
+  if (!trimmed) return { kind: 'text', value: '' };
+
+  if (/^\d{4}$/.test(trimmed)) return { kind: 'postcode', code: trimmed };
+
+  const supabase = supabaseServerAnon();
+
+  // Exact suburb name (case-insensitive). Works across states — caller applies
+  // the filter with `.ilike('suburb', name)` which catches NSW + VIC Newtowns together.
+  const { data: subs } = await supabase
+    .from('suburbs')
+    .select('name')
+    .ilike('name', trimmed)
+    .limit(1);
+  if (subs && subs.length > 0) return { kind: 'suburb', name: subs[0].name };
+
+  // Region by slug (spaces → dashes)
+  const slug = trimmed.toLowerCase().replace(/\s+/g, '-');
+  const { data: bySlug } = await supabase
+    .from('regions')
+    .select('id, slug')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (bySlug) return { kind: 'region', id: bySlug.id as string, slug: bySlug.slug as string };
+
+  // Region by exact name
+  const { data: byName } = await supabase
+    .from('regions')
+    .select('id, slug')
+    .ilike('name', trimmed)
+    .maybeSingle();
+  if (byName) return { kind: 'region', id: byName.id as string, slug: byName.slug as string };
+
+  return { kind: 'text', value: trimmed };
+}
+
+/**
+ * Applies the explicit region/suburb filters AND the resolved q-term in a single pass.
+ * We use strict equality/ILIKE-exact so results never contaminate with unrelated featured
+ * listings — the old OR(region_id, name ILIKE, address ILIKE, …) pattern was too lax.
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any> {
+  if (filters.region) {
+    const region = await getRegionBySlug(filters.region);
+    if (region) query = query.eq('region_id', region.id);
+  } else if (filters.q) {
+    const resolved = await resolveQuery(filters.q);
+    switch (resolved.kind) {
+      case 'suburb':
+        query = query.ilike('suburb', resolved.name);
+        break;
+      case 'region':
+        query = query.eq('region_id', resolved.id);
+        break;
+      case 'postcode':
+        query = query.eq('postcode', resolved.code);
+        break;
+      case 'text':
+        // Narrow fallback: match only name + suburb (address_line1 caused false positives).
+        query = query.or(`name.ilike.%${resolved.value}%,suburb.ilike.%${resolved.value}%`);
+        break;
+    }
+  }
+  if (filters.suburb) {
+    // Explicit suburb filter (e.g. from a suburb page): match exactly.
+    const name = filters.suburb.replace(/-/g, ' ');
+    query = query.ilike('suburb', name);
+  }
+  return query;
+}
+
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
   const supabase = supabaseServerAnon();
   const userLimit = filters.limit ?? 40;
@@ -117,22 +204,7 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     }
   }
 
-  // If a region filter is explicitly set, use it; otherwise try to detect from q
-  if (filters.region) {
-    const region = await getRegionBySlug(filters.region);
-    if (region) query = query.eq('region_id', region.id);
-  } else if (filters.q) {
-    const q = filters.q;
-    const regionMatch = await detectRegionFromQuery(q);
-    if (regionMatch) {
-      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%,postcode.eq.${q}`);
-    } else {
-      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%,postcode.eq.${q}`);
-    }
-  }
-  if (filters.suburb) {
-    query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
-  }
+  query = await applyGeoAndQuery(query, filters);
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
   }
@@ -180,21 +252,7 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
     }
   }
 
-  if (filters.region) {
-    const region = await getRegionBySlug(filters.region);
-    if (region) query = query.eq('region_id', region.id);
-  } else if (filters.q) {
-    const q = filters.q;
-    const regionMatch = await detectRegionFromQuery(q);
-    if (regionMatch) {
-      query = query.or(`region_id.eq.${regionMatch.id},name.ilike.%${q}%,suburb.ilike.%${q}%,postcode.eq.${q}`);
-    } else {
-      query = query.or(`name.ilike.%${q}%,suburb.ilike.%${q}%,address_line1.ilike.%${q}%,postcode.eq.${q}`);
-    }
-  }
-  if (filters.suburb) {
-    query = query.or(`suburb.ilike.${filters.suburb},suburb.ilike.${filters.suburb.replace(/-/g, ' ')}`);
-  }
+  query = await applyGeoAndQuery(query, filters);
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
   }
