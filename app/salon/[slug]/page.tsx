@@ -8,7 +8,9 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
+import { supabaseServerAnon } from '@/lib/supabase';
 import ShearGeniusBadge from '@/components/ShearGeniusBadge';
+import type { AuState } from '@/types/database';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -160,6 +162,24 @@ export default async function BusinessProfilePage({
   const suburbSlug = slugify(business.suburb);
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
+
+  // ShearGenius badge: only show in active service territories
+  const SG_TERRITORIES = new Set<AuState>(['VIC', 'SA', 'TAS']);
+  const showSgBadge = SG_TERRITORIES.has(business.state);
+  let sgLastVisit: string | null = null;
+  let sgNextVisit: string | null = null;
+  if (showSgBadge) {
+    const today = new Date().toISOString().slice(0, 10);
+    const db = supabaseServerAnon();
+    const [lastRes, nextRes] = await Promise.all([
+      db.from('field_runs').select('run_date').eq('state', business.state)
+        .lte('run_date', today).order('run_date', { ascending: false }).limit(1),
+      db.from('field_runs').select('run_date').eq('state', business.state)
+        .gt('run_date', today).order('run_date', { ascending: true }).limit(1),
+    ]);
+    sgLastVisit = (lastRes.data?.[0] as { run_date: string } | undefined)?.run_date ?? null;
+    sgNextVisit = (nextRes.data?.[0] as { run_date: string } | undefined)?.run_date ?? null;
+  }
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
@@ -548,8 +568,10 @@ export default async function BusinessProfilePage({
         </div>
       </div>
 
-      {/* ─── ShearGenius supplier badge ─────────────── */}
-      <ShearGeniusBadge />
+      {/* ─── ShearGenius supplier badge (VIC/SA/TAS only) ── */}
+      {showSgBadge && (
+        <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} />
+      )}
 
       {/* ─── Sticky mobile booking CTA ─────────────── */}
       {(business.booking_url || business.phone) && (
