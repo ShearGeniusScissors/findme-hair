@@ -396,13 +396,16 @@ async function getServiceBusinesses(config: ServiceConfig): Promise<Business[]> 
     return (data ?? []) as Business[];
   }
 
-  if (config.businessTypes.length === 1 && !config.nameKeywords) {
-    // Simple type filter (e.g. barber)
-    const { data } = await supabase
+  if (!config.nameKeywords) {
+    // Simple type filter (one or many types, no keyword refinement)
+    let q = supabase
       .from('businesses')
       .select('*')
-      .eq('status', 'active')
-      .eq('business_type', config.businessTypes[0])
+      .eq('status', 'active');
+    q = config.businessTypes.length === 1
+      ? q.eq('business_type', config.businessTypes[0])
+      : q.in('business_type', config.businessTypes);
+    const { data } = await q
       .order('featured_until', { ascending: false, nullsFirst: false })
       .order('google_rating', { ascending: false, nullsFirst: false })
       .order('google_review_count', { ascending: false, nullsFirst: false })
