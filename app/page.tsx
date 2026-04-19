@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import SearchBar from '@/components/SearchBar';
+import MatrixSearch from '@/components/MatrixSearch';
+import CategoryTiles from '@/components/CategoryTiles';
 import JsonLd from '@/components/JsonLd';
 import { supabaseServerAnon } from '@/lib/supabase';
 
@@ -53,8 +54,8 @@ export default async function HomePage() {
       }} />
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className="relative bg-[var(--color-white)]">
-        <div className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-20 sm:pb-16">
-          <p className="text-editorial-overline mb-6">
+        <div className="mx-auto max-w-6xl px-6 pt-14 pb-10 text-center sm:pt-20 sm:pb-14">
+          <p className="text-editorial-overline mb-5">
             Australia&rsquo;s Hair &amp; Barber Directory
           </p>
           <h1
@@ -64,20 +65,22 @@ export default async function HomePage() {
             Find your next<br />
             <span className="text-[var(--color-gold)]">great haircut</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-[var(--color-ink-light)] sm:text-lg">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--color-ink-light)] sm:text-lg">
             Every listing hand-verified. Hair salons and barber shops only &mdash;
             no beauty, no nails, no spa. Just hair.
           </p>
 
-          <div className="mx-auto mt-10 max-w-xl">
-            <SearchBar size="lg" />
+          <div className="mt-10 text-left">
+            <MatrixSearch totalCount={total} />
           </div>
-
         </div>
 
         {/* Subtle bottom edge */}
         <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
       </section>
+
+      {/* ─── Browse by service ─────────────────────────────── */}
+      <CategoryTiles />
 
       {/* ─── Proof bar ────────────────────────────────────── */}
       <section className="bg-[var(--color-surface)]">

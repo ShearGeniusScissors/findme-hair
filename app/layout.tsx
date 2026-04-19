@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import Link from "next/link";
+import BrandMark from "@/components/BrandMark";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -75,12 +76,8 @@ function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b bg-[var(--color-white)] border-[var(--color-border)]">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 no-underline border-none outline-none focus:outline-none focus-visible:outline-none">
-          <span className="text-xl font-normal tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: 'var(--font-serif)' }}>
-            findme<span className="text-[var(--color-gold)]">.</span>hair
-          </span>
-        </Link>
+        <BrandMark size="md" />
+
 
         <nav className="hidden md:flex items-center gap-8">
           <Link
@@ -139,12 +136,7 @@ function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-5">
           {/* Brand */}
           <div className="md:col-span-1">
-            <p
-              className="text-xl tracking-tight text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              findme<span className="text-[var(--color-gold)]">.</span>hair
-            </p>
+            <BrandMark size="md" href={null} />
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink-muted)]">
               Australia&rsquo;s hand-verified hair salon &amp; barber directory.
               Hair only — nothing else.
