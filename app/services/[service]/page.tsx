@@ -196,8 +196,6 @@ const SERVICES: ServiceConfig[] = [
     description: 'Salons for women\'s cuts and styling',
     metaDescription: 'Find ladies haircut specialists near you. Hair salons offering bobs, layers, long-hair styling, and precision cuts across Australia. Verified listings.',
     businessTypes: ['hair_salon', 'unisex'],
-    nameKeywords: ['ladies', 'women', 'womens', 'hair salon'],
-    specialtyTag: 'womens',
     content: {
       intro: 'A great ladies haircut is the foundation of every style — the cut determines how your hair falls, how long it lasts between salon visits, and how much effort you need at home. Whether you want a sharp bob, soft layers, a pixie, or length with movement, finding a stylist who listens and understands your hair is worth the search.',
       whatToLook: [
