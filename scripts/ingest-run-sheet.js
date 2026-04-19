@@ -221,6 +221,17 @@ async function main() {
 
       ALTER TABLE verification_log
         ADD COLUMN IF NOT EXISTS field_run_id uuid REFERENCES field_runs(id) ON DELETE SET NULL;
+
+      CREATE TABLE IF NOT EXISTS coordination_log (
+        id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        from_org    text NOT NULL,
+        to_org      text NOT NULL,
+        topic       text NOT NULL,
+        logged_at   timestamptz NOT NULL DEFAULT now()
+      );
+
+      ALTER TABLE coordination_log
+        ADD COLUMN IF NOT EXISTS payload jsonb;
     `);
 
     // ── Ensure record_field_verification helper exists ─────────────────────────
@@ -465,6 +476,29 @@ async function main() {
     console.log(`  Already processed:    ${counters.skipped_idempotent}`);
     console.log('══════════════════════════════════════════════════\n');
 
+    // ── Write coordination_log entry ──────────────────────────────────────────
+    await pg.query(
+      `INSERT INTO coordination_log (from_org, to_org, topic, message, payload)
+       VALUES ('SG', 'FMH', 'run_sheet_ingest', $1, $2)`,
+      [
+        `Run sheet ingested: ${meta.operator} / ${meta.territory} / ${runDate} — ${stops.length} stops`,
+        JSON.stringify({
+          field_run_id:   fieldRunId,
+          operator:       meta.operator,
+          run_date:       runDate,
+          territory:      meta.territory,
+          source_doc:     meta.source_doc,
+          stops_total:    stops.length,
+          matched:        counters.matched,
+          created:        counters.created,
+          excluded:       counters.excluded,
+          cannot_confirm: counters.cannot_confirm,
+          needs_review:   counters.needs_review,
+        }),
+      ],
+    );
+    console.log('  coordination_log entry written (SG → FMH)');
+
     // Query needs_review listings for operator reference
     if (counters.needs_review > 0) {
       const reviewRes = await pg.query(
@@ -472,7 +506,6 @@ async function main() {
          FROM businesses b
          JOIN verification_log vl ON vl.business_id = b.id
          WHERE vl.field_run_id = $1
-           AND b.import_source = 'shear_genius'
            AND b.status = 'unverified'
          ORDER BY b.name`,
         [fieldRunId],
