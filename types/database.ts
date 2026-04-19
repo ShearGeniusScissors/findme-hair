@@ -82,6 +82,7 @@ export interface Business {
   scraped_at: string | null;
   walk_ins_welcome: boolean | null;
   walk_ins_source: string | null;
+  preferred_scissor_supplier_url: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -100,6 +100,14 @@ export default function AdminPage() {
     })();
   }, [supabase, load]);
 
+  async function saveSupplierUrl(id: string, url: string) {
+    const trimmed = url.trim() || null;
+    await supabase.from('businesses').update({ preferred_scissor_supplier_url: trimmed }).eq('id', id);
+    setBusinesses((prev) => prev.map((b) => b.id === id ? { ...b, preferred_scissor_supplier_url: trimmed } : b));
+    setStatus(trimmed ? 'Supplier URL saved' : 'Supplier URL cleared');
+    setTimeout(() => setStatus(null), 2000);
+  }
+
   async function setBusinessStatus(ids: string[], next: 'active' | 'excluded' | 'unverified') {
     if (ids.length === 0) return;
     setStatus(`Updating ${ids.length}…`);
@@ -322,6 +330,24 @@ export default function AdminPage() {
                       <p className="font-semibold text-neutral-900">{b.name}</p>
                       {b.address_line1 && (
                         <p className="text-xs text-neutral-500">{b.address_line1}</p>
+                      )}
+                      {tab === 'active' && (
+                        <div className="mt-1.5 flex items-center gap-1">
+                          <input
+                            type="url"
+                            defaultValue={b.preferred_scissor_supplier_url ?? ''}
+                            placeholder="Supplier URL (optional)"
+                            onBlur={(e) => {
+                              if (e.target.value !== (b.preferred_scissor_supplier_url ?? '')) {
+                                saveSupplierUrl(b.id, e.target.value);
+                              }
+                            }}
+                            className="w-48 rounded border border-neutral-200 px-2 py-0.5 text-[11px] text-neutral-600 placeholder-neutral-300 focus:border-rose-300 focus:outline-none"
+                          />
+                          {b.preferred_scissor_supplier_url && (
+                            <span className="inline-block rounded-full bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-600">✂</span>
+                          )}
+                        </div>
                       )}
                     </td>
                     <td className="py-3">{b.suburb}, {b.state}</td>

@@ -562,6 +562,38 @@ export default async function BusinessProfilePage({
               <MapView pins={[business]} height={280} />
             </div>
 
+            {/* Preferred scissor supplier badge */}
+            {business.preferred_scissor_supplier_url && (() => {
+              const supplierUrl = new URL(business.preferred_scissor_supplier_url);
+              supplierUrl.searchParams.set('utm_source', 'findme.hair');
+              supplierUrl.searchParams.set('utm_medium', 'referral');
+              supplierUrl.searchParams.set('utm_campaign', 'supplier-link');
+              supplierUrl.searchParams.set('utm_content', business.slug);
+              return (
+                <div className="card p-5">
+                  <p className="text-xs text-[var(--color-ink-muted)] mb-2 font-medium uppercase tracking-wide">Preferred Scissors</p>
+                  <a
+                    href={supplierUrl.toString()}
+                    target="_blank"
+                    rel="sponsored noopener"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] transition-colors"
+                  >
+                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="6" cy="6" r="3" />
+                      <circle cx="6" cy="18" r="3" />
+                      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                    </svg>
+                    {supplierUrl.hostname.replace(/^www\./, '')}
+                    <svg className="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  </a>
+                </div>
+              );
+            })()}
+
             {/* Claim banner */}
             {!business.is_claimed && <ClaimBanner slug={business.slug} />}
           </aside>
