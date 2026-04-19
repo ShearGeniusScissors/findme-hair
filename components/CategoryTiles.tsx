@@ -35,12 +35,13 @@ function Wave() {
   );
 }
 
-function Lines() {
+function Smile() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <line x1="7" y1="4" x2="7" y2="20" />
-      <line x1="12" y1="4" x2="12" y2="20" />
-      <line x1="17" y1="4" x2="17" y2="20" />
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <line x1="9" y1="9.5" x2="9" y2="10" />
+      <line x1="15" y1="9.5" x2="15" y2="10" />
     </svg>
   );
 }
@@ -49,17 +50,6 @@ function Diamond() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M12 3l8 8-8 10-8-10z" />
-    </svg>
-  );
-}
-
-function Smile() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-      <line x1="9" y1="9.5" x2="9" y2="10" />
-      <line x1="15" y1="9.5" x2="15" y2="10" />
     </svg>
   );
 }
@@ -83,12 +73,12 @@ function Ribbon() {
 }
 
 const TILES: Tile[] = [
-  { label: 'Barber', href: '/services/barber', icon: <Scissors /> },
-  { label: 'Colour', href: '/services/balayage-specialist', icon: <Droplet /> },
+  { label: "Men's Cut", href: '/services/mens-haircut', icon: <Scissors /> },
+  { label: 'Ladies Cut', href: '/services/ladies-cut', icon: <Scissors /> },
+  { label: 'Balayage', href: '/services/balayage-specialist', icon: <Droplet /> },
   { label: 'Curls', href: '/services/curly-hair-specialist', icon: <Wave /> },
-  { label: 'Fades', href: '/search?type=barber&q=fade', icon: <Lines /> },
   { label: 'Bridal', href: '/services/bridal-hair', icon: <Diamond /> },
-  { label: 'Kids', href: '/search?q=kids', icon: <Smile /> },
+  { label: 'Kids', href: '/services/kids-hairdresser', icon: <Smile /> },
   { label: 'Mobile', href: '/services/mobile-hairdresser', icon: <Car /> },
   { label: 'Extensions', href: '/services/hair-extensions', icon: <Ribbon /> },
 ];

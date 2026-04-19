@@ -124,7 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Service filter pages (12 original + 3 new specialty-driven)
   const services = [
     'mobile-hairdresser', 'balayage-specialist', 'curly-hair-specialist', 'colour-correction', 'barber', 'bridal-hair',
-    'kids-hairdresser', 'mens-haircut', 'hair-extensions', 'japanese-hairdresser', 'korean-hair-salon', 'wedding-hair',
+    'kids-hairdresser', 'mens-haircut', 'ladies-cut', 'hair-extensions', 'japanese-hairdresser', 'korean-hair-salon', 'wedding-hair',
     'colour-specialist', 'keratin-treatment', 'highlights',
   ];
   const servicePages: MetadataRoute.Sitemap = services.map((s) => ({

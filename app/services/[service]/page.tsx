@@ -190,6 +190,27 @@ const SERVICES: ServiceConfig[] = [
     },
   },
   {
+    slug: 'ladies-cut',
+    name: 'Ladies Haircuts',
+    h1: 'Ladies Haircut Specialists in Australia',
+    description: 'Salons for women\'s cuts and styling',
+    metaDescription: 'Find ladies haircut specialists near you. Hair salons offering bobs, layers, long-hair styling, and precision cuts across Australia. Verified listings.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['ladies', 'women', 'womens', 'hair salon'],
+    specialtyTag: 'womens',
+    content: {
+      intro: 'A great ladies haircut is the foundation of every style — the cut determines how your hair falls, how long it lasts between salon visits, and how much effort you need at home. Whether you want a sharp bob, soft layers, a pixie, or length with movement, finding a stylist who listens and understands your hair is worth the search.',
+      whatToLook: [
+        'Look at the stylist\'s portfolio — do they cut the shape you\'re after?',
+        'Ask about consultation time — a good ladies cut starts with 5–10 minutes of discussion before any scissors come out',
+        'Check if they specialise in your hair texture (fine, thick, curly, wavy)',
+        'Ask whether they cut dry or wet — dry cutting suits curls and fringe detail; wet cutting suits precision bobs',
+      ],
+      closing: 'Ladies haircuts in Australia typically range from $65 for a trim at a local salon to $200+ at a senior stylist in a premium salon. Most stylists recommend a cut every 8–12 weeks to keep the shape fresh.',
+      proTip: { text: 'Precision cutting relies on sharp, well-balanced scissors. Senior stylists often invest in Japanese-steel shears that hold an edge for years —', linkText: 'ShearGenius offers professional scissors and Australia-wide sharpening', linkHref: 'https://www.sheargenius.com.au' },
+    },
+  },
+  {
     slug: 'hair-extensions',
     name: 'Hair Extension Specialists',
     h1: 'Hair Extension Specialists in Australia',

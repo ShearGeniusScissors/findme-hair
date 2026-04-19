@@ -53,8 +53,8 @@ export default async function HomePage() {
         },
       }} />
       {/* ─── Hero ─────────────────────────────────────────── */}
-      <section className="relative bg-[var(--color-white)]">
-        <div className="mx-auto max-w-6xl px-6 pt-14 pb-10 text-center sm:pt-20 sm:pb-14">
+      <section className="relative bg-[var(--color-surface)]">
+        <div className="mx-auto max-w-6xl px-6 pt-16 pb-16 text-center sm:pt-24 sm:pb-20">
           <p className="text-editorial-overline mb-5">
             Australia&rsquo;s Hair &amp; Barber Directory
           </p>
@@ -70,13 +70,10 @@ export default async function HomePage() {
             no beauty, no nails, no spa. Just hair.
           </p>
 
-          <div className="mt-10 text-left">
+          <div className="mt-12 text-left">
             <MatrixSearch totalCount={total} />
           </div>
         </div>
-
-        {/* Subtle bottom edge */}
-        <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
       </section>
 
       {/* ─── Browse by service ─────────────────────────────── */}

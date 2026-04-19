@@ -1,3 +1,4 @@
+import MatrixSearch from '@/components/MatrixSearch';
 import SearchFilters from '@/components/SearchFilters';
 import SearchResults from '@/components/SearchResults';
 import {
@@ -22,6 +23,9 @@ interface SearchParams {
   specialty?: string;
   walk_ins?: string;
   min_rating?: string;
+  distance?: string;
+  open_now?: string;
+  claimed?: string;
 }
 
 export default async function SearchPage({
@@ -48,7 +52,9 @@ export default async function SearchPage({
     type: params.type as BusinessType | undefined,
     service: params.service,
     specialty: params.specialty,
-    walk_ins: params.walk_ins === 'true' ? true : undefined,
+    walk_ins: params.walk_ins === 'true' || params.walk_ins === '1' ? true : undefined,
+    claimed: params.claimed === '1' ? true : undefined,
+    open_now: params.open_now === '1' ? true : undefined,
     min_rating: params.min_rating ? parseFloat(params.min_rating) : undefined,
   };
 
@@ -81,11 +87,33 @@ export default async function SearchPage({
   if (params.service) clientParams.service = params.service;
   if (params.specialty) clientParams.specialty = params.specialty;
   if (params.walk_ins) clientParams.walk_ins = params.walk_ins;
+  if (params.claimed) clientParams.claimed = params.claimed;
+  if (params.open_now) clientParams.open_now = params.open_now;
   if (params.min_rating) clientParams.min_rating = params.min_rating;
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
-      {/* ─── Search header with filters ──────────── */}
+      {/* ─── Sticky MatrixSearch (compact) ─────────── */}
+      <div className="sticky top-16 z-30 border-b border-[var(--color-border)] bg-[var(--color-white)]">
+        <div className="mx-auto max-w-7xl px-6 py-3">
+          <MatrixSearch
+            totalCount={totalCount}
+            variant="compact"
+            initial={{
+              q: params.q,
+              type: params.type,
+              service: params.service,
+              distance: params.distance,
+              walk_ins: params.walk_ins === 'true' || params.walk_ins === '1',
+              open_now: params.open_now === '1',
+              claimed: params.claimed === '1',
+              min_rating_4: params.min_rating ? parseFloat(params.min_rating) >= 4 : false,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ─── Advanced filters (regions, specialties) ──── */}
       <SearchFilters
         regions={regions.map((r) => ({ slug: r.slug, name: r.name, state: r.state }))}
         suburbs={suburbs}

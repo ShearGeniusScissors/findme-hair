@@ -10,9 +10,56 @@ export interface SearchFilters {
   service?: string;
   specialty?: string; // matches specialties[] array column
   walk_ins?: boolean;
+  claimed?: boolean;
+  open_now?: boolean;
   min_rating?: number;
   limit?: number;
   offset?: number;
+}
+
+interface GooglePeriod {
+  open?: { day: number; hour: number; minute: number };
+  close?: { day: number; hour: number; minute: number };
+}
+
+/** Minutes-since-Sunday-00:00 in Australia/Sydney (covers AEDT/AEST). */
+function nowMinutesInAuLocal(): { day: number; mins: number } {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Sydney',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+  const wd = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun';
+  const hh = parseInt(parts.find((p) => p.type === 'hour')?.value ?? '0', 10);
+  const mm = parseInt(parts.find((p) => p.type === 'minute')?.value ?? '0', 10);
+  const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  return { day: dayMap[wd] ?? 0, mins: hh * 60 + mm };
+}
+
+export function isOpenNow(googleHours: unknown): boolean {
+  const h = googleHours as { periods?: GooglePeriod[] } | null;
+  if (!h?.periods?.length) return false;
+  const now = nowMinutesInAuLocal();
+  const nowAbs = now.day * 1440 + now.mins;
+  for (const p of h.periods) {
+    if (!p.open) continue;
+    const openAbs = p.open.day * 1440 + p.open.hour * 60 + p.open.minute;
+    // Missing close = open 24h on that day; treat as open for that day only.
+    if (!p.close) {
+      if (openAbs <= nowAbs && nowAbs < openAbs + 1440) return true;
+      continue;
+    }
+    let closeAbs = p.close.day * 1440 + p.close.hour * 60 + p.close.minute;
+    if (closeAbs <= openAbs) closeAbs += 7 * 1440; // wraps past Saturday night
+    // Check this week and previous week (covers a Saturday-night → Sunday-morning span)
+    if ((openAbs <= nowAbs && nowAbs < closeAbs) ||
+        (openAbs - 7 * 1440 <= nowAbs && nowAbs < closeAbs - 7 * 1440)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** Map service filter values to business_type(s) */
@@ -25,6 +72,17 @@ const SERVICE_TO_TYPES: Record<string, BusinessType[]> = {
   extensions: ['hair_salon', 'unisex'],
   mens: ['barber', 'unisex'],
   womens: ['hair_salon', 'unisex'],
+  'mens-haircut': ['barber', 'unisex'],
+  'ladies-cut': ['hair_salon', 'unisex'],
+  'balayage-specialist': ['hair_salon', 'unisex'],
+  'colour-specialist': ['hair_salon', 'unisex'],
+  'curly-hair-specialist': ['hair_salon', 'unisex'],
+  'bridal-hair': ['hair_salon', 'unisex'],
+  'kids-hairdresser': ['hair_salon', 'unisex'],
+  'mobile-hairdresser': ['hair_salon', 'unisex'],
+  'hair-extensions': ['hair_salon', 'unisex'],
+  'keratin-treatment': ['hair_salon', 'unisex'],
+  highlights: ['hair_salon', 'unisex'],
 };
 
 /** Detect if a search query matches a known region slug */
@@ -35,6 +93,9 @@ export async function detectRegionFromQuery(q: string): Promise<Region | null> {
 
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
   const supabase = supabaseServerAnon();
+  const userLimit = filters.limit ?? 40;
+  // When open_now is active we over-fetch, filter in JS, then trim.
+  const dbLimit = filters.open_now ? Math.min(userLimit * 6, 400) : userLimit;
   let query = supabase
     .from('businesses')
     .select('*')
@@ -42,7 +103,7 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     .order('featured_until', { ascending: false, nullsFirst: false })
     .order('confidence_score', { ascending: false, nullsFirst: false })
     .order('google_rating', { ascending: false, nullsFirst: false })
-    .limit(filters.limit ?? 40);
+    .limit(dbLimit);
 
   if (filters.state) query = query.eq('state', filters.state);
   if (filters.type) {
@@ -78,6 +139,9 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
   if (filters.walk_ins) {
     query = query.eq('walk_ins_welcome', true);
   }
+  if (filters.claimed) {
+    query = query.eq('is_claimed', true);
+  }
   if (filters.min_rating) {
     query = query.gte('google_rating', filters.min_rating);
   }
@@ -85,11 +149,20 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
 
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as Business[];
+  const rows = (data ?? []) as Business[];
+  if (filters.open_now) {
+    return rows.filter((b) => isOpenNow(b.google_hours)).slice(0, userLimit);
+  }
+  return rows;
 }
 
 export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit' | 'offset'>): Promise<number> {
   const supabase = supabaseServerAnon();
+  // open_now cannot be filtered server-side, so count an over-fetched sample.
+  if (filters.open_now) {
+    const rows = await searchBusinesses({ ...filters, limit: 400 });
+    return rows.length;
+  }
   let query = supabase
     .from('businesses')
     .select('*', { count: 'exact', head: true })
@@ -127,6 +200,9 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
   }
   if (filters.walk_ins) {
     query = query.eq('walk_ins_welcome', true);
+  }
+  if (filters.claimed) {
+    query = query.eq('is_claimed', true);
   }
   if (filters.min_rating) {
     query = query.gte('google_rating', filters.min_rating);

@@ -32,17 +32,30 @@ export default function OgImage() {
           }}
         />
 
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
-          <span style={{ fontSize: 72, color: '#FFFFFF', fontWeight: 400 }}>
-            findme
-          </span>
-          <span style={{ fontSize: 72, color: '#C9A96E', fontWeight: 400 }}>
-            .
-          </span>
-          <span style={{ fontSize: 72, color: '#FFFFFF', fontWeight: 400 }}>
-            hair
-          </span>
+        {/* Logo — F mark + wordmark */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 96,
+              height: 96,
+              backgroundColor: '#FFFFFF',
+              borderRadius: 16,
+              fontSize: 68,
+              color: '#C9A96E',
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
+          >
+            F
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+            <span style={{ fontSize: 72, color: '#FFFFFF', fontWeight: 400 }}>findme</span>
+            <span style={{ fontSize: 72, color: '#C9A96E', fontWeight: 400 }}>.</span>
+            <span style={{ fontSize: 72, color: '#FFFFFF', fontWeight: 400 }}>hair</span>
+          </div>
         </div>
 
         {/* Subtitle */}
