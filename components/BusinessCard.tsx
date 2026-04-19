@@ -108,7 +108,7 @@ export default function BusinessCard({ business }: { business: Business }) {
             {specialties.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--color-gold-dark)]"
+                className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--color-ink)]"
               >
                 {SPECIALTY_DISPLAY[tag] ?? tag.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
               </span>
