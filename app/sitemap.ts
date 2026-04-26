@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/best-haircut-australia`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/stats`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
     { url: `${base}/reviews`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
+    { url: `${base}/scissor-sharpening`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ];
 
   // State pages
