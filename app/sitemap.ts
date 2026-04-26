@@ -156,6 +156,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/barber-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/mobile-hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/cheap-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
   ];
 
   // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]

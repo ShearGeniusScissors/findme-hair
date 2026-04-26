@@ -364,17 +364,22 @@ export async function generateMetadata({
   const config = SERVICES.find((s) => s.slug === service);
   if (!config) return {};
 
+  const path = `https://www.findme.hair/services/${config.slug}`;
   return {
     title: `${config.name} Near You — findme.hair`,
     description: config.metaDescription,
-    alternates: { canonical: `https://www.findme.hair/services/${config.slug}` },
+    alternates: {
+      canonical: path,
+      languages: { 'en-AU': path, 'x-default': path },
+    },
     openGraph: {
       title: `${config.name} — findme.hair`,
       description: config.metaDescription,
-      url: `https://www.findme.hair/services/${config.slug}`,
+      url: path,
       siteName: 'findme.hair',
       locale: 'en_AU',
       type: 'website',
+      images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
     },
   };
 }
@@ -455,6 +460,29 @@ export default async function ServicePage({
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
           { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.findme.hair/search' },
           { '@type': 'ListItem', position: 3, name: config.name },
+        ],
+      }} />
+      {businesses.length > 0 && (
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: `${config.h1}`,
+          numberOfItems: businesses.length,
+          itemListElement: businesses.map((b, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `https://www.findme.hair/salon/${b.slug}`,
+            name: b.name,
+          })),
+        }} />
+      )}
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          { '@type': 'Question', name: `What does a ${config.name.toLowerCase().replace(/s$/, '')} do?`, acceptedAnswer: { '@type': 'Answer', text: config.content.intro } },
+          { '@type': 'Question', name: `What should I look for in a ${config.name.toLowerCase().replace(/s$/, '')}?`, acceptedAnswer: { '@type': 'Answer', text: config.content.whatToLook.join(' ') } },
+          { '@type': 'Question', name: `Where can I find a ${config.name.toLowerCase()} in Australia?`, acceptedAnswer: { '@type': 'Answer', text: `${config.name} are listed across every Australian state on findme.hair. Use the listings above or browse by city to find one near you.` } },
         ],
       }} />
 
