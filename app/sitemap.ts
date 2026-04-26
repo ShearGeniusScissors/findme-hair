@@ -163,6 +163,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/mobile-hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
     { url: `${base}/cheap-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-extensions-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/blow-dry-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-colourist-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/kids-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/best-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/balayage-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/korean-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${base}/curly-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
   ];
 
   // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]
