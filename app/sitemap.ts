@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { supabaseServerAnon } from '@/lib/supabase';
+import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // regenerate daily
@@ -150,5 +151,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...blogPages, ...servicePages, ...aboutPage];
+  // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] for top 97 high-density suburbs
+  const suburbPivotRoutes = ['hairdresser', 'barber'];
+  const suburbPivotPages: MetadataRoute.Sitemap = TOP_SUBURBS.flatMap((s) =>
+    suburbPivotRoutes.map((route) => ({
+      url: `${base}/${route}/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.82,
+    }))
+  );
+
+  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...suburbPivotPages, ...blogPages, ...servicePages, ...aboutPage];
 }
