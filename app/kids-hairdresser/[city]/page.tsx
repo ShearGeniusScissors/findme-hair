@@ -123,7 +123,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Kids stylists in {city} need scissors that stay sharp through hundreds of fast, short cuts. ShearGenius supplies",
-          linkText: "professional Japanese-steel kids and salon scissors with lifetime sharpening",
+          linkText: "professional Japanese-steel kids and salon scissors with Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

@@ -123,7 +123,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Top barbers and men's stylists in {city} put their scissors through 30+ cuts a week. ShearGenius supplies",
-          linkText: "professional Japanese-steel barber scissors and lifetime sharpening",
+          linkText: "professional Japanese-steel barber scissors and Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/barber-scissors",
         },
       }}

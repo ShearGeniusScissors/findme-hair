@@ -46,7 +46,7 @@ export default function Page() {
         ],
         scissorPlug: {
           text: "Even at cheap prices, your stylist's tools matter. ShearGenius supplies",
-          linkText: "professional Japanese-steel scissors with lifetime sharpening for salons across Australia",
+          linkText: "professional Japanese-steel scissors with Australia-wide mail-in sharpening for salons across Australia",
           linkHref: "https://www.sheargenius.com.au/collections/hair-scissors",
         },
       }}

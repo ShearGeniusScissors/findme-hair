@@ -123,7 +123,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Japanese precision cutting in {city} is built on the right tools. ShearGenius supplies",
-          linkText: "Japanese Hitachi ATS-314 steel scissors with lifetime sharpening",
+          linkText: "Japanese Hitachi ATS-314 steel scissors with Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

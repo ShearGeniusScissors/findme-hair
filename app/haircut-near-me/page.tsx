@@ -47,7 +47,7 @@ export default function Page() {
         ],
         scissorPlug: {
           text: "Whatever cut you book, your stylist's most important tool is their scissors. ShearGenius supplies",
-          linkText: "Japanese-steel scissors with lifetime sharpening for barbers and hairdressers Australia-wide",
+          linkText: "Japanese-steel scissors with Australia-wide mail-in sharpening for barbers and hairdressers Australia-wide",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

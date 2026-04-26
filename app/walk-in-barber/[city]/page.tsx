@@ -125,7 +125,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Busy walk-in barbers in {city} put their scissors through more cuts than appointment-only shops. ShearGenius supplies",
-          linkText: "professional Japanese-steel scissors and lifetime sharpening",
+          linkText: "professional Japanese-steel scissors and Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/barber-scissors",
         },
       }}

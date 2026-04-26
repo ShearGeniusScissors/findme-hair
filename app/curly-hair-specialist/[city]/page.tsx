@@ -123,7 +123,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Curly cutters in {city} need scissors that hold a fine edge for chip and slide cutting on dry hair. ShearGenius supplies",
-          linkText: "Japanese Hitachi ATS-314 scissors with lifetime sharpening",
+          linkText: "Japanese Hitachi ATS-314 scissors with Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

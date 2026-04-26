@@ -123,7 +123,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Extension stylists in {city} use specialised scissors to blend tape and weft into the natural hair. ShearGenius supplies",
-          linkText: "Japanese-steel scissors with lifetime sharpening",
+          linkText: "Japanese-steel scissors with Australia-wide mail-in sharpening",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}
