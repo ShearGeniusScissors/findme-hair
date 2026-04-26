@@ -106,6 +106,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.85,
     },
+    {
+      url: `${base}/mobile-hairdresser/${c}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
   ]);
 
   // Blog pages
