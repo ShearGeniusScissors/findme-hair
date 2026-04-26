@@ -73,6 +73,14 @@ export default async function HomePage() {
           <div className="mt-12 text-left">
             <MatrixSearch totalCount={total} />
           </div>
+          <p className="mt-6 text-sm text-[var(--color-ink-muted)]">
+            Or jump straight to{' '}
+            <Link href="/hairdresser-near-me" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">Hairdresser Near Me</Link>
+            {' · '}
+            <Link href="/barber-near-me" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">Barber Near Me</Link>
+            {' · '}
+            <Link href="/haircut-near-me" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">Haircut Near Me</Link>
+          </p>
         </div>
       </section>
 
