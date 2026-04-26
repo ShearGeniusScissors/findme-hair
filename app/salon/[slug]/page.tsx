@@ -240,7 +240,7 @@ export default async function BusinessProfilePage({
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
           { '@type': 'ListItem', position: 2, name: stateName(business.state), item: `https://www.findme.hair/${business.state.toLowerCase()}` },
-          { '@type': 'ListItem', position: 3, name: business.suburb },
+          { '@type': 'ListItem', position: 3, name: business.suburb, item: `https://www.findme.hair/search?suburb=${encodeURIComponent(business.suburb)}&state=${business.state}` },
           { '@type': 'ListItem', position: 4, name: business.name },
         ],
       }} />
