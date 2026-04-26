@@ -132,16 +132,28 @@ export async function generateMetadata({
   const photoUrl = business.google_photos?.[0]?.name
     ? `https://places.googleapis.com/v1/${business.google_photos[0].name}/media?maxHeightPx=630&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
     : 'https://www.findme.hair/og-image.jpg';
+  const path = `https://www.findme.hair/salon/${business.slug}`;
+  // Title hard-capped at <60 chars: drop the "Hair Salon in" phrase and brand suffix on long names.
+  const baseTitle = `${business.name} — ${business.suburb}, ${business.state} | findme.hair`;
+  const title = baseTitle.length <= 60
+    ? baseTitle
+    : `${business.name.slice(0, 40)} — ${business.suburb} | findme.hair`;
   return {
-    title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}, ${business.state} | findme.hair`,
+    title,
     description: business.ai_description
       ? `${business.ai_description.slice(0, 155)}…`
       : `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online.`,
-    alternates: { canonical: `https://www.findme.hair/salon/${business.slug}` },
+    alternates: {
+      canonical: path,
+      languages: {
+        'en-AU': path,
+        'x-default': path,
+      },
+    },
     openGraph: {
       title: `${business.name} — ${TYPE_LABEL[business.business_type]} in ${business.suburb}`,
       description: `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}`,
-      url: `https://www.findme.hair/salon/${business.slug}`,
+      url: path,
       siteName: 'findme.hair',
       locale: 'en_AU',
       type: 'website',

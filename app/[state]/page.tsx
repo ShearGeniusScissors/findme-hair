@@ -50,14 +50,21 @@ export async function generateMetadata({
   const { state } = await params;
   const code = state.toUpperCase() as AuState;
   const name = stateName(code);
+  const path = `https://www.findme.hair/${state.toLowerCase()}`;
   return {
     title: `Hair Salons & Barbers in ${name} — findme.hair`,
     description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb. Free listings, real reviews.`,
-    alternates: { canonical: `https://www.findme.hair/${state.toLowerCase()}` },
+    alternates: {
+      canonical: path,
+      languages: {
+        'en-AU': path,
+        'x-default': path,
+      },
+    },
     openGraph: {
       title: `Hair Salons & Barbers in ${name} — findme.hair`,
       description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb.`,
-      url: `https://www.findme.hair/${state.toLowerCase()}`,
+      url: path,
       siteName: 'findme.hair',
       locale: 'en_AU',
       type: 'website',
@@ -110,7 +117,7 @@ export default async function StatePage({
       slug: 'melbourne',
       state: code,
       count: melbourneTotal,
-      href: `/search?state=VIC&q=Melbourne`,
+      href: `/${code.toLowerCase()}/melbourne`,
     });
   }
 
@@ -121,7 +128,7 @@ export default async function StatePage({
       slug: r.slug,
       state: r.state,
       count: countMap.get(r.id) ?? 0,
-      href: `/search?region=${r.slug}`,
+      href: `/${code.toLowerCase()}/${r.slug}`,
     });
   }
 

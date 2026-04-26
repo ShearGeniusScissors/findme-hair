@@ -34,12 +34,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (data.length < 1000) break;
     regionOffset += 1000;
   }
-  const regionPages: MetadataRoute.Sitemap = allRegions.map((r) => ({
-    url: `${base}/search?region=${r.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+  const regionPages: MetadataRoute.Sitemap = allRegions
+    .filter((r) => r.state && r.slug)
+    .map((r) => ({
+      url: `${base}/${String(r.state).toLowerCase()}/${r.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
 
   // Suburb pages — paginate to get all suburbs
   const allSuburbs: any[] = [];

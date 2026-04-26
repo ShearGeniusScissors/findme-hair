@@ -39,10 +39,19 @@ export async function generateMetadata({
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
   const hasListings = businesses.length > 0;
 
+  const path = `https://www.findme.hair/${state.toLowerCase()}/${region}/${suburb}`;
+  // Title is hard-capped at <60 chars: drop region, keep suburb + state code + brand.
+  const title = `Hair Salons & Barbers in ${suburbName}, ${stateCode} — findme.hair`;
   return {
-    title: `Hair Salons & Barbers in ${suburbName}, ${regionName} ${stateCode} — findme.hair`,
+    title,
     description: `Find hair salons and barbers in ${suburbName}${postcode ? ` ${postcode}` : ''}, ${fullState}. Verified listings with real Google reviews, hours, and Book Now links.`,
-    alternates: { canonical: `https://www.findme.hair/${state.toLowerCase()}/${region}/${suburb}` },
+    alternates: {
+      canonical: path,
+      languages: {
+        'en-AU': path,
+        'x-default': path,
+      },
+    },
     ...(!hasListings && { robots: { index: false, follow: true } }),
     openGraph: {
       title: `Hair Salons & Barbers in ${suburbName} — findme.hair`,
@@ -89,7 +98,7 @@ export default async function SuburbDirectoryPage({
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
           { '@type': 'ListItem', position: 2, name: fullState, item: `https://www.findme.hair/${stateCode.toLowerCase()}` },
-          { '@type': 'ListItem', position: 3, name: regionRow?.name ?? region, item: `https://www.findme.hair/search?region=${region}` },
+          { '@type': 'ListItem', position: 3, name: regionRow?.name ?? region, item: `https://www.findme.hair/${stateCode.toLowerCase()}/${region}` },
           { '@type': 'ListItem', position: 4, name: readable },
         ],
       }} />
@@ -119,7 +128,7 @@ export default async function SuburbDirectoryPage({
             {regionRow && (
               <>
                 <Chevron />
-                <Link href={`/search?region=${region}`} className="hover:text-[var(--color-gold-dark)]">
+                <Link href={`/${stateCode.toLowerCase()}/${region}`} className="hover:text-[var(--color-gold-dark)]">
                   {regionRow.name}
                 </Link>
               </>
