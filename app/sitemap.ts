@@ -93,26 +93,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra',
     'ballarat', 'geelong', 'newcastle', 'wollongong', 'gold-coast', 'sunshine-coast', 'townsville', 'cairns',
   ];
-  const cityGuidePages: MetadataRoute.Sitemap = cities.flatMap((c) => [
-    {
-      url: `${base}/best-hairdresser/${c}`,
+  // 12 city-pivot service routes × 16 cities = 192 URLs
+  const cityServiceRoutes = [
+    'best-hairdresser', 'best-barber', 'mobile-hairdresser',
+    'korean-hair-salon', 'japanese-hairdresser', 'walk-in-barber',
+    'kids-hairdresser', 'balayage-specialist', 'bridal-hair',
+    'hair-extensions', 'mens-haircut', 'curly-hair-specialist',
+  ];
+  const cityGuidePages: MetadataRoute.Sitemap = cities.flatMap((c) =>
+    cityServiceRoutes.map((route) => ({
+      url: `${base}/${route}/${c}`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
-      priority: 0.85,
-    },
-    {
-      url: `${base}/best-barber/${c}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.85,
-    },
-    {
-      url: `${base}/mobile-hairdresser/${c}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    },
-  ]);
+      priority: route.startsWith('best-') ? 0.85 : 0.78,
+    }))
+  );
 
   // Blog pages
   const blogSlugs = [
