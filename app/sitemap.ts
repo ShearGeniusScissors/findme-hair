@@ -151,8 +151,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
 
-  // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb]
-  const suburbPivotRoutes = ['hairdresser', 'barber', 'hair-salon'];
+  // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]
+  const suburbPivotRoutes = ['hairdresser', 'barber', 'hair-salon', 'at-home-hairdresser'];
   const suburbPivotPages: MetadataRoute.Sitemap = TOP_SUBURBS.flatMap((s) =>
     suburbPivotRoutes.map((route) => ({
       url: `${base}/${route}/${s.slug}`,
