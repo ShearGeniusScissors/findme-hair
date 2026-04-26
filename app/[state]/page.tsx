@@ -111,13 +111,19 @@ export default async function StatePage({
   const displayRegions: DisplayRegion[] = [];
 
   if (melbourneZones.length > 0) {
+    // Melbourne is a virtual aggregate (no single 'melbourne' region row — there are 7 melbourne-* zones).
+    // Link to the first zone as the primary entry-point so the link is hierarchical rather than a search URL.
+    const primaryMelbourneSlug =
+      melbourneZones.find((z) => z.slug === 'melbourne-cbd')?.slug ??
+      melbourneZones[0]?.slug ??
+      'melbourne-cbd';
     displayRegions.push({
       id: 'melbourne-metro',
       name: 'Melbourne',
-      slug: 'melbourne',
+      slug: primaryMelbourneSlug,
       state: code,
       count: melbourneTotal,
-      href: `/${code.toLowerCase()}/melbourne`,
+      href: `/${code.toLowerCase()}/${primaryMelbourneSlug}`,
     });
   }
 

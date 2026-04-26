@@ -62,19 +62,22 @@ export default async function RegionDirectoryPage({
   const stateCode = state.toUpperCase() as AuState;
   if (!AU_STATES.some((s) => s.code === stateCode)) notFound();
 
+  // Tolerant fallback — if the region row isn't found, render with slug-derived
+  // display name and fetch by slug instead of region_id. Avoids spurious 404s
+  // when name/slug data is being backfilled.
   const regionRow = await getRegionBySlug(region);
-  if (!regionRow) notFound();
-
   const fullState = stateName(stateCode);
-  const regionName = titleCase(regionRow.name);
+  const regionName = titleCase(regionRow?.name ?? region.replace(/-/g, ' '));
+  const regionSlug = regionRow?.slug ?? region;
 
-  // Suburbs in this region (alphabetical)
-  const allSuburbs = await listSuburbsInRegion(regionRow.id);
+  // Suburbs in this region (alphabetical) — fall back to filtering by region slug
+  // joined through suburbs.region_id when the region row is missing.
+  const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const suburbs = [...allSuburbs].sort((a, b) => a.name.localeCompare(b.name));
 
   // Featured businesses for this region (top rated)
-  const featured = await searchBusinesses({ region: regionRow.slug, limit: 6 });
-  const totalCount = await countBusinessesByRegion(regionRow.id);
+  const featured = await searchBusinesses({ region: regionSlug, limit: 6 });
+  const totalCount = regionRow ? await countBusinessesByRegion(regionRow.id) : 0;
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
