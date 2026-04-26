@@ -149,24 +149,47 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-8 sm:grid-cols-3">
-            {/* By city */}
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Best hairdressers by city */}
             <div>
-              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">By city</h3>
+              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">Best hairdressers</h3>
               <ul className="space-y-2">
                 {[
-                  { name: 'Melbourne', href: '/best-hairdresser/melbourne' },
-                  { name: 'Sydney', href: '/best-hairdresser/sydney' },
-                  { name: 'Brisbane', href: '/best-hairdresser/brisbane' },
-                  { name: 'Perth', href: '/best-hairdresser/perth' },
-                  { name: 'Adelaide', href: '/best-hairdresser/adelaide' },
-                  { name: 'Gold Coast', href: '/best-hairdresser/gold-coast' },
-                  { name: 'Newcastle', href: '/best-hairdresser/newcastle' },
-                  { name: 'Geelong', href: '/best-hairdresser/geelong' },
+                  { name: 'Melbourne', slug: 'melbourne' },
+                  { name: 'Sydney', slug: 'sydney' },
+                  { name: 'Brisbane', slug: 'brisbane' },
+                  { name: 'Perth', slug: 'perth' },
+                  { name: 'Adelaide', slug: 'adelaide' },
+                  { name: 'Gold Coast', slug: 'gold-coast' },
+                  { name: 'Newcastle', slug: 'newcastle' },
+                  { name: 'Geelong', slug: 'geelong' },
                 ].map((c) => (
-                  <li key={c.href}>
-                    <Link href={c.href} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                      Best hairdressers in {c.name} &rarr;
+                  <li key={c.slug}>
+                    <Link href={`/best-hairdresser/${c.slug}`} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                      In {c.name} &rarr;
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Best barbers by city — NEW */}
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-4">Best barbers</h3>
+              <ul className="space-y-2">
+                {[
+                  { name: 'Melbourne', slug: 'melbourne' },
+                  { name: 'Sydney', slug: 'sydney' },
+                  { name: 'Brisbane', slug: 'brisbane' },
+                  { name: 'Perth', slug: 'perth' },
+                  { name: 'Adelaide', slug: 'adelaide' },
+                  { name: 'Gold Coast', slug: 'gold-coast' },
+                  { name: 'Newcastle', slug: 'newcastle' },
+                  { name: 'Canberra', slug: 'canberra' },
+                ].map((c) => (
+                  <li key={c.slug}>
+                    <Link href={`/best-barber/${c.slug}`} className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                      In {c.name} &rarr;
                     </Link>
                   </li>
                 ))}
