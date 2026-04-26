@@ -5,7 +5,11 @@ import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerAnon } from '@/lib/supabase';
+import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
+
+const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
+const suburbToSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
@@ -351,15 +355,21 @@ export default async function CityGuidePage({
             Browse {config.name} suburbs
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {config.suburbs.map((s) => (
-              <Link
-                key={s}
-                href={`/search?q=${encodeURIComponent(s)}&state=${config.state}`}
-                className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
-              >
-                {titleCase(s)}
-              </Link>
-            ))}
+            {config.suburbs.map((s) => {
+              const slug = suburbToSlug(s);
+              const href = SUBURB_SLUG_SET.has(slug)
+                ? `/hairdresser/${slug}`
+                : `/search?q=${encodeURIComponent(s)}&state=${config.state}`;
+              return (
+                <Link
+                  key={s}
+                  href={href}
+                  className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
+                >
+                  {titleCase(s)}
+                </Link>
+              );
+            })}
           </div>
         </section>
 
