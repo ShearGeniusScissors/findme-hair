@@ -363,6 +363,26 @@ export default async function CityGuidePage({
           </div>
         </section>
 
+        {/* Cross-link to barber version */}
+        <section className="mt-8 card p-8">
+          <h2
+            className="text-lg text-[var(--color-ink)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            Looking for a barber instead?
+          </h2>
+          <p className="mt-3 text-sm text-[var(--color-ink-light)]">
+            Our{' '}
+            <Link
+              href={`/best-barber/${config.slug}`}
+              className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium"
+            >
+              best barbers in {config.name}
+            </Link>{' '}
+            guide covers traditional barbershops, fade specialists, and beard work in the same area.
+          </p>
+        </section>
+
         {/* Link to other city guides */}
         <section className="mt-8 card p-8">
           <h2
