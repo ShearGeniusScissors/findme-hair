@@ -56,6 +56,15 @@ export default function NearMePage({ content }: { content: NearMeContent }) {
           acceptedAnswer: { '@type': 'Answer', text: f.a },
         })),
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        url: path,
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', 'h2', '.text-editorial-overline'],
+        },
+      }} />
 
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">

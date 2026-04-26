@@ -73,6 +73,15 @@ export default function CityPivotPage({ city, businesses, content, allCities, em
           acceptedAnswer: { '@type': 'Answer', text: interp(f.a, vars) },
         })),
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        url: `https://www.findme.hair/${content.routePrefix}/${city.slug}`,
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', 'h2', '.text-editorial-overline'],
+        },
+      }} />
 
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">

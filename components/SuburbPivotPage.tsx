@@ -72,6 +72,15 @@ export default function SuburbPivotPage({ suburb, businesses, content, siblingSu
           acceptedAnswer: { '@type': 'Answer', text: interp(f.a, vars) },
         })),
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        url: `https://www.findme.hair/${content.routePrefix}/${suburb.slug}`,
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', 'h2', '.text-editorial-overline'],
+        },
+      }} />
 
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
