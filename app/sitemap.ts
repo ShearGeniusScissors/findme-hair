@@ -106,6 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'korean-hair-salon', 'japanese-hairdresser', 'walk-in-barber',
     'kids-hairdresser', 'balayage-specialist', 'bridal-hair',
     'hair-extensions', 'mens-haircut', 'curly-hair-specialist',
+    'best-haircut',
   ];
   const cityGuidePages: MetadataRoute.Sitemap = cities.flatMap((c) =>
     cityServiceRoutes.map((route) => ({
