@@ -198,6 +198,7 @@ export default async function BusinessProfilePage({
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': business.business_type === 'barber' ? 'BarberShop' : 'HairSalon',
+        '@id': `https://www.findme.hair/salon/${business.slug}#business`,
         name: business.name,
         url: `https://www.findme.hair/salon/${business.slug}`,
         address: {
@@ -209,16 +210,19 @@ export default async function BusinessProfilePage({
           addressCountry: 'AU',
         },
         ...(business.phone && { telephone: business.phone }),
-        ...(business.website_url && { url: business.website_url }),
-        ...(business.lat && business.lng && {
+        // External website goes in sameAs — was previously colliding with the canonical
+        // url field and breaking schema validation on ~9k pages.
+        ...(business.website_url && { sameAs: [business.website_url] }),
+        ...(business.lat != null && business.lng != null && {
           geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng },
         }),
-        ...(business.google_rating != null && business.google_review_count != null && {
+        ...(business.google_rating != null && (business.google_review_count ?? 0) > 0 && {
           aggregateRating: {
             '@type': 'AggregateRating',
             ratingValue: business.google_rating,
             reviewCount: business.google_review_count,
             bestRating: 5,
+            worstRating: 1,
           },
         }),
         ...(photos.length > 0 && {
