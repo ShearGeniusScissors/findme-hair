@@ -286,6 +286,26 @@ function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/trust" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Trust &amp; Editorial Standards
+                </Link>
+              </li>
+              <li>
+                <Link href="/stats" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Industry Stats
+                </Link>
+              </li>
+              <li>
+                <Link href="/press" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Press &amp; Media
+                </Link>
+              </li>
+              <li>
+                <Link href="/directory" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Full Directory Index
+                </Link>
+              </li>
+              <li>
                 <Link href="/claim" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
                   Claim Your Listing
                 </Link>
