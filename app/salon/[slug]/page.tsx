@@ -9,6 +9,8 @@ import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { supabaseServerAnon } from '@/lib/supabase';
+import { TOP_SUBURBS } from '@/lib/suburbConfig';
+import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
 import ShearGeniusBadge from '@/components/ShearGeniusBadge';
 import type { AuState } from '@/types/database';
 import type { Metadata } from 'next';
@@ -532,6 +534,46 @@ export default async function BusinessProfilePage({
                 </div>
               </section>
             )}
+
+            {/* Browse the area — internal linking to suburb + city pivot pages */}
+            {(() => {
+              const suburbSlug = slugify(business.suburb);
+              const matchedSuburb = TOP_SUBURBS.find((s) => s.slug === suburbSlug && s.state === business.state);
+              const matchedCity = PIVOT_CITIES.find((c) => c.state === business.state && (
+                business.suburb.toLowerCase() === c.name.toLowerCase() ||
+                c.suburbs.includes(business.suburb.toLowerCase())
+              ));
+              const isBarber = business.business_type === 'barber';
+              const links: Array<{ href: string; label: string }> = [];
+              if (matchedSuburb) {
+                links.push({ href: `/${isBarber ? 'barber' : 'hairdresser'}/${matchedSuburb.slug}`, label: `${isBarber ? 'Barbers' : 'Hairdressers'} in ${matchedSuburb.name}` });
+                if (!isBarber) {
+                  links.push({ href: `/hair-salon/${matchedSuburb.slug}`, label: `Hair Salons in ${matchedSuburb.name}` });
+                  links.push({ href: `/at-home-hairdresser/${matchedSuburb.slug}`, label: `At-Home Hairdressers in ${matchedSuburb.name}` });
+                }
+              }
+              if (matchedCity) {
+                links.push({ href: `/best-${isBarber ? 'barber' : 'hairdresser'}/${matchedCity.slug}`, label: `Best ${isBarber ? 'Barbers' : 'Hairdressers'} in ${matchedCity.name}` });
+              }
+              links.push({ href: `/${business.state.toLowerCase()}`, label: `All ${stateName(business.state)} salons & barbers` });
+              if (links.length === 0) return null;
+              return (
+                <section className="mt-10">
+                  <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                    Browse the area
+                  </h2>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {links.map((l) => (
+                      <li key={l.href}>
+                        <Link href={l.href} className="text-sm text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">
+                          {l.label} →
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })()}
           </div>
 
           {/* Right column */}
