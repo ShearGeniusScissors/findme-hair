@@ -151,6 +151,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
 
+  // High-volume "near me" landing pages
+  const nearMePages: MetadataRoute.Sitemap = [
+    { url: `${base}/barber-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+  ];
+
   // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]
   const suburbPivotRoutes = ['hairdresser', 'barber', 'hair-salon', 'at-home-hairdresser'];
   const suburbPivotPages: MetadataRoute.Sitemap = TOP_SUBURBS.flatMap((s) =>
@@ -162,5 +169,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...suburbPivotPages, ...blogPages, ...servicePages, ...aboutPage];
+  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
 }
