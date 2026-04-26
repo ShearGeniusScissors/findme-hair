@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import MatrixSearch from '@/components/MatrixSearch';
 import SearchFilters from '@/components/SearchFilters';
 import SearchResults from '@/components/SearchResults';
+import JsonLd from '@/components/JsonLd';
 import {
   listRegions,
   listSuburbsInRegion,
@@ -12,6 +14,24 @@ import {
 import type { AuState, BusinessType } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "Search Hair Salons & Barbers Near You — findme.hair",
+  description: "Search Australia's hand-verified hair salon and barber directory. Filter by suburb, region, type, walk-ins, specialty and rating.",
+  alternates: {
+    canonical: 'https://www.findme.hair/search',
+    languages: { 'en-AU': 'https://www.findme.hair/search', 'x-default': 'https://www.findme.hair/search' },
+  },
+  openGraph: {
+    title: "Search — findme.hair",
+    description: "Search Australia's hand-verified hair directory.",
+    url: 'https://www.findme.hair/search',
+    siteName: 'findme.hair',
+    locale: 'en_AU',
+    type: 'website',
+    images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
+  },
+};
 
 interface SearchParams {
   q?: string;
@@ -93,6 +113,27 @@ export default async function SearchPage({
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'Search hair salons and barbers',
+        url: 'https://www.findme.hair/search',
+        isPartOf: { '@id': 'https://www.findme.hair/#website' },
+        about: { '@id': 'https://www.findme.hair/#organization' },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: { '@type': 'EntryPoint', urlTemplate: 'https://www.findme.hair/search?q={search_term_string}' },
+          'query-input': 'required name=search_term_string',
+        },
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
+          { '@type': 'ListItem', position: 2, name: 'Search', item: 'https://www.findme.hair/search' },
+        ],
+      }} />
       {/* ─── Sticky MatrixSearch (compact) ─────────── */}
       <div className="sticky top-16 z-30 border-b border-[var(--color-border)] bg-[var(--color-white)]">
         <div className="mx-auto max-w-7xl px-6 py-3">
