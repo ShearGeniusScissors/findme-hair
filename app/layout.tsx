@@ -62,6 +62,43 @@ export default function RootLayout({
         <link rel="preconnect" href="https://taxuueemqtquihhzhgnr.supabase.co" />
         <link rel="alternate" hrefLang="en-AU" href="https://www.findme.hair/" />
         <meta name="theme-color" content="#C9A96E" />
+        {/* Organization + WebSite JSON-LD — entity authority signal */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'Organization',
+                  '@id': 'https://www.findme.hair/#organization',
+                  name: 'findme.hair',
+                  alternateName: 'Find Me Hair',
+                  url: 'https://www.findme.hair',
+                  logo: 'https://www.findme.hair/og-image.jpg',
+                  description: "Australia's hand-verified hair salon and barber directory. Hair only — no beauty, no nails, no spa.",
+                  areaServed: { '@type': 'Country', name: 'Australia' },
+                  knowsAbout: ['hairdressers', 'barbers', 'hair salons', 'mobile hairdressers', 'haircut', 'balayage', 'bridal hair', 'kids haircuts', 'mens haircuts', 'curly hair', 'hair extensions', 'Australian salons'],
+                  sameAs: ['https://www.sheargenius.com.au'],
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://www.findme.hair/#website',
+                  url: 'https://www.findme.hair',
+                  name: 'findme.hair',
+                  description: "Australia's hand-verified hair salon and barber directory.",
+                  inLanguage: 'en-AU',
+                  publisher: { '@id': 'https://www.findme.hair/#organization' },
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: { '@type': 'EntryPoint', urlTemplate: 'https://www.findme.hair/search?q={search_term_string}' },
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col">
         <SiteHeader />

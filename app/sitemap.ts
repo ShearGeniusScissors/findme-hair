@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${base}/for-salons`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/search`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${base}/directory`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
   ];
 
   // State pages
