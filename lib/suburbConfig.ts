@@ -109,4 +109,5 @@ export const TOP_SUBURBS: SuburbConfig[] = [
   { name: 'North Perth', slug: 'north-perth', state: 'WA', regionSlug: 'perth-cbd', regionName: 'Perth CBD', businesses: 23 },
   { name: 'Springvale', slug: 'springvale', state: 'VIC', regionSlug: 'melbourne-south-east', regionName: 'Melbourne South East', businesses: 23 },
   { name: 'Northcote', slug: 'northcote', state: 'VIC', regionSlug: 'melbourne-inner-north', regionName: 'Melbourne Inner North', businesses: 22 },
+  { name: 'Rockhampton', slug: 'rockhampton', state: 'QLD', regionSlug: 'rockhampton', regionName: 'Rockhampton', businesses: 18 },
 ];
