@@ -178,6 +178,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/womens-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/hair-stylist-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/hair-salon-open-now`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-color-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hairdresser-open-sunday`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-spa-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
   ];
 
   // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]
