@@ -162,21 +162,31 @@ function SiteFooter() {
 
           {/* Directory */}
           <div>
-            <p className="text-editorial-overline mb-4">Directory</p>
+            <p className="text-editorial-overline mb-4">Find a haircut</p>
             <ul className="space-y-2">
               <li>
+                <Link href="/hairdresser-near-me" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Hairdresser Near Me
+                </Link>
+              </li>
+              <li>
+                <Link href="/barber-near-me" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Barber Near Me
+                </Link>
+              </li>
+              <li>
+                <Link href="/haircut-near-me" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Haircut Near Me
+                </Link>
+              </li>
+              <li>
                 <Link href="/search?type=hair_salon" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Hair Salons
+                  All Hair Salons
                 </Link>
               </li>
               <li>
                 <Link href="/search?type=barber" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Barber Shops
-                </Link>
-              </li>
-              <li>
-                <Link href="/search?type=unisex" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Unisex Salons
+                  All Barber Shops
                 </Link>
               </li>
               <li>
