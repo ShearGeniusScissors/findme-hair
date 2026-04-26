@@ -154,6 +154,23 @@ export default async function StatePage({
           { '@type': 'ListItem', position: 2, name },
         ],
       }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: `Hair salons and barbers in ${name}`,
+        url: `https://www.findme.hair/${code.toLowerCase()}`,
+        about: { '@id': 'https://www.findme.hair/#organization' },
+        isPartOf: { '@id': 'https://www.findme.hair/#website' },
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          { '@type': 'Question', name: `Where can I find a hairdresser in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists verified hairdressers across all major ${name} regions and suburbs. Browse the regions below or use the search to find a salon by suburb name.` } },
+          { '@type': 'Question', name: `How are listings ranked in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `Listings are ranked by Google star rating and review count. Featured (paid) placement is clearly marked at the top of each region. The default ranking is editorial.` } },
+          { '@type': 'Question', name: `How many hair salons does findme.hair list in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair covers ${sorted.length} regions across ${name} with thousands of verified hair salons, barber shops, and unisex salons. Every listing is hand-verified.` } },
+        ],
+      }} />
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
