@@ -227,9 +227,9 @@ export default async function BusinessProfilePage({
             worstRating: 1,
           },
         }),
-        ...(photos.length > 0 && {
-          image: `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,
-        }),
+        image: photos.length > 0
+          ? `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+          : 'https://www.findme.hair/og-image.jpg',
         priceRange: '$$',
         currenciesAccepted: 'AUD',
         paymentAccepted: 'Cash, Credit Card',
