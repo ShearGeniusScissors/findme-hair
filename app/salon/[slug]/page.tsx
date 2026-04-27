@@ -195,6 +195,28 @@ export default async function BusinessProfilePage({
     sgNextVisit = (nextRes.data?.[0] as { run_date: string } | undefined)?.run_date ?? null;
   }
 
+  // Convert Google Places API hours periods to Schema.org OpeningHoursSpecification
+  const SCHEMA_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  type GooglePeriod = { open?: { day?: number; hour?: number; minute?: number }; close?: { day?: number; hour?: number; minute?: number } };
+  const openingHoursSpec = (() => {
+    const periods = (business.google_hours?.periods ?? []) as GooglePeriod[];
+    if (!Array.isArray(periods) || periods.length === 0) return null;
+    const seen = new Set<string>();
+    const specs: Array<Record<string, string>> = [];
+    for (const p of periods) {
+      if (!p?.open || !p?.close || typeof p.open.day !== 'number') continue;
+      const dayName = SCHEMA_DAYS[p.open.day];
+      if (!dayName) continue;
+      const opens = `${String(p.open.hour ?? 0).padStart(2,'0')}:${String(p.open.minute ?? 0).padStart(2,'0')}`;
+      const closes = `${String(p.close.hour ?? 0).padStart(2,'0')}:${String(p.close.minute ?? 0).padStart(2,'0')}`;
+      const key = `${dayName}|${opens}|${closes}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      specs.push({ '@type': 'OpeningHoursSpecification', dayOfWeek: dayName, opens, closes });
+    }
+    return specs.length > 0 ? specs : null;
+  })();
+
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
       <JsonLd data={{
@@ -227,6 +249,7 @@ export default async function BusinessProfilePage({
             worstRating: 1,
           },
         }),
+        ...(openingHoursSpec && { openingHoursSpecification: openingHoursSpec }),
         image: photos.length > 0
           ? `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
           : 'https://www.findme.hair/og-image.jpg',
