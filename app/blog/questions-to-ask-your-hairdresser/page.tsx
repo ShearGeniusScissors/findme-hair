@@ -24,6 +24,7 @@ export default function QuestionsArticle() {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: '10 Questions to Ask Your Hairdresser Before Your Next Appointment',
+        image: 'https://www.findme.hair/og-image.jpg',
         datePublished: '2026-04-13',
         dateModified: '2026-04-13',
         author: { '@type': 'Organization', name: 'findme.hair' },

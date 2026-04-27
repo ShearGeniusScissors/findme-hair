@@ -24,6 +24,7 @@ export default function HowOftenHaircutArticle() {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: 'How Often Should You Get a Haircut?',
+        image: 'https://www.findme.hair/og-image.jpg',
         datePublished: '2026-04-17',
         dateModified: '2026-04-17',
         author: { '@type': 'Organization', name: 'findme.hair' },

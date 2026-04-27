@@ -70,6 +70,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: `Best Haircut in ${config.name} ${year}`,
+        image: 'https://www.findme.hair/og-image.jpg',
         datePublished: `${year}-04-26`,
         dateModified: `${year}-04-26`,
         author: { '@id': 'https://www.findme.hair/#organization' },

@@ -24,6 +24,7 @@ export default function HowToChooseArticle() {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: 'How to Choose the Right Hairdresser for You',
+        image: 'https://www.findme.hair/og-image.jpg',
         datePublished: '2026-04-13',
         dateModified: '2026-04-13',
         author: { '@type': 'Organization', name: 'findme.hair' },

@@ -24,6 +24,7 @@ export default function SalonVsBarberArticle() {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: 'Hair Salon vs Barber Shop: Which One Should You Choose?',
+        image: 'https://www.findme.hair/og-image.jpg',
         datePublished: '2026-04-13',
         dateModified: '2026-04-13',
         author: { '@type': 'Organization', name: 'findme.hair' },
