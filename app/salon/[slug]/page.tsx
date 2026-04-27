@@ -225,6 +225,11 @@ export default async function BusinessProfilePage({
         '@id': `https://www.findme.hair/salon/${business.slug}#business`,
         name: business.name,
         url: `https://www.findme.hair/salon/${business.slug}`,
+        // Description is recommended by Google Rich Results validator. Fall back to a
+        // factual sentence if no AI/manual description exists, so every salon emits one.
+        description: business.ai_description
+          ?? business.description
+          ?? `${business.name} is a ${TYPE_LABEL[business.business_type].toLowerCase()} in ${business.suburb}, ${stateName(business.state)}.`,
         address: {
           '@type': 'PostalAddress',
           streetAddress: business.address_line1,
@@ -250,12 +255,19 @@ export default async function BusinessProfilePage({
           },
         }),
         ...(openingHoursSpec && { openingHoursSpecification: openingHoursSpec }),
-        image: photos.length > 0
-          ? `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-          : 'https://www.findme.hair/og-image.jpg',
+        // Image as ImageObject for stronger Google Rich Results compliance.
+        image: {
+          '@type': 'ImageObject',
+          url: photos.length > 0
+            ? `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+            : 'https://www.findme.hair/og-image.jpg',
+          width: 1200,
+          height: 630,
+        },
         priceRange: '$$',
         currenciesAccepted: 'AUD',
-        paymentAccepted: 'Cash, Credit Card',
+        // paymentAccepted as Text in spec; an array of values is the cleaner emit pattern.
+        paymentAccepted: ['Cash', 'Credit Card'],
       }} />
       <JsonLd data={{
         '@context': 'https://schema.org',
@@ -391,7 +403,7 @@ export default async function BusinessProfilePage({
                 <a
                   href={business.website_url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="nofollow noopener noreferrer"
                   className="btn-outline text-sm gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -404,7 +416,7 @@ export default async function BusinessProfilePage({
                 <a
                   href={`https://www.google.com/maps/place/?q=place_id:${business.google_place_id}`}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="nofollow noopener noreferrer"
                   className="btn-outline text-sm gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -505,7 +517,7 @@ export default async function BusinessProfilePage({
                     <a
                       href={business.booking_url}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="nofollow noopener noreferrer"
                       className="mt-4 btn-gold inline-flex items-center gap-2 text-base px-8 py-3"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -548,7 +560,7 @@ export default async function BusinessProfilePage({
                     <a
                       href={`https://www.google.com/maps/place/?q=place_id:${business.google_place_id}`}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="nofollow noopener noreferrer"
                       className="text-sm font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
                     >
                       Read all reviews &rarr;
@@ -693,7 +705,7 @@ export default async function BusinessProfilePage({
             <a
               href={business.booking_url}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
               className="btn-gold w-full text-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
