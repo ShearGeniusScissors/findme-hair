@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'How to Find a Good Barber Near You — findme.hair',
   description:
     'Not sure how to find a good barber? Learn what to look for, red flags to avoid, and how to tell if a barber is right for you before committing.',
-  alternates: { canonical: 'https://www.findme.hair/blog/how-to-find-a-good-barber' },
+  alternates: { canonical: 'https://www.findme.hair/blog/how-to-find-a-good-barber', languages: { 'en-AU': 'https://www.findme.hair/blog/how-to-find-a-good-barber', 'x-default': 'https://www.findme.hair/blog/how-to-find-a-good-barber' } },
   openGraph: {
     title: 'How to Find a Good Barber Near You',
     description: 'What to look for, red flags to avoid, and how to tell if a barber is right for you.',

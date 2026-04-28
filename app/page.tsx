@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "findme.hair — Australia's Hair Salon & Barber Directory",
   description:
     "Find verified hair salons and barbers near you. 13,000+ listings across Australia. Hair only — no beauty, no nails, no spa.",
-  alternates: { canonical: 'https://www.findme.hair/' },
+  alternates: { canonical: 'https://www.findme.hair/', languages: { 'en-AU': 'https://www.findme.hair/', 'x-default': 'https://www.findme.hair/' } },
   openGraph: {
     title: "findme.hair — Australia's Hair Salon & Barber Directory",
     description: 'Find verified hair salons and barbers near you. 13,000+ listings across Australia.',

@@ -8,6 +8,7 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
+import { stripMarkdown } from '@/lib/seoMeta';
 import { supabaseServerAnon } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
@@ -142,8 +143,9 @@ export async function generateMetadata({
     ? baseTitle
     : `${business.name.slice(0, 40)} — ${business.suburb} | findme.hair`;
   // Fallback description must always be ≥ ~80 chars (audit flagged ~3 salons
-  // with empty ai_description trimmed to a 0-char meta).
-  const aiDesc = (business.ai_description ?? '').trim();
+  // with empty ai_description trimmed to a 0-char meta). Markdown stripped so
+  // **bold** etc. doesn't render literal asterisks in meta/JSON-LD.
+  const aiDesc = stripMarkdown(business.ai_description);
   const fallback = `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online via findme.hair.`;
   const description = aiDesc.length >= 50
     ? `${aiDesc.slice(0, 155)}${aiDesc.length > 155 ? '…' : ''}`
@@ -233,9 +235,10 @@ export default async function BusinessProfilePage({
         url: `https://www.findme.hair/salon/${business.slug}`,
         // Description is recommended by Google Rich Results validator. Fall back to a
         // factual sentence if no AI/manual description exists, so every salon emits one.
-        description: business.ai_description
-          ?? business.description
-          ?? `${business.name} is a ${TYPE_LABEL[business.business_type].toLowerCase()} in ${business.suburb}, ${stateName(business.state)}.`,
+        // Markdown stripped — JSON-LD must not contain ** or other markdown markers.
+        description: stripMarkdown(business.ai_description)
+          || stripMarkdown(business.description)
+          || `${business.name} is a ${TYPE_LABEL[business.business_type].toLowerCase()} in ${business.suburb}, ${stateName(business.state)}.`,
         address: {
           '@type': 'PostalAddress',
           streetAddress: business.address_line1,
@@ -668,6 +671,9 @@ export default async function BusinessProfilePage({
             {/* Preferred scissor supplier badge */}
             {business.preferred_scissor_supplier_url && (() => {
               const supplierUrl = new URL(business.preferred_scissor_supplier_url);
+              if (supplierUrl.hostname === 'sheargenius.com.au') {
+                supplierUrl.hostname = 'www.sheargenius.com.au';
+              }
               supplierUrl.searchParams.set('utm_source', 'findme.hair');
               supplierUrl.searchParams.set('utm_medium', 'referral');
               supplierUrl.searchParams.set('utm_campaign', 'supplier-link');

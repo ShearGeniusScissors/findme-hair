@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Tipping Your Hairdresser in Australia: What You Need to Know — findme.hair',
   description:
     'Is tipping your hairdresser expected in Australia? Learn how much to tip, when it\'s appropriate, and the best alternatives to show appreciation for great service.',
-  alternates: { canonical: 'https://www.findme.hair/blog/tipping-your-hairdresser-in-australia' },
+  alternates: { canonical: 'https://www.findme.hair/blog/tipping-your-hairdresser-in-australia', languages: { 'en-AU': 'https://www.findme.hair/blog/tipping-your-hairdresser-in-australia', 'x-default': 'https://www.findme.hair/blog/tipping-your-hairdresser-in-australia' } },
   openGraph: {
     title: 'Tipping Your Hairdresser in Australia: What You Need to Know',
     description: 'Is tipping your hairdresser expected in Australia? A practical guide to tipping etiquette at salons and barber shops.',

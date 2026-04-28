@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'What Is Balayage? Everything You Need to Know — findme.hair',
   description:
     'Learn what balayage is, how it differs from highlights, types of balayage, how much it costs in Australia ($150-$350+), and how to find the right colourist.',
-  alternates: { canonical: 'https://www.findme.hair/blog/what-is-balayage' },
+  alternates: { canonical: 'https://www.findme.hair/blog/what-is-balayage', languages: { 'en-AU': 'https://www.findme.hair/blog/what-is-balayage', 'x-default': 'https://www.findme.hair/blog/what-is-balayage' } },
   openGraph: {
     title: 'What Is Balayage? Everything You Need to Know',
     description: 'Your complete guide to balayage hair colour in Australia — cost, types, maintenance, and how to find a specialist.',

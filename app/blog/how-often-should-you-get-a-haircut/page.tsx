@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'How Often Should You Get a Haircut? — findme.hair',
   description:
     'How often you should get a haircut depends on your hair length, type, and style. Short hair and fades need trims every 3-4 weeks, medium every 6-8, and long hair every 8-12 weeks.',
-  alternates: { canonical: 'https://www.findme.hair/blog/how-often-should-you-get-a-haircut' },
+  alternates: { canonical: 'https://www.findme.hair/blog/how-often-should-you-get-a-haircut', languages: { 'en-AU': 'https://www.findme.hair/blog/how-often-should-you-get-a-haircut', 'x-default': 'https://www.findme.hair/blog/how-often-should-you-get-a-haircut' } },
   openGraph: {
     title: 'How Often Should You Get a Haircut?',
     description: 'A practical guide to haircut frequency based on your hair length, type, and style goals.',

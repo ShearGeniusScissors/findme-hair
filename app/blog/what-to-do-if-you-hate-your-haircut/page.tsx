@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'What to Do If You Hate Your Haircut — findme.hair',
   description:
     'Hate your haircut? Don\u2019t panic. Here\u2019s what to do next \u2014 from giving it a few days to talking to your stylist, finding a new one, and preventing bad haircuts in the future.',
-  alternates: { canonical: 'https://www.findme.hair/blog/what-to-do-if-you-hate-your-haircut' },
+  alternates: { canonical: 'https://www.findme.hair/blog/what-to-do-if-you-hate-your-haircut', languages: { 'en-AU': 'https://www.findme.hair/blog/what-to-do-if-you-hate-your-haircut', 'x-default': 'https://www.findme.hair/blog/what-to-do-if-you-hate-your-haircut' } },
   openGraph: {
     title: 'What to Do If You Hate Your Haircut',
     description: 'A practical guide to fixing a bad haircut \u2014 from Australia\u2019s hair directory.',

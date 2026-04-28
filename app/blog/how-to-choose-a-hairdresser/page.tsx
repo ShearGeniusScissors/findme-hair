@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'How to Choose the Right Hairdresser for You — findme.hair',
   description:
     'A practical guide to finding the right hairdresser based on your hair type, budget, and style goals. Tips from Australia\'s hair directory.',
-  alternates: { canonical: 'https://www.findme.hair/blog/how-to-choose-a-hairdresser' },
+  alternates: { canonical: 'https://www.findme.hair/blog/how-to-choose-a-hairdresser', languages: { 'en-AU': 'https://www.findme.hair/blog/how-to-choose-a-hairdresser', 'x-default': 'https://www.findme.hair/blog/how-to-choose-a-hairdresser' } },
   openGraph: {
     title: 'How to Choose the Right Hairdresser for You',
     description: 'A practical guide to finding the right hairdresser in Australia.',

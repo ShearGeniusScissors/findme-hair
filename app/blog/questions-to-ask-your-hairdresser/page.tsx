@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: '10 Questions to Ask Your Hairdresser Before Your Next Appointment — findme.hair',
   description:
     'Getting a great haircut starts with great communication. These 10 questions will help you and your stylist get on the same page.',
-  alternates: { canonical: 'https://www.findme.hair/blog/questions-to-ask-your-hairdresser' },
+  alternates: { canonical: 'https://www.findme.hair/blog/questions-to-ask-your-hairdresser', languages: { 'en-AU': 'https://www.findme.hair/blog/questions-to-ask-your-hairdresser', 'x-default': 'https://www.findme.hair/blog/questions-to-ask-your-hairdresser' } },
   openGraph: {
     title: '10 Questions to Ask Your Hairdresser',
     description: 'Questions that lead to better haircuts — from Australia\'s hair directory.',

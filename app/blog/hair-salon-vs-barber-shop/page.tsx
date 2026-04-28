@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Hair Salon vs Barber Shop: Which One Should You Choose? — findme.hair',
   description:
     'What\'s the real difference between a hair salon and a barber shop? Services, pricing, atmosphere, and training compared side by side.',
-  alternates: { canonical: 'https://www.findme.hair/blog/hair-salon-vs-barber-shop' },
+  alternates: { canonical: 'https://www.findme.hair/blog/hair-salon-vs-barber-shop', languages: { 'en-AU': 'https://www.findme.hair/blog/hair-salon-vs-barber-shop', 'x-default': 'https://www.findme.hair/blog/hair-salon-vs-barber-shop' } },
   openGraph: {
     title: 'Hair Salon vs Barber Shop: Which One Should You Choose?',
     description: 'Salon vs barber — services, pricing, and atmosphere compared.',

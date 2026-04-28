@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Blog — Hair Tips & Salon Advice | findme.hair',
   description:
     'Expert advice on choosing hairdressers, understanding salon services, and getting the most from your next appointment. From Australia\'s hair directory.',
-  alternates: { canonical: 'https://www.findme.hair/blog' },
+  alternates: { canonical: 'https://www.findme.hair/blog', languages: { 'en-AU': 'https://www.findme.hair/blog', 'x-default': 'https://www.findme.hair/blog' } },
   openGraph: {
     title: 'Blog — findme.hair',
     description: 'Expert advice on hairdressers, salons, and barbers across Australia.',

@@ -60,7 +60,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://maps.googleapis.com" />
         <link rel="preconnect" href="https://taxuueemqtquihhzhgnr.supabase.co" />
-        <link rel="alternate" hrefLang="en-AU" href="https://www.findme.hair/" />
         <link rel="alternate" type="application/rss+xml" title="findme.hair Editorial Blog" href="https://www.findme.hair/rss.xml" />
         <meta name="theme-color" content="#C9A96E" />
         {/* Organization + WebSite JSON-LD — entity authority signal */}

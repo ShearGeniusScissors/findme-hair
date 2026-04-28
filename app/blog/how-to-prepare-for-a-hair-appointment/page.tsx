@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'How to Prepare for Your Hair Appointment — findme.hair',
   description:
     'Everything you need to do before your next salon visit. From reference photos to what to wear, here is how to prepare for a hair appointment so you leave happy.',
-  alternates: { canonical: 'https://www.findme.hair/blog/how-to-prepare-for-a-hair-appointment' },
+  alternates: { canonical: 'https://www.findme.hair/blog/how-to-prepare-for-a-hair-appointment', languages: { 'en-AU': 'https://www.findme.hair/blog/how-to-prepare-for-a-hair-appointment', 'x-default': 'https://www.findme.hair/blog/how-to-prepare-for-a-hair-appointment' } },
   openGraph: {
     title: 'How to Prepare for Your Hair Appointment',
     description: 'A simple checklist so you walk into the salon confident and walk out happy.',

@@ -156,7 +156,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `https://www.findme.hair/best-hairdresser/${config.slug}` },
+    alternates: { canonical: `https://www.findme.hair/best-hairdresser/${config.slug}`, languages: { "en-AU": `https://www.findme.hair/best-hairdresser/${config.slug}`, "x-default": `https://www.findme.hair/best-hairdresser/${config.slug}` } },
     openGraph: {
       title,
       description,
