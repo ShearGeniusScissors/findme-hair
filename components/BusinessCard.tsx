@@ -30,9 +30,9 @@ const SPECIALTY_DISPLAY: Record<string, string> = {
 };
 
 function PhotoUrl(photoName: string) {
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  if (!key) return null;
-  return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=400&key=${key}`;
+  // Routed through /api/photo so site-audit crawlers see findme.hair URLs
+  // (blocked by robots.txt) instead of crawling places.googleapis.com.
+  return `/api/photo?name=${encodeURIComponent(photoName)}&h=400`;
 }
 
 export default function BusinessCard({ business }: { business: Business }) {

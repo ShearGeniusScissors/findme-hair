@@ -116,9 +116,10 @@ function filterQualityServices(services: string[] | null): string[] {
 }
 
 function PhotoUrl(photoName: string, maxHeight = 600) {
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  if (!key) return null;
-  return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=${maxHeight}&key=${key}`;
+  // Routed through the local /api/photo proxy so site-audit crawlers see
+  // findme.hair URLs (blocked by robots.txt) instead of crawling Google's
+  // places.googleapis.com CDN as if it were part of our site.
+  return `/api/photo?name=${encodeURIComponent(photoName)}&h=${maxHeight}`;
 }
 
 export async function generateMetadata({
@@ -132,7 +133,7 @@ export async function generateMetadata({
   const typeLabel = TYPE_LABEL[business.business_type].toLowerCase();
   const ratingStr = business.google_rating ? `${business.google_rating}★ from ${business.google_review_count ?? 0} Google reviews. ` : '';
   const photoUrl = business.google_photos?.[0]?.name
-    ? `https://places.googleapis.com/v1/${business.google_photos[0].name}/media?maxHeightPx=630&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+    ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(business.google_photos[0].name)}&h=630`
     : 'https://www.findme.hair/og-image.jpg';
   const path = `https://www.findme.hair/salon/${business.slug}`;
   // Title hard-capped at <60 chars: drop the "Hair Salon in" phrase and brand suffix on long names.
@@ -261,10 +262,11 @@ export default async function BusinessProfilePage({
         }),
         ...(openingHoursSpec && { openingHoursSpecification: openingHoursSpec }),
         // Image as ImageObject for stronger Google Rich Results compliance.
+        // Photo URL goes through the /api/photo proxy so it sits on findme.hair.
         image: {
           '@type': 'ImageObject',
           url: photos.length > 0
-            ? `https://places.googleapis.com/v1/${photos[0].name}/media?maxHeightPx=800&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+            ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(photos[0].name)}&h=800`
             : 'https://www.findme.hair/og-image.jpg',
           width: 1200,
           height: 630,
@@ -676,7 +678,7 @@ export default async function BusinessProfilePage({
                   <a
                     href={supplierUrl.toString()}
                     target="_blank"
-                    rel="sponsored noopener"
+                    rel="sponsored nofollow noopener"
                     className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] transition-colors"
                   >
                     <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
