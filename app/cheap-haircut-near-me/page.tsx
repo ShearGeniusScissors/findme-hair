@@ -4,7 +4,7 @@ import NearMePage from "@/components/NearMePage";
 export const revalidate = 86400;
 
 const path = "https://www.findme.hair/cheap-haircut-near-me";
-const title = `Cheap Haircut Near Me — Affordable Hairdressers & Barbers in Australia ${new Date().getFullYear()} | findme.hair`;
+const title = `Cheap Haircut Near Me ${new Date().getFullYear()} | findme.hair`;
 const description = "Find a cheap haircut near you in Australia. Affordable hairdressers, barbers and salons in every major city and suburb — student cuts, men's clipper cuts, blow-dries from $20.";
 
 export const metadata: Metadata = {

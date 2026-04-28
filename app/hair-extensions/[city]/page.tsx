@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Hair Extension Specialists in ${config.name} ${new Date().getFullYear()} — Tape, Bond & Weft | findme.hair`;
+  const title = `Hair Extension Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified hair extension specialists in ${config.name}, ${stateName(config.state)}. Tape extensions, bonds, hand-tied wefts, micro-bead and Russian Remy human hair with real Google reviews.`;
 
   return {

@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Korean Hair Salons in ${config.name} ${new Date().getFullYear()} — Straight Perm & Korean Cuts | findme.hair`;
+  const title = `Korean Hair Salons in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified Korean hair salons in ${config.name}, ${stateName(config.state)}. Magic straightening, straight perm, layered Korean cuts and root touch-ups with real Google reviews.`;
 
   return {

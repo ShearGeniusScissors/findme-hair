@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Kids Hairdressers in ${config.name} ${new Date().getFullYear()} — Family-Friendly Salons | findme.hair`;
+  const title = `Kids Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified kids hairdressers in ${config.name}, ${stateName(config.state)}. First-haircut salons, sensory-friendly cuts and family-friendly stylists with real Google reviews.`;
 
   return {

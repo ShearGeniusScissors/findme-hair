@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Japanese Hairdressers in ${config.name} ${new Date().getFullYear()} — Precision Japanese Cuts | findme.hair`;
+  const title = `Japanese Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified Japanese hair stylists in ${config.name}, ${stateName(config.state)}. Precision dry-cutting, slide-cut layering, digital perms and Japanese head-spa with real Google reviews.`;
 
   return {

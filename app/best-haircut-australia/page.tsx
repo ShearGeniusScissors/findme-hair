@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/best-haircut-australia";
 const year = new Date().getFullYear();
-const title = `Best Haircut in Australia ${year} — Top Hairdressers and Barbers in Every City | findme.hair`;
+const title = `Best Haircut in Australia ${year} | findme.hair`;
 const description = `Find the best haircut in Australia. Verified top hairdressers and barbers in every major city — Melbourne, Sydney, Brisbane, Perth, Adelaide and beyond. Ranked by Google rating and review count.`;
 
 export const metadata: Metadata = {

@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Curly Hair Specialists in ${config.name} ${new Date().getFullYear()} — Curly Cut, Rezo & DevaCut | findme.hair`;
+  const title = `Curly Hair Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified curly hair specialists in ${config.name}, ${stateName(config.state)}. Curly cut, Rezo cut, DevaCut, dry cutting and curly colour work with real Google reviews.`;
 
   return {

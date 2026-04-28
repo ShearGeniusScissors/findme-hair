@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Men's Haircuts in ${config.name} ${new Date().getFullYear()} — Best Barbers & Stylists | findme.hair`;
+  const title = `Men's Haircuts in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find the best men's haircuts in ${config.name}, ${stateName(config.state)}. Skin fades, scissor cuts, beard trims and gentleman's grooming with real Google reviews.`;
 
   return {

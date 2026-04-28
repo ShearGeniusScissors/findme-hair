@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `At-Home Hairdressers in ${config.name} ${new Date().getFullYear()} — Mobile Stylists Who Come to You | findme.hair`;
+  const title = `At-Home Hairdressers ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find at-home hairdressers in ${config.name}, ${stateName(config.state)}. Stylists who come to your home or workplace — cuts, colour, blow-dries with real Google reviews.`;
 
   return {

@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Bridal Hair Stylists in ${config.name} ${new Date().getFullYear()} — Wedding Hair Specialists | findme.hair`;
+  const title = `Bridal Hair Stylists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified bridal hair stylists in ${config.name}, ${stateName(config.state)}. Wedding-day hair, on-location styling, bridal trials and bridesmaid packages with real Google reviews.`;
 
   return {

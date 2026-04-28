@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
-  const title = `Balayage Specialists in ${config.name} ${new Date().getFullYear()} — Hand-Painted Highlights | findme.hair`;
+  const title = `Balayage Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified balayage specialists in ${config.name}, ${stateName(config.state)}. Hand-painted highlights, lived-in colour, foilage and money-piece work with real Google reviews.`;
 
   return {

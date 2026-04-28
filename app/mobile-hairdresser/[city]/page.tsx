@@ -52,7 +52,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const path = `https://www.findme.hair/mobile-hairdresser/${config.slug}`;
-  const title = `Mobile Hairdressers in ${config.name} ${new Date().getFullYear()} — At-Home Stylists | findme.hair`;
+  const title = `Mobile Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified mobile hairdressers who come to you in ${config.name}, ${stateName(config.state)}. At-home cuts, colour, and styling with real Google reviews.`;
 
   return {
