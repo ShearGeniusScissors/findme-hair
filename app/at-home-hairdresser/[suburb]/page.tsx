@@ -7,6 +7,7 @@ import { supabaseServerAnon } from "@/lib/supabase";
 import type { Business } from "@/types/database";
 
 export const revalidate = 3600;
+export const dynamicParams = false;
 
 const ROUTE = "at-home-hairdresser";
 const TITLE_BASE = "At-Home Hairdressers";

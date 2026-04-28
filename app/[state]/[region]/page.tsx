@@ -31,8 +31,15 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${state.toLowerCase()}/${region}`;
 
+  // Hard-cap title at 60 chars. Long region names overflow the default form;
+  // fall back to a shorter form keyword-front.
+  const fullTitle = `Hair Salons & Barbers in ${regionName}, ${fullState} — findme.hair`;
+  const title = fullTitle.length <= 60
+    ? fullTitle
+    : `${regionName} ${stateCode} Hair & Barbers — findme.hair`;
+
   return {
-    title: `Hair Salons & Barbers in ${regionName}, ${fullState} — findme.hair`,
+    title,
     description: `Find verified hair salons and barbers across ${regionName}, ${fullState}. Browse by suburb, real Google reviews, hours, and Book Now links.`,
     alternates: {
       canonical: path,

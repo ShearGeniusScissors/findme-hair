@@ -40,8 +40,12 @@ export async function generateMetadata({
   const hasListings = businesses.length > 0;
 
   const path = `https://www.findme.hair/${state.toLowerCase()}/${region}/${suburb}`;
-  // Title is hard-capped at <60 chars: drop region, keep suburb + state code + brand.
-  const title = `Hair Salons & Barbers in ${suburbName}, ${stateCode} — findme.hair`;
+  // Hard-cap title at 60 chars. Long suburb names (e.g. "Bundaberg Central")
+  // overflow the default — fall back to a shorter form keyword-front.
+  const fullTitle = `Hair Salons & Barbers in ${suburbName}, ${stateCode} — findme.hair`;
+  const title = fullTitle.length <= 60
+    ? fullTitle
+    : `${suburbName} ${stateCode} Hair & Barbers — findme.hair`;
   return {
     title,
     description: `Find hair salons and barbers in ${suburbName}${postcode ? ` ${postcode}` : ''}, ${fullState}. Verified listings with real Google reviews, hours, and Book Now links.`,

@@ -9,6 +9,7 @@ import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return PIVOT_CITIES.map((c) => ({ city: c.slug }));

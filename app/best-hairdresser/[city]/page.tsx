@@ -12,6 +12,7 @@ const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const suburbToSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const dynamicParams = false;
 
 interface CityConfig {
   name: string;

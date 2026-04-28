@@ -7,6 +7,7 @@ import { supabaseServerAnon } from "@/lib/supabase";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
+export const dynamicParams = false;
 
 const ROUTE = "kids-hairdresser";
 const TITLE_BASE = "Kids Hairdressers";

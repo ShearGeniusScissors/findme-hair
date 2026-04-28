@@ -51,8 +51,13 @@ export async function generateMetadata({
   const code = state.toUpperCase() as AuState;
   const name = stateName(code);
   const path = `https://www.findme.hair/${state.toLowerCase()}`;
+  // Long state names like "Australian Capital Territory" overflow 60 chars.
+  const fullTitle = `Hair Salons & Barbers in ${name} — findme.hair`;
+  const title = fullTitle.length <= 60
+    ? fullTitle
+    : `Hair Salons & Barbers in ${code} — findme.hair`;
   return {
-    title: `Hair Salons & Barbers in ${name} — findme.hair`,
+    title,
     description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb. Free listings, real reviews.`,
     alternates: {
       canonical: path,

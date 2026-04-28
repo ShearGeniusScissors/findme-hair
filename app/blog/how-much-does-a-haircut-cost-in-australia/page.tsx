@@ -3,7 +3,7 @@ import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'How Much Does a Haircut Cost in Australia? (2026 Guide) — findme.hair',
+  title: 'Haircut Cost in Australia (2026) — findme.hair',
   description:
     'A complete guide to haircut prices in Australia for 2026. Men\u2019s, women\u2019s, and kids\u2019 haircut costs, colour service pricing, and tips to save money at the salon.',
   alternates: { canonical: 'https://www.findme.hair/blog/how-much-does-a-haircut-cost-in-australia', languages: { 'en-AU': 'https://www.findme.hair/blog/how-much-does-a-haircut-cost-in-australia', 'x-default': 'https://www.findme.hair/blog/how-much-does-a-haircut-cost-in-australia' } },
