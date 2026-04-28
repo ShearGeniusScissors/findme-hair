@@ -117,7 +117,7 @@ export default function BlogIndexPage() {
             className="mt-3 text-3xl text-[var(--color-ink)] sm:text-4xl"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
-            Blog
+            findme.hair Editorial Blog — Hair, Barber & Salon Guides
           </h1>
           <p className="mt-3 text-[var(--color-ink-light)]">
             Expert advice on hairdressers, salon services, and getting the most from your next appointment.

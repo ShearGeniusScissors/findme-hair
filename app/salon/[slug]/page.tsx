@@ -140,11 +140,16 @@ export async function generateMetadata({
   const title = baseTitle.length <= 60
     ? baseTitle
     : `${business.name.slice(0, 40)} — ${business.suburb} | findme.hair`;
+  // Fallback description must always be ≥ ~80 chars (audit flagged ~3 salons
+  // with empty ai_description trimmed to a 0-char meta).
+  const aiDesc = (business.ai_description ?? '').trim();
+  const fallback = `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online via findme.hair.`;
+  const description = aiDesc.length >= 50
+    ? `${aiDesc.slice(0, 155)}${aiDesc.length > 155 ? '…' : ''}`
+    : fallback;
   return {
     title,
-    description: business.ai_description
-      ? `${business.ai_description.slice(0, 155)}…`
-      : `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online.`,
+    description,
     alternates: {
       canonical: path,
       languages: {
@@ -379,6 +384,9 @@ export default async function BusinessProfilePage({
               style={{ fontFamily: 'var(--font-serif)' }}
             >
               {business.name}
+              <span className="block text-base font-normal text-[var(--color-ink-light)] mt-1">
+                {TYPE_LABEL[business.business_type]} in {business.suburb}, {stateName(business.state)}
+              </span>
             </h1>
 
             <p className="mt-2 text-[var(--color-ink-light)]">

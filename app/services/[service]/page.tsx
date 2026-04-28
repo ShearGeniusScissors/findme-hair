@@ -349,6 +349,86 @@ const SERVICES: ServiceConfig[] = [
       closing: 'Well-placed highlights can make hair look thicker, healthier, and more vibrant. Find a specialist who takes the time to customise your placement and formulation rather than using a one-size-fits-all approach.',
     },
   },
+  {
+    slug: 'blow-dry',
+    name: 'Blow-Dry Specialists',
+    h1: 'Blow-Dry Bars & Specialists in Australia',
+    description: 'Professional blow-dry, styling and finishing',
+    metaDescription: 'Find blow-dry bars and stylists near you in Australia. Bouncy blowouts, sleek finishes, occasion styling. Verified salons with real Google reviews.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['blow', 'dry', 'blow-dry', 'blowout'],
+    specialtyTag: 'blow-dry',
+    content: {
+      intro: 'A professional blow-dry transforms how your hair looks and feels — soft, bouncy, smooth, or sleek depending on your finish. Blow-dry specialists know exactly which round brush, nozzle angle, and tension to use for your hair type and the look you want.',
+      whatToLook: [
+        'Confirm whether the price includes wash, treatment and styling',
+        'Tell the stylist your hair type and desired finish before they start',
+        'Ask about heat-protect products — essential for hair longevity',
+        'Find out how long the blow-dry lasts (a good one survives an overnight)',
+      ],
+      closing: 'A skilled blow-dry artist can make hair look professionally styled in 30-45 minutes. For occasions, weddings, or just a confidence reset, book a specialist rather than relying on a generic salon blowout.',
+    },
+  },
+  {
+    slug: 'afro',
+    name: 'Afro & Textured Hair Specialists',
+    h1: 'Afro & Textured Hair Specialists in Australia',
+    description: 'Stylists trained in afro, kinky, coily and textured hair',
+    metaDescription: 'Find afro and textured hair specialists near you in Australia. Cornrows, braids, twists, locs, silk presses and natural curl care by trained stylists.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['afro', 'textured', 'natural', 'african', 'braids'],
+    specialtyTag: 'afro',
+    content: {
+      intro: 'Textured hair — types 3C through 4C — needs specialist care. Many mainstream salons lack the training, products and time to work with afro-textured hair properly. A specialist understands shrinkage, curl pattern, and how to cut, condition and style natural hair without damage.',
+      whatToLook: [
+        'Ask if they regularly work with your specific hair type and pattern',
+        'Confirm they stock products formulated for textured hair (Mielle, Cantu, As I Am, Camille Rose, etc.)',
+        'Discuss heat use — silk presses and blow-dries need careful technique to avoid heat damage',
+        'For braids, locs and protective styles, ask about scalp tension and finishing care',
+      ],
+      closing: 'Textured-hair salons in Australia have grown significantly — major cities now have dedicated specialists across braiding, locs, silk-pressing and natural curl care. Specialists almost always deliver better results than mainstream salons that "do all hair types".',
+    },
+  },
+  {
+    slug: 'organic',
+    name: 'Organic & Natural Hair Salons',
+    h1: 'Organic & Natural Hair Salons in Australia',
+    description: 'Ammonia-free, low-tox and organic colour specialists',
+    metaDescription: 'Find organic and natural hair salons near you in Australia. Ammonia-free colour, plant-based dyes, low-tox treatments and chemical-conscious stylists.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['organic', 'natural', 'ammonia-free', 'henna'],
+    specialtyTag: 'organic',
+    content: {
+      intro: 'Organic hair salons use lower-tox, plant-based or ammonia-free formulations for colour, treatments and styling. Ideal for sensitive scalps, allergies, pregnancy, or anyone wanting to reduce chemical exposure without sacrificing results.',
+      whatToLook: [
+        'Ask which specific organic brand they use (O&M, Original Mineral, Hairstory, herbatint, etc.)',
+        'Clarify what "organic" means at that salon — practices vary widely',
+        'For colour, ammonia-free does not mean colour-free — discuss expected results',
+        'Check if they offer a patch test 48 hours before colour service',
+      ],
+      closing: 'The organic hair scene in Australia has matured beyond niche — most capital cities now have several dedicated organic salons. Senior stylists trained in lower-tox techniques can deliver results equal to or better than conventional salons.',
+    },
+  },
+  {
+    slug: 'wigs',
+    name: 'Wig & Hair Replacement Specialists',
+    h1: 'Wig & Hair Replacement Specialists in Australia',
+    description: 'Wig fitting, customisation and hair replacement services',
+    metaDescription: 'Find wig and hair replacement specialists near you in Australia. Custom wig fitting, lace-front styling, medical wigs and hair systems by trained professionals.',
+    businessTypes: ['hair_salon', 'unisex'],
+    nameKeywords: ['wig', 'wigs', 'hair replacement', 'topper'],
+    specialtyTag: 'wigs',
+    content: {
+      intro: 'A specialist wig stylist customises wigs, hair toppers and hair systems to look natural — colour-matching, cutting, fitting and styling. Whether for medical reasons, alopecia, fashion or convenience, a specialist makes the difference between a wig that looks like a wig and one that looks like your own hair.',
+      whatToLook: [
+        'Ask about their experience with medical clients (chemotherapy, alopecia areata)',
+        'For lace-front wigs, confirm they offer customisation and bleaching of the lace',
+        'Discuss material — human hair vs. premium synthetic each have trade-offs',
+        'Ask about ongoing maintenance, washing and re-styling appointments',
+      ],
+      closing: 'A skilled wig specialist transforms a stock wig into something that looks completely natural. For medical hair loss, many salons partner with the Australian Cancer Council Wig Service — ask about subsidised options.',
+    },
+  },
 ];
 
 export function generateStaticParams() {
@@ -362,7 +442,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { service } = await params;
   const config = SERVICES.find((s) => s.slug === service);
-  if (!config) return {};
+  if (!config) return { title: 'Service not found — findme.hair', robots: { index: false } };
 
   const path = `https://www.findme.hair/services/${config.slug}`;
   return {

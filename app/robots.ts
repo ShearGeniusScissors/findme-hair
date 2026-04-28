@@ -8,7 +8,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/dashboard/', '/api/', '/claim/'],
+        // /_next/* contains build chunks that crawlers (esp. Ahrefs) pull
+        // as if they were pages, inflating the audit URL count.
+        disallow: ['/admin/', '/dashboard/', '/api/', '/claim/', '/_next/'],
       },
       // Explicitly allow major AI crawlers (some require named entries)
       { userAgent: 'GPTBot', allow: '/' },
