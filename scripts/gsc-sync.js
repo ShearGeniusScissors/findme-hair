@@ -8,9 +8,10 @@
  *   3. Compares new impressions vs stored impressions — flags >50% drops as issues
  *   4. Creates Paperclip FIN issues for top-declining pages needing content refresh
  *
- * ── Auth ────────────────────────────────────────────────────────────────────
- *   Same as gsc-report.js — GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_PATH
- *   Plus standard Supabase env vars from .env.local
+ * ── Auth (see gsc-report.js header for full setup) ─────────────────────────
+ *   Recommended: `gcloud auth application-default login --scopes=...webmasters.readonly`
+ *   Legacy:      GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_PATH
+ *   Plus standard Supabase env vars from .env.local.
  *
  * ── Usage ───────────────────────────────────────────────────────────────────
  *   node scripts/gsc-sync.js                      # 7-day window (default)
@@ -28,9 +29,8 @@ require('dotenv').config({ path: '.env.local' });
 
 const { google } = require('googleapis');
 const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
-const path = require('path');
 const https = require('https');
+const { getGoogleAuth } = require('../lib/google-auth');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -64,26 +64,6 @@ const config = ORG_CONFIG[orgKey];
 if (!config) {
   console.error(`Unknown --org value: "${orgKey}". Valid: ${Object.keys(ORG_CONFIG).join(', ')}`);
   process.exit(1);
-}
-
-// ── Auth ──────────────────────────────────────────────────────────────────────
-
-function loadCredentials() {
-  const jsonStr = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-  const jsonPath = process.env.GOOGLE_SERVICE_ACCOUNT_PATH;
-  if (jsonStr) {
-    try { return JSON.parse(jsonStr); }
-    catch { throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON.'); }
-  }
-  if (jsonPath) {
-    const resolved = path.resolve(jsonPath);
-    if (!fs.existsSync(resolved)) throw new Error(`Key file not found: ${resolved}`);
-    return JSON.parse(fs.readFileSync(resolved, 'utf8'));
-  }
-  throw new Error(
-    'No GSC credentials found.\n' +
-    'Set GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_PATH.'
-  );
 }
 
 // ── Date range ────────────────────────────────────────────────────────────────
@@ -200,11 +180,7 @@ async function main() {
   else console.log('MODE     : LIVE\n');
 
   // Auth
-  const credentials = loadCredentials();
-  const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
-  });
+  const auth = await getGoogleAuth();
   const webmasters = google.webmasters({ version: 'v3', auth });
 
   // Fetch GSC data

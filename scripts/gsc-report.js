@@ -2,30 +2,24 @@
 /**
  * gsc-report.js — Google Search Console performance report for findme.hair
  *
- * Pulls last 90 days (or custom range) of performance data via the GSC API
- * using service account auth. Outputs two CSVs.
+ * Pulls last 90 days (or custom range) of performance data via the GSC API.
+ * Outputs two CSVs.
  *
- * ── Auth setup ──────────────────────────────────────────────────────────────
+ * ── Auth setup (pick one — Option A is recommended, no GCP console required) ─
  *
- * 1. Create a Google Cloud project (or use an existing one).
- * 2. Enable the "Google Search Console API" in the API Library.
- * 3. Create a service account → generate a JSON key → download it.
- * 4. In GSC, go to Settings → Users and permissions → Add user:
- *      - Email: the service account email (e.g. gsc-reader@my-project.iam.gserviceaccount.com)
- *      - Permission: "Full" or "Restricted" (read-only is enough)
- *      - Property: sc-domain:findme.hair
+ * Option A — Application Default Credentials (recommended, lightest setup):
+ *   1. Run once on the machine that runs this script:
+ *        gcloud auth application-default login \
+ *          --scopes=https://www.googleapis.com/auth/webmasters.readonly
+ *   2. In GSC, Settings → Users → Add the same Google account as RESTRICTED.
  *
- * Required OAuth scope: https://www.googleapis.com/auth/webmasters.readonly
+ * Option B — Service account JSON (legacy, kept for backward compat):
+ *   1. Create a GCP project + enable the Google Search Console API.
+ *   2. Create a service account, generate a JSON key, download it.
+ *   3. In GSC, Settings → Users → Add the service-account email.
+ *   4. Set GOOGLE_SERVICE_ACCOUNT_JSON='{...}' or GOOGLE_SERVICE_ACCOUNT_PATH=/path/to/key.json
  *
- * ── Credential injection ────────────────────────────────────────────────────
- *
- * Option A — env var with full JSON string:
- *   export GOOGLE_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
- *
- * Option B — env var with path to key file:
- *   export GOOGLE_SERVICE_ACCOUNT_PATH=/path/to/service-account-key.json
- *
- * Option C — add GOOGLE_SERVICE_ACCOUNT_PATH=... to .env.local
+ * Required scope: https://www.googleapis.com/auth/webmasters.readonly
  *
  * ── Usage ───────────────────────────────────────────────────────────────────
  *
@@ -45,44 +39,13 @@ require('dotenv').config({ path: '.env.local' });
 
 const { google } = require('googleapis');
 const fs = require('fs');
-const path = require('path');
+const { getGoogleAuth } = require('../lib/google-auth');
 
 // ── Config ───────────────────────────────────────────────────────────────────
 
 const SITE_URL = 'sc-domain:findme.hair'; // Domain property (both www + non-www)
 const DEFAULT_DAYS = 90;
 const ROW_LIMIT = 25000; // GSC API max per request
-
-// ── Auth ─────────────────────────────────────────────────────────────────────
-
-function loadCredentials() {
-  const jsonStr = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-  const jsonPath = process.env.GOOGLE_SERVICE_ACCOUNT_PATH;
-
-  if (jsonStr) {
-    try {
-      return JSON.parse(jsonStr);
-    } catch {
-      throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON.');
-    }
-  }
-
-  if (jsonPath) {
-    const resolved = path.resolve(jsonPath);
-    if (!fs.existsSync(resolved)) {
-      throw new Error(`Service account key file not found: ${resolved}`);
-    }
-    return JSON.parse(fs.readFileSync(resolved, 'utf8'));
-  }
-
-  throw new Error(
-    'No GSC credentials found.\n\n' +
-    'Set one of these environment variables:\n' +
-    '  GOOGLE_SERVICE_ACCOUNT_JSON  — full JSON key string\n' +
-    '  GOOGLE_SERVICE_ACCOUNT_PATH  — path to the JSON key file\n\n' +
-    'See the script header for full setup instructions.'
-  );
-}
 
 // ── Date range ────────────────────────────────────────────────────────────────
 
@@ -192,11 +155,7 @@ async function main() {
   console.log(`Property : ${SITE_URL}`);
   console.log(`Range    : ${dateRange.startDate} → ${dateRange.endDate}\n`);
 
-  const credentials = loadCredentials();
-  const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
-  });
+  const auth = await getGoogleAuth();
   const webmasters = google.webmasters({ version: 'v3', auth });
 
   console.log('Fetching by page...');
