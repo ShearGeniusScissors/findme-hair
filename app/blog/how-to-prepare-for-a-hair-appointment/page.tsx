@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     siteName: 'findme.hair',
     locale: 'en_AU',
     type: 'article',
+    images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
   },
 };
 

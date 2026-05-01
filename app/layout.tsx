@@ -26,6 +26,27 @@ export const metadata: Metadata = {
   description:
     "Hand-verified hair salons and barber shops across Australia. Hair and barber only — no beauty, no nails, no spa. Just hair.",
   metadataBase: new URL("https://www.findme.hair"),
+  // Explicit robots + hreflang at root so every page inherits a complete head
+  // section. Audit reminder: omitting these means homepage fails OG/robots
+  // completeness checks even though the site is meant to be fully indexable.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://www.findme.hair',
+    languages: {
+      'en-AU': 'https://www.findme.hair',
+      'x-default': 'https://www.findme.hair',
+    },
+  },
   openGraph: {
     title: "findme.hair",
     description:

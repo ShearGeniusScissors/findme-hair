@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     siteName: 'findme.hair',
     locale: 'en_AU',
     type: 'website',
+    // Page-level openGraph override drops the inherited images array — must
+    // re-supply or Ahrefs flags 'OG tags incomplete' on /blog.
+    images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
   },
 };
 
