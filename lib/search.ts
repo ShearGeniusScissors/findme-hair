@@ -320,6 +320,40 @@ export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
   return (data ?? []) as Suburb[];
 }
 
+export async function getNearbySalons(
+  state: AuState,
+  suburb: string,
+  excludeSlug: string,
+  limit = 6,
+): Promise<Business[]> {
+  const supabase = supabaseServerAnon();
+  const { data: sameSuburb } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('status', 'active')
+    .eq('state', state)
+    .ilike('suburb', suburb)
+    .neq('slug', excludeSlug)
+    .order('google_rating', { ascending: false, nullsFirst: false })
+    .order('google_review_count', { ascending: false, nullsFirst: false })
+    .limit(limit);
+  if (sameSuburb && sameSuburb.length >= limit) return sameSuburb as Business[];
+  // Top up from same state if suburb is sparse
+  const remaining = limit - (sameSuburb?.length ?? 0);
+  const { data: stateRest } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('status', 'active')
+    .eq('state', state)
+    .neq('slug', excludeSlug)
+    .order('google_rating', { ascending: false, nullsFirst: false })
+    .order('google_review_count', { ascending: false, nullsFirst: false })
+    .limit(remaining * 3);
+  const seen = new Set((sameSuburb ?? []).map((b) => b.slug));
+  const fillers = (stateRest ?? []).filter((b) => !seen.has(b.slug)).slice(0, remaining);
+  return [...(sameSuburb ?? []), ...fillers] as Business[];
+}
+
 export async function getSuburbBusinesses(
   state: AuState,
   regionSlug: string,

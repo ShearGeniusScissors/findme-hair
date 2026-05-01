@@ -6,7 +6,7 @@ import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
 import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
-import { getBusinessBySlug } from '@/lib/search';
+import { getBusinessBySlug, getNearbySalons } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { stripMarkdown } from '@/lib/seoMeta';
 import { supabaseServerAnon } from '@/lib/supabase';
@@ -180,6 +180,11 @@ export default async function BusinessProfilePage({
   const { slug } = await params;
   const business = await getBusinessBySlug(slug);
   if (!business) notFound();
+
+  // Internal-link cross-pollination — gives every salon page 6 inbound links
+  // from sibling salons in the same suburb (or state if suburb is sparse).
+  // Eliminates the "orphan page" Ahrefs flag and spreads PageRank.
+  const nearbySalons = await getNearbySalons(business.state, business.suburb, business.slug, 6);
 
   const suburbSlug = slugify(business.suburb);
   const photos = business.google_photos ?? [];
@@ -622,6 +627,37 @@ export default async function BusinessProfilePage({
                 </section>
               );
             })()}
+
+            {/* Nearby salons — sibling salon cross-links so every profile gets
+                inbound internal links from at least 6 other salon pages. */}
+            {nearbySalons.length > 0 && (
+              <section className="mt-10">
+                <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Other salons {business.suburb ? `near ${business.suburb}` : `in ${stateName(business.state)}`}
+                </h2>
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {nearbySalons.map((n) => (
+                    <li key={n.slug}>
+                      <Link
+                        href={`/salon/${n.slug}`}
+                        className="block card p-4 hover:border-[var(--color-gold)] transition-colors"
+                      >
+                        <div className="text-sm font-medium text-[var(--color-ink)]">{n.name}</div>
+                        <div className="mt-1 text-xs text-[var(--color-ink-muted)]">
+                          {n.suburb}, {n.state}
+                          {n.google_rating != null && (
+                            <span className="ml-2 text-[var(--color-gold-dark)]">
+                              ★ {n.google_rating.toFixed(1)}
+                              {n.google_review_count ? ` (${n.google_review_count})` : ''}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
 
           {/* Right column */}
