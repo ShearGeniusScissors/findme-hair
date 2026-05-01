@@ -82,8 +82,10 @@ export default async function RegionDirectoryPage({
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const suburbs = [...allSuburbs].sort((a, b) => a.name.localeCompare(b.name));
 
-  // Featured businesses for this region (top rated)
-  const featured = await searchBusinesses({ region: regionSlug, limit: 6 });
+  // Internal-link cross-pollination — pull up to 100 salons in this region so
+  // every region hub spreads PageRank to ~100 long-tail profiles, not just 6.
+  // Kills most of the "only one dofollow incoming link" Ahrefs warnings.
+  const featured = await searchBusinesses({ region: regionSlug, limit: 100 });
   const totalCount = regionRow ? await countBusinessesByRegion(regionRow.id) : 0;
 
   return (
@@ -177,7 +179,7 @@ export default async function RegionDirectoryPage({
           )}
         </section>
 
-        {/* Featured listings */}
+        {/* Top 6 featured (cards) + dense list of all salons in region */}
         {featured.length > 0 && (
           <section className="mt-14">
             <div className="flex items-baseline justify-between">
@@ -195,7 +197,7 @@ export default async function RegionDirectoryPage({
               </Link>
             </div>
             <div className="mt-6 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-              {featured.map((b) => (
+              {featured.slice(0, 6).map((b) => (
                 <Link
                   key={b.id}
                   href={`/salon/${b.slug}`}
@@ -216,6 +218,35 @@ export default async function RegionDirectoryPage({
                 </Link>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Dense salon list — internal-link spread for SEO. Up to 100 region salons,
+            three columns, plain anchor tags so every long-tail profile gets at
+            least one strong inbound link from this region hub. */}
+        {featured.length > 6 && (
+          <section className="mt-10">
+            <h2
+              className="text-xl text-[var(--color-ink)] mb-6"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              All salons &amp; barbers in {regionName}
+            </h2>
+            <ul className="grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((b) => (
+                <li key={b.id} className="text-sm">
+                  <Link
+                    href={`/salon/${b.slug}`}
+                    className="text-[var(--color-ink)] hover:text-[var(--color-gold-dark)]"
+                  >
+                    {b.name}
+                    {b.suburb && (
+                      <span className="text-[var(--color-ink-muted)]"> — {b.suburb}</span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

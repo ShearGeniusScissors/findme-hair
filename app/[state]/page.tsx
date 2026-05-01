@@ -146,8 +146,10 @@ export default async function StatePage({
   // Sort by priority
   const sorted = sortDisplayRegions(displayRegions, code);
 
-  // Get top rated businesses for this state
-  const featured = await searchBusinesses({ state: code, limit: 6 });
+  // Get top 50 rated businesses — state hubs are 1 click from /, so flooding
+  // them with 50 outbound salon links spreads PageRank to top-rated profiles
+  // sitewide. (Was 6 — created internal-link starvation across the long tail.)
+  const featured = await searchBusinesses({ state: code, limit: 50 });
 
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
@@ -252,7 +254,7 @@ export default async function StatePage({
           )}
         </section>
 
-        {/* Featured listings */}
+        {/* Top 6 featured (cards) + dense list of top-rated salons in state */}
         {featured.length > 0 && (
           <section className="mt-14">
             <div className="flex items-baseline justify-between">
@@ -270,7 +272,7 @@ export default async function StatePage({
               </Link>
             </div>
             <div className="mt-6 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-              {featured.map((b) => (
+              {featured.slice(0, 6).map((b) => (
                 <Link
                   key={b.id}
                   href={`/salon/${b.slug}`}
@@ -291,6 +293,34 @@ export default async function StatePage({
                 </Link>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Dense salon list — internal-link spread for SEO. Up to 50 top-rated state salons.
+            State pages are 1 click from /, so this distributes PageRank to long-tail profiles. */}
+        {featured.length > 6 && (
+          <section className="mt-10">
+            <h2
+              className="text-xl text-[var(--color-ink)] mb-6"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              More top-rated salons in {name}
+            </h2>
+            <ul className="grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.slice(6).map((b) => (
+                <li key={b.id} className="text-sm">
+                  <Link
+                    href={`/salon/${b.slug}`}
+                    className="text-[var(--color-ink)] hover:text-[var(--color-gold-dark)]"
+                  >
+                    {b.name}
+                    {b.suburb && (
+                      <span className="text-[var(--color-ink-muted)]"> — {b.suburb}</span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
       </div>

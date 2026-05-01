@@ -202,6 +202,28 @@ export default async function BusinessProfilePage({
   // Eliminates the "orphan page" Ahrefs flag and spreads PageRank.
   const nearbySalons = await getNearbySalons(business.state, business.suburb, business.slug, 6);
 
+  // Region-level siblings — many small suburbs have only 1-3 salons so
+  // nearbySalons returns a thin list. Pull up to 12 region-level sibling salons
+  // for a denser internal-link block per profile.
+  // (Roughly 13.8k profiles × 12 region links = ~165k inbound salon links sitewide.)
+  let regionSiblings: Array<{ id: string; slug: string; name: string; suburb: string; google_rating: number | null; google_review_count: number | null }> = [];
+  let regionDisplayName = '';
+  if (business.region_id) {
+    const db = supabaseServerAnon();
+    const [{ data: regionRow }, { data: siblings }] = await Promise.all([
+      db.from('regions').select('name, slug').eq('id', business.region_id).maybeSingle(),
+      db.from('businesses')
+        .select('id, slug, name, suburb, google_rating, google_review_count')
+        .eq('status', 'active')
+        .eq('region_id', business.region_id)
+        .neq('slug', business.slug)
+        .order('google_review_count', { ascending: false, nullsFirst: false })
+        .limit(12),
+    ]);
+    regionDisplayName = (regionRow as { name?: string } | null)?.name ?? '';
+    regionSiblings = (siblings ?? []) as typeof regionSiblings;
+  }
+
   const suburbSlug = slugify(business.suburb);
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
@@ -241,7 +263,9 @@ export default async function BusinessProfilePage({
       const key = `${dayName}|${opens}|${closes}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      specs.push({ '@type': 'OpeningHoursSpecification', dayOfWeek: dayName, opens, closes });
+      // dayOfWeek MUST be a schema.org URL per spec — Ahrefs strict validator
+      // flags plain string ("Tuesday") even though Google tolerates it.
+      specs.push({ '@type': 'OpeningHoursSpecification', dayOfWeek: `https://schema.org/${dayName}`, opens, closes });
     }
     return specs.length > 0 ? specs : null;
   })();
@@ -287,18 +311,19 @@ export default async function BusinessProfilePage({
         ...(openingHoursSpec && { openingHoursSpecification: openingHoursSpec }),
         // Image as ImageObject for stronger Google Rich Results compliance.
         // Photo URL goes through the /api/photo proxy so it sits on findme.hair.
+        // Width/height omitted because the upstream image isn't fixed at 1200x630;
+        // ImageObject only requires url per schema.org spec.
         image: {
           '@type': 'ImageObject',
           url: photos.length > 0
             ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(photos[0].name)}&h=800`
             : 'https://www.findme.hair/og-image.jpg',
-          width: 1200,
-          height: 630,
         },
         priceRange: '$$',
-        currenciesAccepted: 'AUD',
-        // paymentAccepted as Text in spec; an array of values is the cleaner emit pattern.
-        paymentAccepted: ['Cash', 'Credit Card'],
+        // paymentAccepted is Text per schema.org spec — array form trips strict
+        // validators (Ahrefs included). currenciesAccepted is not a property of
+        // BarberShop/HairSalon (only on Store/AutomotiveBusiness/FoodEstablishment).
+        paymentAccepted: 'Cash, Credit Card',
       }} />
       <JsonLd data={{
         '@context': 'https://schema.org',
@@ -673,6 +698,29 @@ export default async function BusinessProfilePage({
                             </span>
                           )}
                         </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Region-level sibling salons — denser internal-link block.
+                Plain anchor list (no cards) so 12 region siblings don't blow up the page. */}
+            {regionSiblings.length > 0 && (
+              <section className="mt-10">
+                <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                  More salons in {regionDisplayName || stateName(business.state)}
+                </h2>
+                <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2 text-sm">
+                  {regionSiblings.map((s) => (
+                    <li key={s.id} className="truncate">
+                      <Link
+                        href={`/salon/${s.slug}`}
+                        className="text-[var(--color-ink)] hover:text-[var(--color-gold-dark)]"
+                      >
+                        <span className="font-medium">{s.name}</span>
+                        <span className="text-[var(--color-ink-muted)]"> — {s.suburb}</span>
                       </Link>
                     </li>
                   ))}
