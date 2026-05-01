@@ -7,8 +7,8 @@ import { stateName } from "@/lib/geo";
 export const revalidate = 3600;
 
 const path = "https://www.findme.hair/reviews";
-const title = `Top-Rated Hair Salons & Barbers in Australia ${new Date().getFullYear()} — Verified Reviews | findme.hair`;
-const description = "The top-rated hair salons and barber shops across Australia, ranked by verified Google reviews. The single most-reviewed and highest-rated businesses on findme.hair, refreshed hourly.";
+const title = `Top-Rated Hair Salons & Barbers AU ${new Date().getFullYear()} | findme.hair`;
+const description = "Top-rated hair salons and barbers across Australia, ranked by verified Google reviews. Highest-rated businesses on findme.hair, refreshed hourly.";
 
 export const metadata: Metadata = {
   title,

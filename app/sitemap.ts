@@ -96,6 +96,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Paginated /directory/salons/[page] — every salon links from these pages,
+  // killing the "orphan page" issue Ahrefs flagged on 8,764 salon profiles.
+  const totalSalonPages = Math.ceil(allBusinessSlugs.length / 100);
+  const salonDirectoryPages: MetadataRoute.Sitemap = Array.from({ length: totalSalonPages }, (_, i) => ({
+    url: `${base}/directory/salons/${i + 1}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.5,
+  }));
+
   // City guide pages (8 capitals + 8 regional)
   const cities = [
     'melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra',
@@ -194,5 +204,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
+  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...salonDirectoryPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
 }

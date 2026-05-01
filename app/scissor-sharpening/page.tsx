@@ -5,8 +5,8 @@ import JsonLd from "@/components/JsonLd";
 export const revalidate = 86400;
 
 const path = "https://www.findme.hair/scissor-sharpening";
-const title = `Scissor Sharpening for Hairdressers Australia ${new Date().getFullYear()} — Editorial Guide | findme.hair`;
-const description = "How Australian hairdressers and barbers should approach scissor sharpening — frequency, cost, mail-in vs mobile, what to look for in a sharpening service. Editorial guide.";
+const title = `Scissor Sharpening Australia ${new Date().getFullYear()} | findme.hair`;
+const description = "How Australian hairdressers and barbers should approach scissor sharpening — frequency, cost, mail-in vs mobile, what to look for. Editorial guide.";
 
 export const metadata: Metadata = {
   title,

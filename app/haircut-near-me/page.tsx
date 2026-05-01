@@ -4,8 +4,8 @@ import NearMePage from "@/components/NearMePage";
 export const revalidate = 86400;
 
 const path = "https://www.findme.hair/haircut-near-me";
-const title = `Haircut Near Me — Find a Hairdresser or Barber in Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a haircut near you in Australia. Verified hairdressers, barbers and salons in every major city and suburb — quick cuts, fades, blow-dries and full colour with real Google reviews.";
+const title = `Haircut Near Me ${new Date().getFullYear()} | findme.hair`;
+const description = "Find a haircut near you in Australia. Verified hairdressers, barbers and salons in every major city and suburb — quick cuts, fades, blow-dries.";
 
 export const metadata: Metadata = {
   title,

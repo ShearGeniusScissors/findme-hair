@@ -7,7 +7,7 @@ import { TOP_SUBURBS } from "@/lib/suburbConfig";
 export const revalidate = 86400;
 
 const path = "https://www.findme.hair/directory";
-const title = `findme.hair Directory — Browse Every Australian Hair Salon & Barber by Location | ${new Date().getFullYear()}`;
+const title = `findme.hair Directory ${new Date().getFullYear()} | Australian Salon Index`;
 const description = "Complete directory index of findme.hair — every state, region, city and high-density suburb on one page. Browse hairdressers, barbers, hair salons, mobile stylists and specialty services across Australia.";
 
 export const metadata: Metadata = {
@@ -113,6 +113,16 @@ export default function DirectoryPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-10 space-y-12">
+
+        <section className="card p-8">
+          <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>A&ndash;Z list of every salon</h2>
+          <p className="text-sm text-[var(--color-ink-muted)] mb-3">
+            Complete listing of every verified hair salon and barber on findme.hair, paginated by 100. The fastest way to browse the whole directory.
+          </p>
+          <Link href="/directory/salons/1" className="inline-block btn-gold text-sm">
+            Browse all salons &rarr;
+          </Link>
+        </section>
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Find a haircut</h2>

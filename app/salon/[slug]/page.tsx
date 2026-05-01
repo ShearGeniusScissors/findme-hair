@@ -394,9 +394,14 @@ export default async function BusinessProfilePage({
               style={{ fontFamily: 'var(--font-serif)' }}
             >
               {business.name}
-              <span className="block text-base font-normal text-[var(--color-ink-light)] mt-1">
-                {TYPE_LABEL[business.business_type]} in {business.suburb}, {stateName(business.state)}
-              </span>
+              {/* Add a contextual subtitle only when the business name is short enough that
+                  the combined H1 stays under ~70 chars. Long business names produce sufficient
+                  H1 text on their own. */}
+              {business.name.length <= 30 && (
+                <span className="block text-base font-normal text-[var(--color-ink-light)] mt-1">
+                  {TYPE_LABEL[business.business_type]} in {business.suburb}, {stateName(business.state)}
+                </span>
+              )}
             </h1>
 
             <p className="mt-2 text-[var(--color-ink-light)]">

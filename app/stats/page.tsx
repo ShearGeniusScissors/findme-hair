@@ -6,8 +6,8 @@ import { supabaseServerAnon } from "@/lib/supabase";
 export const revalidate = 3600;
 
 const path = "https://www.findme.hair/stats";
-const title = `Australian Hair Industry Stats ${new Date().getFullYear()} — Live Directory Numbers | findme.hair`;
-const description = "Live Australian hair industry statistics — total verified salons by state, business type breakdowns, walk-in coverage, mobile and specialty stylists. Updated continuously from the findme.hair directory.";
+const title = `Australian Hair Industry Stats ${new Date().getFullYear()} | findme.hair`;
+const description = "Live Australian hair industry stats — total verified salons by state, business type breakdowns, walk-in coverage, mobile and specialty stylists.";
 
 export const metadata: Metadata = {
   title,

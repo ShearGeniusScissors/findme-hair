@@ -4,8 +4,8 @@ import NearMePage from "@/components/NearMePage";
 export const revalidate = 86400;
 
 const path = "https://www.findme.hair/mobile-hairdresser-near-me";
-const title = `Mobile Hairdresser Near Me — At-Home Stylists in Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a mobile hairdresser near you in Australia. At-home stylists who come to your door — cuts, colour, blow-dries, weddings and event hair, all with real Google reviews.";
+const title = `Mobile Hairdresser Near Me ${new Date().getFullYear()} | findme.hair`;
+const description = "Find a mobile hairdresser near you in Australia. At-home stylists who come to your door — cuts, colour, blow-dries, wedding and event hair.";
 
 export const metadata: Metadata = {
   title,
