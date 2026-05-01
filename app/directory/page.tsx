@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/directory";
 const title = `findme.hair Directory ${new Date().getFullYear()} | Australian Salon Index`;
-const description = "Complete directory index of findme.hair — every state, region, city and high-density suburb on one page. Browse hairdressers, barbers, hair salons, mobile stylists and specialty services across Australia.";
+const description = "Complete directory index of findme.hair — every state, region, city and suburb. Browse hairdressers, barbers, hair salons and mobile stylists across Australia.";
 
 export const metadata: Metadata = {
   title,
