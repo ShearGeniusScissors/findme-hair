@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { supabaseServerAnon } from '@/lib/supabase';
 import type { AuState, Business, BusinessType, Region, Suburb } from '@/types/database';
 
@@ -283,7 +284,11 @@ export async function countBusinessesByRegion(regionId: string): Promise<number>
   return count ?? 0;
 }
 
-export async function getBusinessBySlug(slug: string): Promise<Business | null> {
+// React.cache dedupes calls within a single request — generateMetadata + the page
+// component both call this for the same slug, so we go from 2 DB queries per
+// /salon/[slug] render to 1. Drops salon-page render time noticeably and clears
+// the audit's "Slow page" / "Timed out" warnings on long-tail profiles.
+export const getBusinessBySlug = cache(async (slug: string): Promise<Business | null> => {
   const supabase = supabaseServerAnon();
   const { data, error } = await supabase
     .from('businesses')
@@ -293,7 +298,7 @@ export async function getBusinessBySlug(slug: string): Promise<Business | null> 
     .maybeSingle();
   if (error) throw error;
   return (data as Business | null) ?? null;
-}
+});
 
 export async function listRegions(state?: AuState): Promise<Region[]> {
   const supabase = supabaseServerAnon();

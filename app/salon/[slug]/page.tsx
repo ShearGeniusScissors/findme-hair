@@ -18,6 +18,22 @@ import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
+// Pre-render the 500 highest-traffic salons (featured + most-reviewed) at build
+// time so Ahrefs/Google never hit a cold ISR start on these. The remaining 13k
+// salons stay on-demand ISR but go in the sitemap.
+export async function generateStaticParams() {
+  const { supabaseServerAnon } = await import('@/lib/supabase');
+  const supabase = supabaseServerAnon();
+  const { data } = await supabase
+    .from('businesses')
+    .select('slug')
+    .eq('status', 'active')
+    .order('featured_until', { ascending: false, nullsFirst: false })
+    .order('google_review_count', { ascending: false, nullsFirst: false })
+    .limit(500);
+  return (data ?? []).map((b: { slug: string }) => ({ slug: b.slug }));
+}
+
 const TYPE_LABEL = {
   hair_salon: 'Hair Salon',
   barber: 'Barber Shop',
