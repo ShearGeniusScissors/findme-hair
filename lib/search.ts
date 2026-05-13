@@ -166,10 +166,17 @@ async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any
       case 'postcode':
         query = query.eq('postcode', resolved.code);
         break;
-      case 'text':
+      case 'text': {
         // Narrow fallback: match only name + suburb (address_line1 caused false positives).
-        query = query.or(`name.ilike.%${resolved.value}%,suburb.ilike.%${resolved.value}%`);
+        // Audit row da5d8f40: strip PostgREST or()-meta chars so user input can't
+        // break out of the filter expression (commas split filters; parens nest them;
+        // asterisks and quotes change LIKE semantics).
+        const safe = resolved.value.replace(/[,()*"'\\]/g, '');
+        if (safe.length > 0) {
+          query = query.or(`name.ilike.%${safe}%,suburb.ilike.%${safe}%`);
+        }
         break;
+      }
     }
   }
   if (filters.suburb) {
