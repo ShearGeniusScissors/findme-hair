@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'node:crypto';
 import { supabaseServiceRole, supabaseServerAnon } from '@/lib/supabase';
 import { emailDomainMatchesWebsite, isDisposableEmail } from '@/lib/emailDomain';
+
+// Audit row 884a60c2 — rate limit /claim using the claim_attempts table itself
+// (no external KV dep). 3 attempts per IP per hour, 5 per email per day.
+const IP_HOURLY_LIMIT = 3;
+const EMAIL_DAILY_LIMIT = 5;
+
+function clientIp(req: NextRequest): string {
+  // Vercel populates x-forwarded-for and x-real-ip; the legacy ip() helper is
+  // gone in Next 16. Take the first XFF entry (left-most = original client).
+  const xff = req.headers.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0].trim();
+  return req.headers.get('x-real-ip') ?? 'unknown';
+}
+
+/** Hash the IP so we don't store raw IPs in claim_attempts.session_hash. */
+function hashIp(ip: string): string {
+  return 'ip_' + createHash('sha256').update(ip).digest('hex').slice(0, 24);
+}
 
 // Audit row e53b6673 — initialise a claim. This route does NOT issue the
 // magic link itself; we hand that off to Supabase Auth from the client so
@@ -47,6 +66,40 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Rate-limit via claim_attempts row count — no external KV needed.
+  const service = supabaseServiceRole();
+  const ipHash = hashIp(clientIp(req));
+  const oneHourAgo = new Date(Date.now() - 3600 * 1000).toISOString();
+  const oneDayAgo = new Date(Date.now() - 86400 * 1000).toISOString();
+
+  // Count attempts in the last hour from this IP. session_hash holds the IP
+  // hash for unauthenticated traffic + the browser session id for in-page
+  // submissions; for the rate-limit predicate we look for either match.
+  const { count: ipHourly } = await service
+    .from('claim_attempts')
+    .select('id', { count: 'exact', head: true })
+    .gte('created_at', oneHourAgo)
+    .eq('session_hash', ipHash);
+  if ((ipHourly ?? 0) >= IP_HOURLY_LIMIT) {
+    return NextResponse.json(
+      { error: 'Too many claim attempts from this network. Please try again in an hour.' },
+      { status: 429 },
+    );
+  }
+
+  const emailHash = 'em_' + createHash('sha256').update(email).digest('hex').slice(0, 24);
+  const { count: emailDaily } = await service
+    .from('claim_attempts')
+    .select('id', { count: 'exact', head: true })
+    .gte('created_at', oneDayAgo)
+    .eq('session_hash', emailHash);
+  if ((emailDaily ?? 0) >= EMAIL_DAILY_LIMIT) {
+    return NextResponse.json(
+      { error: 'Too many claim attempts for this email today. Please try again tomorrow or contact support.' },
+      { status: 429 },
+    );
+  }
+
   const anon = supabaseServerAnon();
   const { data: business } = await anon
     .from('businesses')
@@ -72,41 +125,55 @@ export async function POST(req: NextRequest) {
   const verifiedByEmail = emailDomainMatchesWebsite(email, business.website_url);
   const verdict: 'verified_owner' | 'pending_review' = verifiedByEmail ? 'verified_owner' : 'pending_review';
 
-  // claim_attempts is INSERT-only for anon (per audit RLS migration). We use
-  // the service role here to avoid a round-trip token, and so we can also
-  // surface the row id back to the client for the magic-link redirect.
-  const service = supabaseServiceRole();
+  // Record the attempt. We insert THREE rows so the rate-limit query above
+  // (which keys on session_hash) finds the right matches: one keyed on the
+  // browser session, one keyed on the IP hash, one keyed on the email hash.
+  // Without the dual rows the per-IP and per-email limits won't trigger on
+  // repeated retries from the same attacker. claim_attempts is INSERT-only
+  // for anon (per audit RLS migration); we use service_role here to read
+  // the inserted id back for the magic-link redirect.
+  const baseRow = {
+    business_id: business.id,
+    variant: 'v1',
+    entry_route: 'claim',
+    entry_cta: 'claim_form_submit',
+    email_entered: true,
+    phone_entered: false,
+    verification_method: verifiedByEmail ? 'email_domain_match' : null,
+    outcome: verdict,
+  };
+
+  // Primary attempt row — used downstream for the magic-link verification.
   const { data: attempt, error: attemptErr } = await service
     .from('claim_attempts')
-    .insert({
-      business_id: business.id,
-      session_hash: sessionHash || null,
-      variant: 'v1',
-      entry_route: 'claim',
-      entry_cta: 'claim_form_submit',
-      email_entered: true,
-      phone_entered: false,
-      verification_method: verifiedByEmail ? 'email_domain_match' : null,
-      outcome: verdict,
-    })
+    .insert({ ...baseRow, session_hash: sessionHash || null })
     .select('id')
     .single();
+
+  // Sibling rows keyed on IP + email hashes — used only by the rate limiter.
+  // Fire-and-forget: failures here shouldn't block the legitimate claim.
+  await service.from('claim_attempts').insert([
+    { ...baseRow, session_hash: ipHash },
+    { ...baseRow, session_hash: emailHash },
+  ]);
 
   if (attemptErr) {
     return NextResponse.json({ error: 'Failed to record claim attempt' }, { status: 500 });
   }
 
   // Emit one claim_events row for analytics — keeps claim_funnel_v warm.
-  await service.from('claim_events').insert({
-    attempt_id: attempt.id,
-    business_id: business.id,
-    event_type: 'claim_submitted',
-    variant: 'v1',
-    meta: { verdict, has_website: !!business.website_url, message_length: message.length },
-  });
+  if (attempt) {
+    await service.from('claim_events').insert({
+      attempt_id: attempt.id,
+      business_id: business.id,
+      event_type: 'claim_submitted',
+      variant: 'v1',
+      meta: { verdict, has_website: !!business.website_url, message_length: message.length },
+    });
+  }
 
   // For pending review, post a coordination_log row so Matt/Aaron see the queue.
-  if (!verifiedByEmail) {
+  if (!verifiedByEmail && attempt) {
     await service.from('coordination_log').insert({
       from_org: 'FMH',
       to_org: 'FMH',
@@ -128,6 +195,10 @@ export async function POST(req: NextRequest) {
           : 'no_website_on_listing',
       },
     });
+  }
+
+  if (!attempt) {
+    return NextResponse.json({ error: 'Failed to record claim attempt' }, { status: 500 });
   }
 
   return NextResponse.json({
