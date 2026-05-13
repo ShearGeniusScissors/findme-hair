@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
 import { stateName } from "@/lib/geo";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -19,7 +19,7 @@ interface SalonRow {
 }
 
 async function getTotalCount(): Promise<number> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { count } = await supabase
     .from("businesses")
     .select("id", { count: "exact", head: true })
@@ -28,7 +28,7 @@ async function getTotalCount(): Promise<number> {
 }
 
 async function getSalonPage(pageNum: number): Promise<SalonRow[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const offset = (pageNum - 1) * PAGE_SIZE;
   const { data } = await supabase
     .from("businesses")

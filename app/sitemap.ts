@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
 // Drop force-dynamic so Next.js can serve the cached sitemap across requests
@@ -7,7 +7,7 @@ import { TOP_SUBURBS } from '@/lib/suburbConfig';
 export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const base = 'https://www.findme.hair';
   // Use the deploy-time date as the stable lastmod for static + pivot pages.
   // For business + region + suburb pages we pass the row's own updated_at

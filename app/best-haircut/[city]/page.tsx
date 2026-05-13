@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import BusinessCard from "@/components/BusinessCard";
 import JsonLd from "@/components/JsonLd";
 import { stateName } from "@/lib/geo";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import type { AuState, Business } from "@/types/database";
 
@@ -40,7 +40,7 @@ export async function generateMetadata({
 }
 
 async function getTopBusinesses(state: AuState, suburbs: string[]): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const suburbFilters = suburbs.map((s) => `suburb.ilike.${s}`).join(",");
   const { data } = await supabase
     .from("businesses")

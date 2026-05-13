@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 
 export const revalidate = 3600;
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function StatsPage() {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   const byState = await supabase.from('businesses').select('state').eq('status', 'active');
 

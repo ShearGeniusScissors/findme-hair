@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SuburbPivotPage from "@/components/SuburbPivotPage";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
 import { stateName } from "@/lib/geo";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 import type { Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -49,7 +49,7 @@ export async function generateMetadata({
 }
 
 async function getBusinesses(suburbName: string, state: string): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data: barbers } = await supabase
     .from("businesses")
     .select("*")

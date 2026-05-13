@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
-import { supabaseServiceRole, supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServiceRole, supabaseServerInternal } from '@/lib/supabase';
 import { emailDomainMatchesWebsite, isDisposableEmail } from '@/lib/emailDomain';
 
 // Audit row 884a60c2 — rate limit /claim using the claim_attempts table itself
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const anon = supabaseServerAnon();
+  const anon = supabaseServerInternal();
   const { data: business } = await anon
     .from('businesses')
     .select('id, slug, name, website_url, is_claimed, claimed_by, suburb, state')

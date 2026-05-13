@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { stateName, titleCase } from '@/lib/geo';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import type { Business, BusinessType } from '@/types/database';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -465,7 +465,7 @@ export async function generateMetadata({
 }
 
 async function getServiceBusinesses(config: ServiceConfig): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   // If we have a specialty tag, prefer that — it's the most accurate filter
   if (config.specialtyTag) {

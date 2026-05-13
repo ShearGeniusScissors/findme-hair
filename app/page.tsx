@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import MatrixSearch from '@/components/MatrixSearch';
 import CategoryTiles from '@/components/CategoryTiles';
 import JsonLd from '@/components/JsonLd';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 
 export const metadata: Metadata = {
   title: "findme.hair — Australia's Hair Salon & Barber Directory",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   // Fetch total active count
   const { count: totalCount } = await supabase

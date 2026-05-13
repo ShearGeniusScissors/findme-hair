@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 import { stateName } from "@/lib/geo";
 
 export const revalidate = 3600;
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReviewsPage() {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   const { data: topByReviews } = await supabase
     .from('businesses')

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import CityPivotPage from "@/components/CityPivotPage";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { stateName } from "@/lib/geo";
-import { supabaseServerAnon } from "@/lib/supabase";
+import { supabaseServerInternal } from "@/lib/supabase";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -49,7 +49,7 @@ export async function generateMetadata({
 }
 
 async function getBusinesses(state: AuState, suburbs: string[]): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const suburbFilters = suburbs.map((s) => `suburb.ilike.${s}`).join(",");
 
   const { data: byFlag } = await supabase
