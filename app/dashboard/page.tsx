@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase';
 import type { Business, BusinessMedia, OpeningHours } from '@/types/database';
 
@@ -22,6 +23,7 @@ function defaultHours(businessId: string): OpeningHours[] {
 
 export default function DashboardPage() {
   const supabase = supabaseBrowser();
+  const params = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -30,6 +32,12 @@ export default function DashboardPage() {
   const [media, setMedia] = useState<Record<string, BusinessMedia[]>>({});
   const [status, setStatus] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [claimNotice, setClaimNotice] = useState<
+    | { kind: 'verified'; salonName: string }
+    | { kind: 'pending'; salonName: string }
+    | { kind: 'failed'; reason: string }
+    | null
+  >(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const loadMedia = useCallback(async (businessId: string) => {
@@ -104,6 +112,35 @@ export default function DashboardPage() {
       setEmail(user.email ?? null);
       const { data: sess } = await supabase.auth.getSession();
       setToken(sess.session?.access_token ?? null);
+
+      // If we arrived via the claim flow magic link, finish the transaction.
+      // Audit row e53b6673.
+      const slug = params.get('slug');
+      const verdict = params.get('verdict');
+      const claimAttemptId = params.get('claim_attempt_id');
+      if (slug && verdict && claimAttemptId && sess.session?.access_token) {
+        try {
+          const res = await fetch('/api/claim/finalise', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              authorization: `Bearer ${sess.session.access_token}`,
+            },
+            body: JSON.stringify({ slug, verdict, claim_attempt_id: claimAttemptId }),
+          });
+          const json = await res.json();
+          if (res.ok && json.claimed) {
+            setClaimNotice({ kind: 'verified', salonName: json.business_name });
+          } else if (res.ok && json.pending) {
+            setClaimNotice({ kind: 'pending', salonName: json.business_name });
+          } else if (!res.ok) {
+            setClaimNotice({ kind: 'failed', reason: json.error ?? 'Claim could not be completed' });
+          }
+        } catch {
+          setClaimNotice({ kind: 'failed', reason: 'Network error while completing claim' });
+        }
+      }
+
       const { data } = await supabase
         .from('businesses')
         .select('*')
@@ -212,6 +249,24 @@ export default function DashboardPage() {
         </button>
       </div>
 
+      {claimNotice && claimNotice.kind === 'verified' && (
+        <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <p className="font-semibold">{claimNotice.salonName} is now yours.</p>
+          <p className="mt-1">Your email matched the salon&rsquo;s website, so we approved the claim automatically. Scroll down to edit your listing.</p>
+        </div>
+      )}
+      {claimNotice && claimNotice.kind === 'pending' && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-semibold">Claim submitted for {claimNotice.salonName}.</p>
+          <p className="mt-1">Because your email doesn&rsquo;t match the salon&rsquo;s website, our team will manually verify ownership within 24 hours. We&rsquo;ll email you the moment you&rsquo;re approved.</p>
+        </div>
+      )}
+      {claimNotice && claimNotice.kind === 'failed' && (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+          <p className="font-semibold">Claim could not be completed.</p>
+          <p className="mt-1">{claimNotice.reason}</p>
+        </div>
+      )}
       {status && (
         <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-800">{status}</p>
       )}
