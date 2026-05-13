@@ -39,6 +39,19 @@ export default function DashboardPage() {
     | null
   >(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+
+  const fetchPhotoUrl = useCallback(async (storagePath: string) => {
+    // Bucket is private (audit 4ad5ca94) — getPublicUrl no longer works.
+    // Use a 1-hour signed URL. Cache locally so rerenders don't refetch.
+    setPhotoUrls((prev) => {
+      if (prev[storagePath]) return prev;
+      void supabaseBrowser().storage.from(BUCKET).createSignedUrl(storagePath, 3600).then(({ data }) => {
+        if (data?.signedUrl) setPhotoUrls((p) => ({ ...p, [storagePath]: data.signedUrl }));
+      });
+      return prev;
+    });
+  }, []);
 
   const loadMedia = useCallback(async (businessId: string) => {
     const { data } = await supabase
@@ -46,13 +59,10 @@ export default function DashboardPage() {
       .select('*')
       .eq('business_id', businessId)
       .order('sort_order');
-    setMedia((prev) => ({ ...prev, [businessId]: (data ?? []) as BusinessMedia[] }));
-  }, [supabase]);
-
-  function photoUrl(storagePath: string) {
-    const { data } = supabaseBrowser().storage.from(BUCKET).getPublicUrl(storagePath);
-    return data.publicUrl;
-  }
+    const rows = (data ?? []) as BusinessMedia[];
+    setMedia((prev) => ({ ...prev, [businessId]: rows }));
+    rows.forEach((m) => fetchPhotoUrl(m.storage_path));
+  }, [supabase, fetchPhotoUrl]);
 
   async function uploadPhoto(businessId: string, file: File) {
     if (!token) return;
@@ -390,7 +400,7 @@ export default function DashboardPage() {
                           <div key={m.id} className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={photoUrl(m.storage_path)}
+                              src={photoUrls[m.storage_path] ?? ''}
                               alt=""
                               className="h-full w-full object-cover"
                             />

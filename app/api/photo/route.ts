@@ -26,8 +26,11 @@ export async function GET(req: NextRequest) {
     return new NextResponse('invalid name', { status: 400 });
   }
 
-  const key = process.env.GOOGLE_MAPS_API_KEY ?? process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  if (!key) return new NextResponse('not configured', { status: 500 });
+  // Audit row 65e2c726 — removed fallback to NEXT_PUBLIC_GOOGLE_MAPS_API_KEY.
+  // The public key is referrer-restricted in GCP for browser use; server-side
+  // fetches need GOOGLE_MAPS_API_KEY (server-only, no referrer restriction).
+  const key = process.env.GOOGLE_MAPS_API_KEY;
+  if (!key) return new NextResponse('GOOGLE_MAPS_API_KEY not configured', { status: 500 });
 
   const upstream = `https://places.googleapis.com/v1/${name}/media?maxHeightPx=${encodeURIComponent(h)}&key=${key}`;
   const r = await fetch(upstream, { cache: 'force-cache' });
