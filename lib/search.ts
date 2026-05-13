@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import type { AuState, Business, BusinessType, Region, Suburb } from '@/types/database';
 
 export interface SearchFilters {
@@ -112,7 +112,7 @@ export async function resolveQuery(q: string): Promise<QueryResolution> {
 
   if (/^\d{4}$/.test(trimmed)) return { kind: 'postcode', code: trimmed };
 
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   // Any suburb whose name contains the query (case-insensitive).
   // Catches variants: "bondi" → Bondi + Bondi Beach + Bondi Junction + North Bondi.
@@ -188,7 +188,10 @@ async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any
 }
 
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  // Internal: returns full Business rows incl. confidence_score for sort + internal
+  // columns rendered server-side. Anon role no longer has SELECT on those columns
+  // post audit row 353f6644.
+  const supabase = supabaseServerInternal();
   const userLimit = filters.limit ?? 40;
   // When open_now is active we over-fetch, filter in JS, then trim.
   const dbLimit = filters.open_now ? Math.min(userLimit * 6, 400) : userLimit;
@@ -238,7 +241,7 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
 }
 
 export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit' | 'offset'>): Promise<number> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   // open_now cannot be filtered server-side, so count an over-fetched sample.
   if (filters.open_now) {
     const rows = await searchBusinesses({ ...filters, limit: 400 });
@@ -281,7 +284,7 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
 }
 
 export async function countBusinessesByRegion(regionId: string): Promise<number> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { count, error } = await supabase
     .from('businesses')
     .select('*', { count: 'exact', head: true })
@@ -296,7 +299,10 @@ export async function countBusinessesByRegion(regionId: string): Promise<number>
 // /salon/[slug] render to 1. Drops salon-page render time noticeably and clears
 // the audit's "Slow page" / "Timed out" warnings on long-tail profiles.
 export const getBusinessBySlug = cache(async (slug: string): Promise<Business | null> => {
-  const supabase = supabaseServerAnon();
+  // Internal: /salon/[slug] renders confidence_score (noindex), scraped_services
+  // (services list), preferred_scissor_supplier_url (supplier badge). Bypass RLS;
+  // .eq('status','active') is the defensive row filter.
+  const supabase = supabaseServerInternal();
   const { data, error } = await supabase
     .from('businesses')
     .select('*')
@@ -308,7 +314,7 @@ export const getBusinessBySlug = cache(async (slug: string): Promise<Business | 
 });
 
 export async function listRegions(state?: AuState): Promise<Region[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   let query = supabase.from('regions').select('*').order('name');
   if (state) query = query.eq('state', state);
   const { data, error } = await query;
@@ -317,13 +323,13 @@ export async function listRegions(state?: AuState): Promise<Region[]> {
 }
 
 export async function getRegionBySlug(slug: string): Promise<Region | null> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data } = await supabase.from('regions').select('*').eq('slug', slug).maybeSingle();
   return (data as Region | null) ?? null;
 }
 
 export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data } = await supabase
     .from('suburbs')
     .select('*')
@@ -365,7 +371,10 @@ export async function getNearbySalonsByDistance(
   limit = 6,
 ): Promise<NearbySalon[]> {
   if (origin.lat == null || origin.lng == null) return [];
-  const supabase = supabaseServerAnon();
+  // Internal: returns full Business rows for the nearby panel which downstream
+  // BusinessCard rendering touches non-public columns. Bypass RLS; status='active'
+  // is the row filter.
+  const supabase = supabaseServerInternal();
 
   // Bounding box pre-filter so we don't pull the whole state.
   // 1° latitude ≈ 110.574 km; 1° longitude ≈ 111.320 * cos(lat) km.
@@ -413,7 +422,8 @@ export async function getSuburbBusinesses(
   regionSlug: string,
   suburbSlug: string,
 ): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  // Internal: getSuburbBusinesses returns full rows + orders by confidence_score.
+  const supabase = supabaseServerInternal();
   const region = await getRegionBySlug(regionSlug);
   if (!region) return [];
   const suburbName = suburbSlug.replace(/-/g, ' ');
@@ -433,7 +443,7 @@ export async function getSuburbByRegionAndSlug(
   regionId: string,
   suburbSlug: string,
 ): Promise<Suburb | null> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data } = await supabase
     .from('suburbs')
     .select('*')
@@ -444,7 +454,7 @@ export async function getSuburbByRegionAndSlug(
 }
 
 export async function listStates(): Promise<AuState[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data, error } = await supabase
     .from('businesses')
     .select('state')

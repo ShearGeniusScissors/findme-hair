@@ -16,13 +16,6 @@ export function supabaseBrowser() {
   return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-/** Read-only server client — anonymous, no cookies. Use in Server Components. */
-export function supabaseServerAnon() {
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
 /**
  * Service-role client. BYPASSES RLS. Server-side only.
  */
@@ -32,6 +25,22 @@ export function supabaseServiceRole() {
   return createClient(SUPABASE_URL, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+}
+
+/**
+ * Server-side render client. Was supabaseServerAnon, now backed by service_role
+ * because audit row 353f6644 introduces column-level GRANTs that revoke
+ * confidence_score / preferred_scissor_supplier_url / scraped_* / notes /
+ * verification_flags etc. from anon. Server-render pages need those columns.
+ *
+ * Callers MUST keep explicit row-level filters (e.g. `.eq('status', 'active')`)
+ * because service_role bypasses RLS. Without those filters, excluded /
+ * unverified listings would leak onto public pages.
+ *
+ * Server-only. Never imported into Client Components.
+ */
+export function supabaseServerInternal() {
+  return supabaseServiceRole();
 }
 
 /**

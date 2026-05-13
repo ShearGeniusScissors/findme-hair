@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 
 // Audit row 25f65d1a — dynamic per-salon OG card. Used by /salon/[slug]
 // generateMetadata + JSON-LD ImageObject when the salon has no google_photos.
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     return brandTile();
   }
 
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const { data } = await supabase
     .from('businesses')
     .select('name, suburb, state, business_type, google_rating, google_review_count')

@@ -10,7 +10,7 @@ import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { stripMarkdown } from '@/lib/seoMeta';
 import { formatTag } from '@/lib/formatTag';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
 import ShearGeniusBadge from '@/components/ShearGeniusBadge';
@@ -23,8 +23,8 @@ export const revalidate = 3600; // ISR — regenerate at most once per hour
 // time so Ahrefs/Google never hit a cold ISR start on these. The remaining 13k
 // salons stay on-demand ISR but go in the sitemap.
 export async function generateStaticParams() {
-  const { supabaseServerAnon } = await import('@/lib/supabase');
-  const supabase = supabaseServerAnon();
+  const { supabaseServerInternal } = await import('@/lib/supabase');
+  const supabase = supabaseServerInternal();
   const { data } = await supabase
     .from('businesses')
     .select('slug')
@@ -211,7 +211,7 @@ export default async function BusinessProfilePage({
   let regionSiblings: Array<{ id: string; slug: string; name: string; suburb: string; google_rating: number | null; google_review_count: number | null }> = [];
   let regionDisplayName = '';
   if (business.region_id) {
-    const db = supabaseServerAnon();
+    const db = supabaseServerInternal();
     const [{ data: regionRow }, { data: siblings }] = await Promise.all([
       db.from('regions').select('name, slug').eq('id', business.region_id).maybeSingle(),
       db.from('businesses')
@@ -237,7 +237,7 @@ export default async function BusinessProfilePage({
   let sgNextVisit: string | null = null;
   if (showSgBadge) {
     const today = new Date().toISOString().slice(0, 10);
-    const db = supabaseServerAnon();
+    const db = supabaseServerInternal();
     const [lastRes, nextRes] = await Promise.all([
       db.from('field_runs').select('run_date').eq('state', business.state)
         .lte('run_date', today).order('run_date', { ascending: false }).limit(1),

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { stateName, titleCase } from '@/lib/geo';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import type { AuState, Business } from '@/types/database';
 
 export const revalidate = 3600;
@@ -79,7 +79,7 @@ export async function generateMetadata({
 }
 
 async function getMobileHairdressers(config: CityConfig): Promise<Business[]> {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
   const suburbFilters = config.suburbs.map((s) => `suburb.ilike.${s}`).join(',');
 
   // Try is_mobile=true first (the canonical signal); fall back to specialties[] containing 'mobile'

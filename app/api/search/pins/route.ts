@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 import { resolveQuery } from '@/lib/search';
 import type { AuState, BusinessType } from '@/types/database';
 
@@ -23,7 +23,7 @@ const PIN_LIMIT = 100;
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   let query = supabase
     .from('businesses')

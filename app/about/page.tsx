@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { supabaseServerAnon } from '@/lib/supabase';
+import { supabaseServerInternal } from '@/lib/supabase';
 
 export const metadata: Metadata = {
   title: 'About findme.hair — Australia\'s Hair Salon & Barber Directory',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const supabase = supabaseServerAnon();
+  const supabase = supabaseServerInternal();
 
   const { count: totalCount } = await supabase
     .from('businesses')
