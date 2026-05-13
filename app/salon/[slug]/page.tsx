@@ -9,6 +9,7 @@ import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug, getNearbySalons } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { stripMarkdown } from '@/lib/seoMeta';
+import { formatTag } from '@/lib/formatTag';
 import { supabaseServerAnon } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
@@ -40,27 +41,10 @@ const TYPE_LABEL = {
   unisex: 'Unisex Salon',
 } as const;
 
-const SPECIALTY_DISPLAY: Record<string, string> = {
-  'colour-specialist': 'Colour Specialist',
-  'curly-hair': 'Curly Hair',
-  'balayage': 'Balayage',
-  'extensions': 'Extensions',
-  'bridal': 'Bridal Hair',
-  'kids': 'Kids',
-  'mens': 'Mens Cuts',
-  'mobile': 'Mobile',
-  'japanese': 'Japanese',
-  'korean': 'Korean',
-  'keratin': 'Keratin',
-  'highlights': 'Highlights',
-  'organic': 'Organic',
-  'barber': 'Barber',
-  'blow-dry': 'Blow Dry',
-  'afro': 'Textured Hair',
-  'colour-correction': 'Colour Correction',
-  'wigs': 'Wigs',
-};
-
+// Display labels come from lib/formatTag (kebab/snake → Title Case + brand /
+// term overrides). The map below remains for the *link target only* — chip
+// click must still resolve against the underlying raw tag value because the
+// filter logic on /services/[slug] uses businesses.specialties contains().
 const SPECIALTY_SLUG: Record<string, string> = {
   'colour-specialist': 'colour-specialist',
   'curly-hair': 'curly-hair-specialist',
@@ -522,7 +506,7 @@ export default async function BusinessProfilePage({
                         href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
                         className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
                       >
-                        {SPECIALTY_DISPLAY[s] ?? s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                        {formatTag(s)}
                       </Link>
                     ))}
                   </div>
