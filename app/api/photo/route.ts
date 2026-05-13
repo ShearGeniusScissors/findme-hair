@@ -44,9 +44,48 @@ export async function GET(req: NextRequest) {
   const h = url.searchParams.get('h') ?? '600';
   if (!name) return cachedResponse('missing name', { status: 400 });
 
-  // Defence: only allow places-api photo names ("places/{place_id}/photos/{photo_id}").
+  // Defence 1: shape check (free).
   if (!/^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/.test(name)) {
     return cachedResponse('invalid name', { status: 400 });
+  }
+
+  // Defence 2: COST CONTROL — only pay for an upstream call if this photo
+  // name actually appears in our businesses table. Random enumeration by
+  // attackers (or stale links from old indexes) get a free 404 from us
+  // instead of a billable INVALID_ARGUMENT from Google.
+  // Uses GIN(google_photos) for a 1-2ms lookup at Supabase scale.
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (supaUrl && anonKey) {
+    try {
+      const validateRes = await fetch(
+        `${supaUrl}/rest/v1/rpc/is_known_photo_name`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: anonKey,
+            Authorization: `Bearer ${anonKey}`,
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ p_name: name }),
+          // Cache the validation result so we don't hit Supabase on every photo
+          // request either — names rarely move.
+          next: { revalidate: 3600 },
+        },
+      );
+      if (validateRes.ok) {
+        const known = await validateRes.json();
+        if (known !== 1 && !Array.isArray(known)) {
+          return cachedResponse('unknown photo', { status: 404 });
+        }
+      }
+      // If the validation request itself errors, fall through and let the
+      // upstream call decide. Don't block legitimate traffic on a Supabase
+      // outage.
+    } catch {
+      // ignore — fall through
+    }
   }
 
   const key = process.env.GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_PLACES_API_KEY;
