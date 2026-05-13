@@ -325,38 +325,80 @@ export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
   return (data ?? []) as Suburb[];
 }
 
-export async function getNearbySalons(
-  state: AuState,
-  suburb: string,
-  excludeSlug: string,
+export type NearbySalon = Business & { distance_km: number };
+
+/**
+ * Great-circle distance between two lat/lng points, in kilometres.
+ * Wikipedia: https://en.wikipedia.org/wiki/Haversine_formula
+ */
+export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371; // Earth radius in km
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/**
+ * Return up to `limit` active salons within `radiusKm` of `origin`, ordered by:
+ *   1. same-suburb first (still ranked by distance within the group)
+ *   2. distance ascending
+ *   3. google_rating descending
+ *
+ * Salons without lat/lng are excluded. If the origin itself has no lat/lng we
+ * return an empty array — callers should render an empty state in that case
+ * (the spec is explicit: NEVER fall back to top-rated state-wide salons).
+ */
+export async function getNearbySalonsByDistance(
+  origin: { slug: string; suburb: string; state: AuState; lat: number | null; lng: number | null },
+  radiusKm = 25,
   limit = 6,
-): Promise<Business[]> {
+): Promise<NearbySalon[]> {
+  if (origin.lat == null || origin.lng == null) return [];
   const supabase = supabaseServerAnon();
-  const { data: sameSuburb } = await supabase
+
+  // Bounding box pre-filter so we don't pull the whole state.
+  // 1° latitude ≈ 110.574 km; 1° longitude ≈ 111.320 * cos(lat) km.
+  // Pad the box by ~10% to keep haversine-corner cases in scope.
+  const latDelta = (radiusKm * 1.1) / 110.574;
+  const cosLat = Math.max(Math.abs(Math.cos((origin.lat * Math.PI) / 180)), 0.01);
+  const lngDelta = (radiusKm * 1.1) / (111.320 * cosLat);
+
+  const { data, error } = await supabase
     .from('businesses')
     .select('*')
     .eq('status', 'active')
-    .eq('state', state)
-    .ilike('suburb', suburb)
-    .neq('slug', excludeSlug)
-    .order('google_rating', { ascending: false, nullsFirst: false })
-    .order('google_review_count', { ascending: false, nullsFirst: false })
-    .limit(limit);
-  if (sameSuburb && sameSuburb.length >= limit) return sameSuburb as Business[];
-  // Top up from same state if suburb is sparse
-  const remaining = limit - (sameSuburb?.length ?? 0);
-  const { data: stateRest } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('status', 'active')
-    .eq('state', state)
-    .neq('slug', excludeSlug)
-    .order('google_rating', { ascending: false, nullsFirst: false })
-    .order('google_review_count', { ascending: false, nullsFirst: false })
-    .limit(remaining * 3);
-  const seen = new Set((sameSuburb ?? []).map((b) => b.slug));
-  const fillers = (stateRest ?? []).filter((b) => !seen.has(b.slug)).slice(0, remaining);
-  return [...(sameSuburb ?? []), ...fillers] as Business[];
+    .neq('slug', origin.slug)
+    .not('lat', 'is', null)
+    .not('lng', 'is', null)
+    .gte('lat', origin.lat - latDelta)
+    .lte('lat', origin.lat + latDelta)
+    .gte('lng', origin.lng - lngDelta)
+    .lte('lng', origin.lng + lngDelta)
+    .limit(200);
+  if (error) throw error;
+
+  const sameSuburb = origin.suburb.toLowerCase();
+  const withDistance: NearbySalon[] = [];
+  for (const b of (data ?? []) as Business[]) {
+    if (b.lat == null || b.lng == null) continue;
+    const distance_km = haversineKm(origin.lat, origin.lng, b.lat, b.lng);
+    if (distance_km > radiusKm) continue;
+    withDistance.push({ ...b, distance_km });
+  }
+
+  withDistance.sort((a, b) => {
+    const aSame = a.suburb.toLowerCase() === sameSuburb ? 0 : 1;
+    const bSame = b.suburb.toLowerCase() === sameSuburb ? 0 : 1;
+    if (aSame !== bSame) return aSame - bSame;
+    if (a.distance_km !== b.distance_km) return a.distance_km - b.distance_km;
+    return (b.google_rating ?? 0) - (a.google_rating ?? 0);
+  });
+
+  return withDistance.slice(0, limit);
 }
 
 export async function getSuburbBusinesses(

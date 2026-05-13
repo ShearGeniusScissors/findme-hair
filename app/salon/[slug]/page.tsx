@@ -6,7 +6,7 @@ import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
 import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
-import { getBusinessBySlug, getNearbySalons } from '@/lib/search';
+import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { stripMarkdown } from '@/lib/seoMeta';
 import { formatTag } from '@/lib/formatTag';
@@ -181,10 +181,15 @@ export default async function BusinessProfilePage({
   const business = await getBusinessBySlug(slug);
   if (!business) notFound();
 
-  // Internal-link cross-pollination — gives every salon page 6 inbound links
-  // from sibling salons in the same suburb (or state if suburb is sparse).
-  // Eliminates the "orphan page" Ahrefs flag and spreads PageRank.
-  const nearbySalons = await getNearbySalons(business.state, business.suburb, business.slug, 6);
+  // Real-geography "Other salons near {suburb}" — haversine within 25km, never
+  // a state-wide fallback (that previously surfaced Melbourne salons on
+  // remote-country profiles). If <2 salons within radius we render an empty
+  // state with a /claim CTA further down.
+  const nearbySalons = await getNearbySalonsByDistance(
+    { slug: business.slug, suburb: business.suburb, state: business.state, lat: business.lat, lng: business.lng },
+    25,
+    6,
+  );
 
   // Region-level siblings — many small suburbs have only 1-3 salons so
   // nearbySalons returns a thin list. Pull up to 12 region-level sibling salons
@@ -658,13 +663,14 @@ export default async function BusinessProfilePage({
               );
             })()}
 
-            {/* Nearby salons — sibling salon cross-links so every profile gets
-                inbound internal links from at least 6 other salon pages. */}
-            {nearbySalons.length > 0 && (
-              <section className="mt-10">
-                <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
-                  Other salons {business.suburb ? `near ${business.suburb}` : `in ${stateName(business.state)}`}
-                </h2>
+            {/* Nearby salons — haversine within 25km. Empty state when <2 real
+                neighbours exist (e.g. remote country towns) — never falls back
+                to unrelated metro salons. */}
+            <section className="mt-10">
+              <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                Other salons near {business.suburb}
+              </h2>
+              {nearbySalons.length >= 2 ? (
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {nearbySalons.map((n) => (
                     <li key={n.slug}>
@@ -675,6 +681,9 @@ export default async function BusinessProfilePage({
                         <div className="text-sm font-medium text-[var(--color-ink)]">{n.name}</div>
                         <div className="mt-1 text-xs text-[var(--color-ink-muted)]">
                           {n.suburb}, {n.state}
+                          <span className="ml-2 text-[var(--color-ink)]">
+                            {n.distance_km < 1 ? `${(n.distance_km * 1000).toFixed(0)} m away` : `${n.distance_km.toFixed(1)} km away`}
+                          </span>
                           {n.google_rating != null && (
                             <span className="ml-2 text-[var(--color-gold-dark)]">
                               ★ {n.google_rating.toFixed(1)}
@@ -686,8 +695,20 @@ export default async function BusinessProfilePage({
                     </li>
                   ))}
                 </ul>
-              </section>
-            )}
+              ) : (
+                <div className="mt-4 card p-6">
+                  <p className="text-sm text-[var(--color-ink-light)]">
+                    No verified salons nearby yet — be the first to claim a listing in your area.
+                  </p>
+                  <Link
+                    href="/claim"
+                    className="mt-3 inline-flex items-center text-sm font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                  >
+                    Claim a listing →
+                  </Link>
+                </div>
+              )}
+            </section>
 
             {/* Region-level sibling salons — denser internal-link block.
                 Plain anchor list (no cards) so 12 region siblings don't blow up the page. */}
