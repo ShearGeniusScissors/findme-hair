@@ -11,13 +11,16 @@ const KEY_LOCATION = `${HOST}/${INDEXNOW_KEY}.txt`;
  * Protected by a simple bearer token check (INDEXNOW_SECRET env var).
  */
 export async function POST(req: NextRequest) {
-  // Simple auth — set INDEXNOW_SECRET env var in Vercel
+  // Audit row b598236d — default-closed if INDEXNOW_SECRET is missing.
+  // Previously: `if (secret) { ... }` — meaning a missing env var made the
+  // endpoint accept anonymous submissions. Now: missing secret = 500.
   const secret = process.env.INDEXNOW_SECRET;
-  if (secret) {
-    const auth = req.headers.get('authorization');
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  if (!secret) {
+    return NextResponse.json({ error: 'INDEXNOW_SECRET not configured' }, { status: 500 });
+  }
+  const auth = req.headers.get('authorization');
+  if (auth !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const body = await req.json();

@@ -133,9 +133,11 @@ export async function generateMetadata({
   if (!business) return { title: 'Salon not found' };
   const typeLabel = TYPE_LABEL[business.business_type].toLowerCase();
   const ratingStr = business.google_rating ? `${business.google_rating}★ from ${business.google_review_count ?? 0} Google reviews. ` : '';
+  // Per-salon dynamic OG when no Google photo exists. /og-image.jpg is the
+  // static brand-tile fallback if the generator errors. Audit row 25f65d1a.
   const photoUrl = business.google_photos?.[0]?.name
     ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(business.google_photos[0].name)}&h=630`
-    : 'https://www.findme.hair/og-image.jpg';
+    : `https://www.findme.hair/api/og?slug=${encodeURIComponent(business.slug)}`;
   const path = `https://www.findme.hair/salon/${business.slug}`;
   // Title hard-capped at <60 chars: drop the "Hair Salon in" phrase and brand suffix on long names.
   const baseTitle = `${business.name} — ${business.suburb}, ${business.state} | findme.hair`;
@@ -150,9 +152,20 @@ export async function generateMetadata({
   const description = aiDesc.length >= 50
     ? `${aiDesc.slice(0, 155)}${aiDesc.length > 155 ? '…' : ''}`
     : fallback;
+  // Audit row 3b164977 — pages with confidence_score < 30 and no enrichment
+  // (no Google photos AND no AI description AND no manual description) are
+  // paper-thin. Don't let Google index them — they dilute trust signals.
+  const isLowConfidence = (business.confidence_score ?? 0) < 30
+    && (!business.google_photos || business.google_photos.length === 0)
+    && !business.ai_description
+    && !business.description;
+
   return {
     title,
     description,
+    robots: isLowConfidence
+      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+      : undefined,
     alternates: {
       canonical: path,
       languages: {
@@ -306,7 +319,7 @@ export default async function BusinessProfilePage({
           '@type': 'ImageObject',
           url: photos.length > 0
             ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(photos[0].name)}&h=800`
-            : 'https://www.findme.hair/og-image.jpg',
+            : `https://www.findme.hair/api/og?slug=${encodeURIComponent(business.slug)}`,
         },
         priceRange: '$$',
         // paymentAccepted is Text per schema.org spec — array form trips strict

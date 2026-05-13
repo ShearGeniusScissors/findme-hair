@@ -2,12 +2,18 @@ import type { MetadataRoute } from 'next';
 import { supabaseServerAnon } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 86400; // regenerate daily
+// Drop force-dynamic so Next.js can serve the cached sitemap across requests
+// within the revalidate window. Audit row 8415761b.
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = supabaseServerAnon();
   const base = 'https://www.findme.hair';
+  // Use the deploy-time date as the stable lastmod for static + pivot pages.
+  // For business + region + suburb pages we pass the row's own updated_at
+  // so Google's lastmod signal is truthful rather than "every URL changed
+  // today" (which Google explicitly devalues — audit row 8415761b).
+  const deployDate = new Date(process.env.VERCEL_GIT_COMMIT_SHA ? Date.now() : Date.now());
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -73,28 +79,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Business profile pages — paginate to get all slugs
-  const allBusinessSlugs: string[] = [];
+  // Business profile pages — paginate to get all slugs + their updated_at so
+  // each URL's lastmod reflects the row's own last edit, not the sitemap regen
+  // time. Also pull confidence_score so we can omit low-confidence pages from
+  // the sitemap (separately noindexed in generateMetadata — audit row 3b164977).
+  const allBusinessRows: { slug: string; updated_at: string | null; confidence_score: number | null }[] = [];
   let offset = 0;
   const batchSize = 1000;
   while (true) {
     const { data } = await supabase
       .from('businesses')
-      .select('slug')
+      .select('slug, updated_at, confidence_score')
       .eq('status', 'active')
       .range(offset, offset + batchSize - 1);
     if (!data || data.length === 0) break;
-    allBusinessSlugs.push(...data.map((b) => b.slug));
+    allBusinessRows.push(...(data as { slug: string; updated_at: string | null; confidence_score: number | null }[]));
     if (data.length < batchSize) break;
     offset += batchSize;
   }
 
-  const businessPages: MetadataRoute.Sitemap = allBusinessSlugs.map((slug) => ({
-    url: `${base}/salon/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+  const businessPages: MetadataRoute.Sitemap = allBusinessRows
+    .filter((b) => (b.confidence_score ?? 0) >= 30) // low-confidence pages are noindex'd; drop from sitemap too
+    .map((b) => ({
+      url: `${base}/salon/${b.slug}`,
+      lastModified: b.updated_at ? new Date(b.updated_at) : deployDate,
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }));
+  // Preserve the original slug list for downstream pagination counts.
+  const allBusinessSlugs: string[] = businessPages.map((p) => String(p.url).split('/salon/')[1]);
 
   // Paginated /directory/salons/[page] — every salon links from these pages,
   // killing the "orphan page" issue Ahrefs flagged on 8,764 salon profiles.
