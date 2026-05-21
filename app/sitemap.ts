@@ -22,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/search`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${base}/directory`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${base}/press`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-05-22'), changeFrequency: 'yearly', priority: 0.85 },
+    { url: `${base}/for-salons/badge`, lastModified: new Date('2026-05-22'), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/trust`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/best-haircut-australia`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/stats`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
