@@ -46,7 +46,7 @@ export default function MapView({ pins, height = 420, className }: Props) {
     if (!ref.current) return;
     if (typeof IntersectionObserver === 'undefined') {
       // Old browser fallback — load immediately rather than silently fail.
-      setShouldLoad(true);
+      queueMicrotask(() => setShouldLoad(true));
       return;
     }
     const target = ref.current;

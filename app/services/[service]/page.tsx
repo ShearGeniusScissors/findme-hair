@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
-import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import type { Business, BusinessType } from '@/types/database';
 

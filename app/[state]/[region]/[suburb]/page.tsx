@@ -33,7 +33,6 @@ export async function generateMetadata({
   const suburbName = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
   const postcode = suburbRow?.postcode ?? '';
   const fullState = stateName(stateCode);
-  const regionName = titleCase(regionRow?.name ?? region.replace(/-/g, ' '));
 
   // Check if suburb has active listings — noindex empty pages
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);

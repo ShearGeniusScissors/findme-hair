@@ -226,7 +226,6 @@ export default async function BusinessProfilePage({
     regionSiblings = (siblings ?? []) as typeof regionSiblings;
   }
 
-  const suburbSlug = slugify(business.suburb);
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
 

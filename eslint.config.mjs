@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node CommonJS scripts — not part of the deployed app.
+    "scripts/**",
+    "lib/google-auth.js",
   ]),
 ]);
 

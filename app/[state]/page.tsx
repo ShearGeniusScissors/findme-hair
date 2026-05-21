@@ -23,25 +23,6 @@ function isMelbourneZone(region: Region): boolean {
   return n.startsWith('melbourne') || n === 'melbourne';
 }
 
-function isCityZone(region: Region, city: string): boolean {
-  const n = region.name.toLowerCase();
-  return n.startsWith(city.toLowerCase());
-}
-
-function sortRegions(regions: Region[], stateCode: string): Region[] {
-  const priorities = PRIORITY_REGIONS[stateCode] ?? [];
-  return [...regions].sort((a, b) => {
-    const aSlug = a.slug.toLowerCase();
-    const bSlug = b.slug.toLowerCase();
-    const aIdx = priorities.findIndex((p) => aSlug.startsWith(p));
-    const bIdx = priorities.findIndex((p) => bSlug.startsWith(p));
-    const aPri = aIdx >= 0 ? aIdx : 999;
-    const bPri = bIdx >= 0 ? bIdx : 999;
-    if (aPri !== bPri) return aPri - bPri;
-    return a.name.localeCompare(b.name);
-  });
-}
-
 export async function generateMetadata({
   params,
 }: {

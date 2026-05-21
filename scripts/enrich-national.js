@@ -68,6 +68,21 @@ async function supabaseQuery(fn, label, retries = 3) {
 
 const STATE_ORDER = ['VIC', 'NSW', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
+const TYPE_CONFIG = {
+  hair_salon: { label: 'hair salon', tone: 'warm and professional — match to suburb vibe (suburban = friendly, city = polished)' },
+  barber: { label: 'barber shop', tone: 'masculine, direct, no-nonsense — write like a barber talks' },
+  unisex: { label: 'unisex salon', tone: 'inclusive and welcoming — covers everyone' },
+};
+const DEFAULT_TYPE = { label: 'hair salon', tone: 'warm and professional' };
+
+const WALKINS_LABEL = { true: 'Yes', false: 'No, appointment only' };
+
+function mergeCounts(target, source) {
+  for (const [key, count] of Object.entries(source)) {
+    target[key] = (target[key] || 0) + count;
+  }
+}
+
 // ─── NOT_HAIR detection ──────────────────────────────
 const NOT_HAIR_PRIMARY = [
   /\bnail salon\b/i, /\bnail bar\b/i, /\bnails? only\b/i,
@@ -213,7 +228,7 @@ async function fetchGoogleReviews(placeId) {
 
 // ─── Generate description ────────────────────────────
 async function generateDescription(business, websiteContent, reviews) {
-  const typeLabel = { hair_salon: 'hair salon', barber: 'barber shop', unisex: 'unisex salon' }[business.business_type] || 'hair salon';
+  const { label: typeLabel, tone: toneGuide } = TYPE_CONFIG[business.business_type] || DEFAULT_TYPE;
 
   const websiteText = websiteContent?.text || business.scraped_about || 'not available';
   const servicesText = websiteContent?.services?.length > 0
@@ -223,12 +238,6 @@ async function generateDescription(business, websiteContent, reviews) {
     ? reviews.map((r, i) => `Review ${i + 1}: "${r}"`).join('\n')
     : 'not available';
   const contentSource = websiteContent?.source || business.content_source || 'minimal';
-
-  const toneGuide = {
-    barber: 'masculine, direct, no-nonsense — write like a barber talks',
-    hair_salon: 'warm and professional — match to suburb vibe (suburban = friendly, city = polished)',
-    unisex: 'inclusive and welcoming — covers everyone',
-  }[business.business_type] || 'warm and professional';
 
   const prompt = `Write a rich directory listing description for this Australian ${typeLabel}.
 
@@ -247,7 +256,7 @@ ${servicesText}
 GOOGLE REVIEWS:
 ${reviewsText.slice(0, 2000)}
 
-Walk-ins: ${business.walk_ins_welcome === true ? 'Yes' : business.walk_ins_welcome === false ? 'No, appointment only' : 'Unknown'}
+Walk-ins: ${WALKINS_LABEL[business.walk_ins_welcome] ?? 'Unknown'}
 
 TONE: ${toneGuide}
 
@@ -444,9 +453,7 @@ async function processState(state, resume) {
     totalSkipped += result.skipped;
     totalWalkInsYes += result.walkInsYes;
     totalWalkInsNo += result.walkInsNo;
-    for (const [s, c] of Object.entries(result.specialtyCounts)) {
-      totalSpecialties[s] = (totalSpecialties[s] || 0) + c;
-    }
+    mergeCounts(totalSpecialties, result.specialtyCounts);
   }
 
   // State summary
@@ -521,9 +528,7 @@ async function main() {
     grandSkipped += r.skipped;
     grandWalkInsYes += r.walkInsYes;
     grandWalkInsNo += r.walkInsNo;
-    for (const [s, c] of Object.entries(r.specialties)) {
-      grandSpecialties[s] = (grandSpecialties[s] || 0) + c;
-    }
+    mergeCounts(grandSpecialties, r.specialties);
   }
 
   log(`\nTOTAL ENRICHED: ${grandEnriched}`);

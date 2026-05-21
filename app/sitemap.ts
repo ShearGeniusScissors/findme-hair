@@ -38,27 +38,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  type RegionRow = { slug: string | null; state: string | null };
+  type SuburbRow = {
+    slug: string;
+    state: string;
+    region_id: string | null;
+    regions: { slug: string } | { slug: string }[];
+  };
+
   // Region pages — fetch all regions (default limit is 1000, paginate to be safe)
-  const allRegions: any[] = [];
+  const allRegions: RegionRow[] = [];
   let regionOffset = 0;
   while (true) {
     const { data } = await supabase.from('regions').select('slug, state').range(regionOffset, regionOffset + 999);
     if (!data || data.length === 0) break;
-    allRegions.push(...data);
+    allRegions.push(...(data as RegionRow[]));
     if (data.length < 1000) break;
     regionOffset += 1000;
   }
   const regionPages: MetadataRoute.Sitemap = allRegions
-    .filter((r) => r.state && r.slug)
+    .filter((r): r is { slug: string; state: string } => !!r.state && !!r.slug)
     .map((r) => ({
-      url: `${base}/${String(r.state).toLowerCase()}/${r.slug}`,
+      url: `${base}/${r.state.toLowerCase()}/${r.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
 
   // Suburb pages — paginate to get all suburbs
-  const allSuburbs: any[] = [];
+  const allSuburbs: SuburbRow[] = [];
   let suburbOffset = 0;
   const suburbBatch = 1000;
   while (true) {
@@ -67,17 +75,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select('slug, state, region_id, regions!inner(slug)')
       .range(suburbOffset, suburbOffset + suburbBatch - 1);
     if (!data || data.length === 0) break;
-    allSuburbs.push(...data);
+    allSuburbs.push(...(data as unknown as SuburbRow[]));
     if (data.length < suburbBatch) break;
     suburbOffset += suburbBatch;
   }
 
-  const suburbPages: MetadataRoute.Sitemap = allSuburbs.map((s: any) => ({
-    url: `${base}/${s.state.toLowerCase()}/${s.regions.slug}/${s.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  const suburbPages: MetadataRoute.Sitemap = allSuburbs.map((s) => {
+    const regionSlug = Array.isArray(s.regions) ? s.regions[0]?.slug : s.regions?.slug;
+    return {
+      url: `${base}/${s.state.toLowerCase()}/${regionSlug}/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    };
+  });
 
   // Business profile pages — paginate to get all slugs + their updated_at so
   // each URL's lastmod reflects the row's own last edit, not the sitemap regen
