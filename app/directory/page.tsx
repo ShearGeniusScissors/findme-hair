@@ -3,8 +3,11 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
+import { supabaseServerInternal } from "@/lib/supabase";
 
 export const revalidate = 86400;
+
+const SALON_PAGE_SIZE = 100;
 
 const path = "https://www.findme.hair/directory";
 const title = `findme.hair Directory ${new Date().getFullYear()} | Australian Salon Index`;
@@ -67,7 +70,19 @@ const BLOG_POSTS = [
   { slug: "how-to-prepare-for-a-hair-appointment", title: "How to prepare for a hair appointment" },
 ];
 
-export default function DirectoryPage() {
+async function getActiveBusinessCount(): Promise<number> {
+  const supabase = supabaseServerInternal();
+  const { count } = await supabase
+    .from("businesses")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active");
+  return count ?? 0;
+}
+
+export default async function DirectoryPage() {
+  const totalSalons = await getActiveBusinessCount();
+  const totalSalonPages = Math.max(1, Math.ceil(totalSalons / SALON_PAGE_SIZE));
+
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
       <JsonLd data={{
@@ -116,12 +131,25 @@ export default function DirectoryPage() {
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>A&ndash;Z list of every salon</h2>
-          <p className="text-sm text-[var(--color-ink-muted)] mb-3">
-            Complete listing of every verified hair salon and barber on findme.hair, paginated by 100. The fastest way to browse the whole directory.
+          <p className="text-sm text-[var(--color-ink-muted)] mb-4">
+            Complete listing of every verified hair salon and barber on findme.hair — {totalSalons.toLocaleString()} listings across {totalSalonPages} pages of 100. Sorted by state, suburb and name.
           </p>
-          <Link href="/directory/salons/1" className="inline-block btn-gold text-sm">
-            Browse all salons &rarr;
-          </Link>
+          {/* Direct one-click links to every paginated salon-index page. This is the
+              fix for the "orphan salon profile pages" issue: every /salon/{slug}
+              page is reachable in two clicks (Directory → page N → salon) instead
+              of being buried behind sequential pagination chains that crawlers
+              with small budgets won't follow. */}
+          <nav className="mt-3 flex flex-wrap gap-1 text-xs" aria-label="Salon directory pagination">
+            {Array.from({ length: totalSalonPages }, (_, i) => i + 1).map((n) => (
+              <Link
+                key={n}
+                href={`/directory/salons/${n}`}
+                className="rounded border border-[var(--color-border)] px-2 py-1 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] text-[var(--color-ink-light)]"
+              >
+                {n}
+              </Link>
+            ))}
+          </nav>
         </section>
 
         <section className="card p-8">

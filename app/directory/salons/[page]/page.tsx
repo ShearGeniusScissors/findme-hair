@@ -42,8 +42,17 @@ async function getSalonPage(pageNum: number): Promise<SalonRow[]> {
 }
 
 export async function generateStaticParams() {
-  // Pre-render the first 5 pages; the rest are ISR.
-  return [{ page: "1" }, { page: "2" }, { page: "3" }, { page: "4" }, { page: "5" }];
+  // Pre-render every paginated salon-index page so crawlers can reach every
+  // /salon/{slug} in two clicks. Was 5; bumping to full coverage kills the
+  // orphan-salon-profile problem Ahrefs Site Audit flagged on 2,793 listings.
+  const supabase = supabaseServerInternal();
+  const { count } = await supabase
+    .from("businesses")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active");
+  const total = count ?? 0;
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  return Array.from({ length: pages }, (_, i) => ({ page: String(i + 1) }));
 }
 
 export async function generateMetadata({

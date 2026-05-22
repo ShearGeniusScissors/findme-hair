@@ -82,15 +82,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     suburbOffset += suburbBatch;
   }
 
-  const suburbPages: MetadataRoute.Sitemap = allSuburbs.map((s) => {
-    const regionSlug = Array.isArray(s.regions) ? s.regions[0]?.slug : s.regions?.slug;
-    return {
-      url: `${base}/${s.state.toLowerCase()}/${regionSlug}/${s.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    };
-  });
+  // Build a set of suburbs that actually have active businesses, so we don't
+  // pollute the sitemap with suburb pages that render noindex (the per-page
+  // template noindexes empty suburb pages). Ahrefs Site Audit flagged 1,384
+  // "Noindex page in sitemap" errors traced primarily to this.
+  const { data: suburbCounts } = await supabase
+    .from('businesses')
+    .select('suburb, state')
+    .eq('status', 'active');
+  const populatedSuburbs = new Set<string>();
+  for (const row of (suburbCounts ?? []) as Array<{ suburb: string | null; state: string | null }>) {
+    if (row.suburb && row.state) {
+      populatedSuburbs.add(`${row.state.toUpperCase()}|${row.suburb.toLowerCase().trim()}`);
+    }
+  }
+
+  const suburbPages: MetadataRoute.Sitemap = allSuburbs
+    .filter((s) => populatedSuburbs.has(`${s.state.toUpperCase()}|${(s.slug || '').replace(/-/g, ' ').toLowerCase().trim()}`))
+    .map((s) => {
+      const regionSlug = Array.isArray(s.regions) ? s.regions[0]?.slug : s.regions?.slug;
+      return {
+        url: `${base}/${s.state.toLowerCase()}/${regionSlug}/${s.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      };
+    });
 
   // Business profile pages — paginate to get all slugs + their updated_at so
   // each URL's lastmod reflects the row's own last edit, not the sitemap regen
