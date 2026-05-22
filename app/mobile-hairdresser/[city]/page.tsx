@@ -251,6 +251,51 @@ export default async function MobileHairdresserCityPage({
           </div>
         )}
 
+        {/* Notes from the field — editorial commentary on top picks. */}
+        {businesses.length >= 3 && (
+          <section className="mt-14 card p-8">
+            <p className="text-editorial-overline mb-3">Notes from the field</p>
+            <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+              Who we&rsquo;d send a friend to in {config.name}
+            </h2>
+            <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
+              Picks from {config.name}&rsquo;s {businesses.length}-strong list of mobile-capable stylists on findme.hair. All hand-verified, ranked by review-quality, never paid placement.
+            </p>
+            <div className="mt-6 space-y-5">
+              {businesses.slice(0, 5).map((b) => {
+                const rating = typeof b.google_rating === 'number' ? b.google_rating.toFixed(1) : null;
+                const reviews = typeof b.google_review_count === 'number' ? b.google_review_count : null;
+                const type = b.business_type === 'barber' ? 'barber' : 'hairdresser';
+                const specialties = (b.specialties ?? []) as string[];
+                const interesting = specialties.filter((s) => ['mobile','bridal','balayage','colour-specialist','curly-hair','kids','keratin','japanese','korean','extensions'].includes(s));
+                const specBlurb = interesting.length > 0 ? interesting.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ') : null;
+                const text = b.ai_description
+                  ? (() => {
+                      const t = b.ai_description.replace(/\s+/g, ' ').trim();
+                      const stop = t.search(/[.!?]\s/);
+                      return stop >= 60 && stop <= 240 ? t.slice(0, stop + 1) : t.slice(0, 220) + (t.length > 220 ? '…' : '');
+                    })()
+                  : `${b.name} is a verified mobile ${type} serving ${titleCase(b.suburb)} and surrounding suburbs.`;
+                return (
+                  <article key={b.id} className="border-l-2 border-[var(--color-gold)] pl-5">
+                    <h3 className="text-base text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                      <Link href={`/salon/${b.slug}`} className="hover:text-[var(--color-gold-dark)]">{b.name}</Link>
+                      <span className="text-sm font-normal text-[var(--color-ink-muted)]"> — based in {titleCase(b.suburb)}</span>
+                    </h3>
+                    <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+                      mobile {type}{rating && reviews ? ` · ${rating}★ across ${reviews.toLocaleString()} reviews` : ''}
+                    </p>
+                    <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-relaxed">
+                      {text}
+                      {specBlurb && <span className="text-[var(--color-ink-muted)]"> Strong on {specBlurb}.</span>}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* Guide content */}
         <section className="mt-14 card p-8">
           <h2

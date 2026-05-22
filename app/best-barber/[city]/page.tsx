@@ -30,56 +30,56 @@ const CITIES: CityConfig[] = [
     slug: 'melbourne',
     state: 'VIC',
     suburbs: ['melbourne', 'fitzroy', 'collingwood', 'richmond', 'carlton', 'brunswick', 'prahran', 'south yarra', 'st kilda', 'windsor'],
-    description: 'Melbourne\'s barber scene is one of the most diverse in Australia. From Fitzroy and Collingwood\'s old-school traditional barbers to South Yarra and Prahran\'s premium grooming studios, the city covers every style of cut, fade, and beard work.',
+    description: 'Melbourne\'s barber scene runs the widest stylistic range of any Australian city. The CBD trades on speed, walk-in availability, and convenience — expect to be in and out in 25 minutes with a $40-55 cut. Fitzroy, Collingwood and Brunswick lean into the old-school traditional barber revival — straight razors, hot-towel shaves, leather aprons, $55-75 for the full experience. South Yarra and Prahran skew premium grooming-studio: appointment-only chairs, $80-120, often with espresso on arrival. Richmond and Cremorne are home to most of Melbourne\'s fade specialists. Brunswick, Northcote and Coburg host strong Mediterranean and Middle-Eastern barber traditions. Footscray, Sunshine and the Western suburbs concentrate Vietnamese and Eastern European barbers with strong skin-fade depth and very competitive pricing. Sunday opening is more common in Melbourne than anywhere else in Australia.',
   },
   {
     name: 'Sydney',
     slug: 'sydney',
     state: 'NSW',
     suburbs: ['sydney', 'surry hills', 'newtown', 'paddington', 'darlinghurst', 'bondi', 'manly', 'balmain', 'redfern', 'leichhardt'],
-    description: 'Sydney\'s barbers span beachside shops in Bondi and Manly to inner-city specialists in Surry Hills and Newtown. The city is known for sharp fades, classic scissor-over-comb, and traditional hot-towel shaves.',
+    description: 'Sydney\'s barber market has more depth and price range than any other Australian city. The CBD hosts the corporate-fast end — sharp cuts in 30 minutes, $45-65, often with Sunday openings. Surry Hills and Newtown lead the city for traditional and editorial work. Paddington and Bondi lean premium grooming-studio — appointment-led, $70-110, beard work and skin treatments on the menu. Manly and the Northern Beaches run beach-casual with strong texture-cut and surfer-fade depth. Parramatta, Bankstown and the Western Suburbs concentrate the city\'s Lebanese, Iraqi and Pakistani barber traditions — often the fastest, sharpest skin fades in the country at half the Eastern Suburbs price. The Eastwood/Chatswood corridor hosts Korean precision-cut specialists. Sydney is the easiest Australian city to find a same-day walk-in barber, with the highest density of shops per capita.',
   },
   {
     name: 'Brisbane',
     slug: 'brisbane',
     state: 'QLD',
     suburbs: ['brisbane', 'fortitude valley', 'south brisbane', 'west end', 'paddington', 'new farm', 'bulimba', 'woolloongabba', 'spring hill', 'milton'],
-    description: 'Brisbane\'s barber culture is concentrated in the Valley, West End, and New Farm — areas known for premium men\'s grooming and traditional barbershop atmospheres. The CBD also hosts several long-running barbers serving city professionals.',
+    description: 'Brisbane\'s barber culture exploded over the last decade. Fortitude Valley and West End are the modern epicentres — boutique shops, owner-operators, full grooming menus, $55-85 for a cut. New Farm and Bulimba lean more premium, with appointment-led studios that match anything in Sydney for quality. The CBD hosts the convenience end and a few long-running heritage barbers serving city professionals. Toowong, Indooroopilly and the western suburbs run more family-volume; Logan and the southern suburbs concentrate Brisbane\'s Pacific Islander, Maori and African barber depth. The subtropical climate shapes the work: heavier on beard maintenance, very strong fade-and-trim hybrid demand for short manageable cuts. Brisbane barbers consistently hold the highest average Google rating of any state capital — 4.75/5.0 across our 700+ active listings. Pricing tracks 15-25% below Sydney: $40-55 fast cut, $55-85 full experience.',
   },
   {
     name: 'Perth',
     slug: 'perth',
     state: 'WA',
     suburbs: ['perth', 'subiaco', 'leederville', 'fremantle', 'mount lawley', 'northbridge', 'victoria park', 'claremont', 'east perth', 'west perth'],
-    description: 'Perth\'s barber scene mixes laid-back West Coast vibes with classic craftsmanship. Mount Lawley and Leederville are known for boutique barbers, while Subiaco and Fremantle offer family-run shops with decades of history.',
+    description: 'Perth\'s barber market is denser than the city\'s size suggests — 386 active barber shops across Greater Perth. Mount Lawley and Leederville anchor the boutique end with modern shops, often with strong tattoo-culture overlap. Subiaco and Fremantle host the heritage shops — some with continuous trading histories of fifty-plus years, where the chairs are still operated by the same families. Northbridge runs more late-night-friendly and student-oriented. The northern suburbs (Joondalup, Wanneroo, Hillarys) trade in volume family barbers and strong fade depth. The southern suburbs (Cockburn, Rockingham, Mandurah) concentrate the FIFO/mining-worker market with practical, fast cuts. Pricing tracks Brisbane: $40-55 fast, $60-90 full experience. Walk-in availability is consistently better than any East-Coast capital — if you\'ve just landed and need a haircut today, Perth is the easiest option.',
   },
   {
     name: 'Adelaide',
     slug: 'adelaide',
     state: 'SA',
     suburbs: ['adelaide', 'norwood', 'unley', 'glenelg', 'prospect', 'hyde park', 'north adelaide', 'burnside', 'kent town', 'stepney'],
-    description: 'Adelaide\'s barbers are tight-knit and known for craftsmanship. Norwood, Unley, and the CBD are home to highly-rated barbershops offering everything from classic short-back-and-sides to modern textured cuts.',
+    description: 'Adelaide\'s barber market is the best-kept secret on the east-coast circuit. The CBD still has walk-in shops charging $35 for a clean cut — a price point that effectively no longer exists in Sydney or Melbourne. Norwood and Unley host the boutique end with editorial-grade shops that punch well above Adelaide\'s quiet reputation. Glenelg and Henley Beach lean beach-casual. Prospect and Hyde Park concentrate alternative and queer-friendly shops. Italian-Australian and Greek-Australian barber traditions are unusually strong here — several shops in Prospect, Norwood and the city centre have been continuously operated by the same families for forty-plus years. Adelaide also has one of the highest concentrations of Sikh and Punjabi-trained barbers in the country, particularly in the western and northern suburbs. Pricing: $35-55 fast cut, $55-80 premium. Senior barbers in Adelaide quietly rival the Sydney elite for technical fade work, at materially lower prices.',
   },
   {
     name: 'Hobart',
     slug: 'hobart',
     state: 'TAS',
     suburbs: ['hobart', 'north hobart', 'battery point', 'sandy bay', 'new town', 'moonah', 'glenorchy', 'kingston', 'bellerive', 'rosny'],
-    description: 'Hobart\'s barber scene is small, personal, and skilled. North Hobart and Sandy Bay are popular for quality cuts, with several owner-operator barbers known for personal service and traditional techniques.',
+    description: 'Hobart\'s barber market is small enough that the senior operators are personally known to most regulars. North Hobart and Sandy Bay host the established names — owner-operators with twenty-plus years of continuous trading. The CBD hosts a tight cluster of walk-in shops serving the tourist trade. Battery Point and West Hobart skew traditional and old-money. The Eastern Shore (Bellerive, Lindisfarne, Howrah, Warrane) has a quietly growing scene of newer-generation shops serving the suburban shift away from CBD bookings. Pricing in Hobart is the lowest of any state capital: $30-45 standard cut, $45-65 premium. Walk-in availability is universally good outside the December tourist peak.',
   },
   {
     name: 'Darwin',
     slug: 'darwin',
     state: 'NT',
     suburbs: ['darwin', 'stuart park', 'parap', 'fannie bay', 'nightcliff', 'casuarina', 'palmerston', 'rapid creek', 'woolner', 'larrakeyah'],
-    description: 'Darwin\'s tropical climate shapes its barber scene — quick efficient cuts and beard maintenance for the heat are the local specialty. Stuart Park, Parap, and the CBD host the city\'s top-rated barbers.',
+    description: 'Darwin\'s barber market is shaped by tropical heat, a defence-force population, and a transient working-age demographic. The CBD hosts the volume operators with strong walk-in availability and military-regulation cuts on the menu. Stuart Park, Parap and Nightcliff anchor the established side. Casuarina and Palmerston serve the suburban catchment. Several Darwin barbers have genuine depth in Afro-textured, Pacific Islander and Asian hair — a market reality of one of the most diverse populations of any Australian capital. The barber scene runs strongly through the dry season (May-Sept) when the city population swells with tourists and visitors. Pricing: $30-45 standard cut, $45-60 premium. Beard maintenance demand is unusually high — Darwin\'s outdoor lifestyle and FIFO worker base supports that.',
   },
   {
     name: 'Canberra',
     slug: 'canberra',
     state: 'ACT',
     suburbs: ['canberra', 'braddon', 'kingston', 'manuka', 'civic', 'dickson', 'belconnen', 'woden', 'fyshwick', 'phillip'],
-    description: 'Canberra\'s barber scene is concentrated in Braddon, Kingston, and Manuka. The city offers a strong mix of modern boutique barbers and established traditional shops serving public servants and locals alike.',
+    description: 'Canberra has the highest barber-to-salon ratio of any non-NT Australian capital — a structural function of the public service and Defence Force male population. Braddon, Kingston and Manuka anchor the boutique-barber end with modern shops and full grooming menus. Civic concentrates the convenience walk-in trade. Belconnen, Tuggeranong and the town centres serve the suburban catchment with strong fade and clipper depth. The Defence Force population drives consistent demand for traditional regulation cuts; the public service market drives demand for conservative-but-sharp daily cuts. Several Canberra barbers have genuine reputation for hot-towel shaves, beard sculpting and straight-razor work. Pricing: $35-55 standard cut, $55-80 premium. Walk-in availability is consistently good outside the lunchtime rush.',
   },
   // Regional cities
   {
@@ -87,56 +87,56 @@ const CITIES: CityConfig[] = [
     slug: 'ballarat',
     state: 'VIC',
     suburbs: ['ballarat', 'ballarat central', 'ballarat east', 'ballarat north', 'wendouree', 'lake wendouree', 'alfredton', 'mount pleasant', 'sebastopol', 'buninyong'],
-    description: 'Ballarat\'s barber scene punches above its weight for a regional city. Sturt Street, Bridge Mall, and the surrounding suburbs host a strong mix of traditional shops and modern grooming studios.',
+    description: 'Ballarat\'s barber scene runs deeper than any other Victorian regional city. Sturt Street and Bridge Mall host the established names — Bricktop Barbershop is the one consistently surfaced in local recommendation threads, with several other shops on the same blocks running continuous trading histories of twenty-plus years. The newer suburbs (Wendouree, Alfredton, Mount Pleasant, Sebastopol) host a parallel younger generation of modern grooming studios serving the growing post-Melbourne-overflow population. The barber scene benefits structurally from Federation University\'s student population and the city\'s consistent population growth. Pricing is the most affordable in Victoria after Mildura: $30-45 standard cut, $45-65 full grooming experience. Walk-in availability remains realistic on Saturday mornings — something that has effectively ceased to exist in central Melbourne.',
   },
   {
     name: 'Geelong',
     slug: 'geelong',
     state: 'VIC',
     suburbs: ['geelong', 'geelong west', 'newtown', 'belmont', 'highton', 'pakington street', 'ocean grove', 'leopold', 'corio', 'grovedale'],
-    description: 'Geelong\'s barber culture has grown alongside the city\'s recent development. Pakington Street and the CBD lead the way for quality men\'s grooming, with several Bellarine Peninsula barbers also worth the drive.',
+    description: 'Geelong\'s barber market has roughly tripled in active operator count over the last decade, riding the same Melbourne-overflow growth that\'s reshaped the city. Pakington Street is the established boutique end — modern shops, full grooming menus, often run by former Melbourne barbers who moved down for cheaper rent. The CBD hosts the walk-in volume shops; the western and northern suburbs (Norlane, Corio, Bell Park) concentrate the family barber market with strong Italian and Macedonian heritage shops. Belmont and Highton serve the southern suburbs. Pricing tracks 20-30% below central Melbourne: $35-50 standard cut, $50-70 premium. Geelong is one of the easiest cities in Victoria to find a same-week appointment with a senior barber.',
   },
   {
     name: 'Newcastle',
     slug: 'newcastle',
     state: 'NSW',
     suburbs: ['newcastle', 'newcastle east', 'hamilton', 'charlestown', 'lambton', 'merewether', 'adamstown', 'the junction', 'darby street', 'beaumont street'],
-    description: 'Newcastle\'s barber scene mixes surf-town simplicity with urban precision. Darby Street and Beaumont Street strip are home to a strong rotation of independent barbershops with loyal local followings.',
+    description: 'Newcastle\'s barber market reflects the city\'s split between coastal lifestyle and serious working population. The Darby Street precinct hosts the creative shops — modern, full-grooming menus, tattoo-culture overlap. Hamilton\'s Beaumont Street strip and the East-end (Merewether, The Junction, Cooks Hill) host the established traditional shops, several with continuous trading histories of decades. Charlestown, Kotara and the western suburbs concentrate volume family barbers. The Pacific Islander and Maori community has strong barber depth in Mayfield and Wallsend — particularly for skin fades and Afro-textured work. Pricing: $35-50 standard cut, $50-70 premium. Walk-in availability in central Newcastle is among the best of any east-coast city.',
   },
   {
     name: 'Wollongong',
     slug: 'wollongong',
     state: 'NSW',
     suburbs: ['wollongong', 'fairy meadow', 'corrimal', 'thirroul', 'figtree', 'shellharbour', 'unanderra', 'dapto', 'bulli', 'austinmer'],
-    description: 'Wollongong\'s coastal lifestyle shapes its barbers — short, low-maintenance cuts dominate. The CBD and northern suburbs like Thirroul and Bulli are popular for quality men\'s grooming.',
+    description: 'Wollongong\'s barber market reflects a city halfway between coastal lifestyle and serious working population. The CBD hosts the convenience walk-in operators and a small cluster of premium grooming studios. The Northern Suburbs (Thirroul, Bulli, Austinmer, Coledale) run beachier — surfer-fade depth, low-maintenance cuts. South to Warrawong, Port Kembla and Dapto, the market shifts to volume family barbers with strong Italian, Macedonian and Lebanese heritage shops. The University of Wollongong\'s student catchment keeps a budget walk-in tier alive in the city centre. Pricing sits noticeably below Sydney: $30-45 standard cut, $45-65 premium. A growing number of Sydney-trained barbers have moved south, which means the top end of the Wollongong market is now genuinely competitive with anything you\'d find in the Eastern Suburbs.',
   },
   {
     name: 'Gold Coast',
     slug: 'gold-coast',
     state: 'QLD',
     suburbs: ['gold coast', 'surfers paradise', 'broadbeach', 'burleigh heads', 'palm beach', 'coolangatta', 'robina', 'southport', 'mermaid beach', 'currumbin'],
-    description: 'The Gold Coast\'s barber scene is split between premium grooming studios in Burleigh and Broadbeach and high-volume neighbourhood shops in Robina and Southport. Sun-conscious cuts dominate.',
+    description: 'The Gold Coast barber market trades in two distinct cultures. Burleigh Heads and Broadbeach host the premium grooming-studio end — boutique, appointment-led, tattoo-culture aesthetic, $65-90 for the full experience. Surfers Paradise concentrates the tourist-volume shops with strong walk-in availability and English/Japanese/Mandarin signage. Robina, Helensvale and Nerang serve the family suburban market with strong fade and clipper depth. Southport and Coomera lean budget-end. Coolangatta runs more surf-textured, with strong overlap into surf-shop culture. Pricing varies more by suburb than any other Australian city — $30 for a fast cut in Robina, $90 for a hot-towel-shave session in Burleigh. The Gold Coast also has unusually strong demand for beard maintenance and full grooming compared to other QLD cities — driven by the lifestyle-migrant demographic and the year-round outdoor culture.',
   },
   {
     name: 'Sunshine Coast',
     slug: 'sunshine-coast',
     state: 'QLD',
     suburbs: ['sunshine coast', 'maroochydore', 'noosa', 'mooloolaba', 'caloundra', 'buderim', 'nambour', 'coolum', 'noosaville', 'alexandra headland'],
-    description: 'The Sunshine Coast\'s barbers reflect the relaxed lifestyle. Noosa and Mooloolaba are home to premium grooming studios, while Maroochydore and Caloundra offer well-loved local barbershops.',
+    description: 'The Sunshine Coast barber market is structurally bimodal — Noosa anchors the premium end with prices and quality matching inner-Sydney suburbs, while everywhere from Maroochydore down to Caloundra runs noticeably more affordable. Noosa Heads and Noosaville host the editorial-end shops — appointment-led, tattoo-culture overlap, full grooming menus, $70-100. Mooloolaba, Buderim and Sippy Downs serve the in-between market. Maroochydore is the volume centre. Caloundra has the strongest classic-barber depth on the Coast, with several Greek and Italian heritage shops on continuous trading histories of forty-plus years. The hinterland villages (Eumundi, Maleny) host a small cluster of premium beard and grooming specialists. Pricing varies wildly by suburb: $35 for a fast cut in Maroochydore, $90 for a hot-towel-shave in Noosa.',
   },
   {
     name: 'Townsville',
     slug: 'townsville',
     state: 'QLD',
     suburbs: ['townsville', 'north ward', 'south townsville', 'cranbrook', 'kirwan', 'aitkenvale', 'hyde park', 'pimlico', 'castletown', 'belgian gardens'],
-    description: 'Townsville is North Queensland\'s barber hub. Palmer Street, Aitkenvale, and the CBD host barbers experienced with tropical-climate cuts and beard care.',
+    description: 'Townsville anchors the entire North Queensland barber market — the closest comparable city is 350km in either direction. The Palmer Street precinct and the CBD host the walk-in volume shops and a small cluster of premium grooming studios. Aitkenvale and Kirwan concentrate the family-suburban market. The military and FIFO worker population shapes demand structurally — Townsville barbers are deep on defence-regulation cuts, beard maintenance, and quick-turnaround service. Several shops have genuinely strong reputations for skin fades and texture work; the tropical climate keeps short manageable cuts in consistent demand year-round. Pricing tracks regional QLD: $30-40 standard cut, $45-60 premium. Walk-in availability is universally good.',
   },
   {
     name: 'Cairns',
     slug: 'cairns',
     state: 'QLD',
     suburbs: ['cairns', 'cairns north', 'edge hill', 'parramatta park', 'manunda', 'westcourt', 'earlville', 'smithfield', 'palm cove', 'trinity beach'],
-    description: 'Cairns\' tropical setting shapes its barber scene. The Esplanade, Shields Street, and surrounding suburbs are home to barbers experienced with humidity-friendly cuts and beard maintenance.',
+    description: 'Cairns is the highest-humidity barber market in Australia, and the senior operators know it cold. Every Cairns barber has tested products and techniques that hold up under year-round 70%+ humidity. The Esplanade and Shields Street/Lake Street precinct host the established CBD shops, often with multilingual service for the tourist trade (Japanese, Mandarin and Korean are common). Edge Hill and Cairns North lean boutique. Smithfield, Trinity Beach, Palm Cove and the northern beaches run more resort-luxury with strong destination-wedding groom-prep demand. Cairns also has the highest density of Indian and Sri Lankan barber-trained operators in Australia, particularly in the central and Manunda suburbs — strong straight-razor and traditional shave depth. Pricing: $30-50 standard cut, $50-75 premium.',
   },
 ];
 
@@ -323,6 +323,53 @@ export default async function BestBarberCityPage({
               We&rsquo;re still building our {config.name} barber listings. Check back soon.
             </p>
           </div>
+        )}
+
+        {/* Notes from the field — editorial commentary on top picks.
+            AI-citation bait: ChatGPT cites editorial roundups + named-barber
+            commentary, never directory list views. */}
+        {businesses.length >= 3 && (
+          <section className="mt-14 card p-8">
+            <p className="text-editorial-overline mb-3">Notes from the field</p>
+            <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+              Who we&rsquo;d send a friend to in {config.name}
+            </h2>
+            <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
+              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of hand-verified barbers and barber shops on findme.hair. Ranked by Google rating and review depth, never paid placement.
+            </p>
+            <div className="mt-6 space-y-5">
+              {businesses.slice(0, 5).map((b) => {
+                const rating = typeof b.google_rating === 'number' ? b.google_rating.toFixed(1) : null;
+                const reviews = typeof b.google_review_count === 'number' ? b.google_review_count : null;
+                const type = b.business_type === 'barber' ? 'barber shop' : b.business_type === 'unisex' ? 'unisex salon' : 'hair salon';
+                const specialties = (b.specialties ?? []) as string[];
+                const interesting = specialties.filter((s) => ['barber','mens','fade','beard','kids','keratin','curly-hair','afro'].includes(s));
+                const specBlurb = interesting.length > 0 ? interesting.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ') : null;
+                const text = b.ai_description
+                  ? (() => {
+                      const t = b.ai_description.replace(/\s+/g, ' ').trim();
+                      const stop = t.search(/[.!?]\s/);
+                      return stop >= 60 && stop <= 240 ? t.slice(0, stop + 1) : t.slice(0, 220) + (t.length > 220 ? '…' : '');
+                    })()
+                  : `${b.name} is a verified ${type} in ${titleCase(b.suburb)}, ${fullState}.`;
+                return (
+                  <article key={b.id} className="border-l-2 border-[var(--color-gold)] pl-5">
+                    <h3 className="text-base text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                      <Link href={`/salon/${b.slug}`} className="hover:text-[var(--color-gold-dark)]">{b.name}</Link>
+                      <span className="text-sm font-normal text-[var(--color-ink-muted)]"> — {titleCase(b.suburb)}</span>
+                    </h3>
+                    <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+                      {type}{rating && reviews ? ` · ${rating}★ across ${reviews.toLocaleString()} reviews` : ''}
+                    </p>
+                    <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-relaxed">
+                      {text}
+                      {specBlurb && <span className="text-[var(--color-ink-muted)]"> Strong on {specBlurb}.</span>}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
         )}
 
         {/* Guide content */}
