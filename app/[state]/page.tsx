@@ -3,10 +3,20 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { AU_STATES, stateName } from '@/lib/geo';
-import { listRegions, searchBusinesses, countBusinessesByRegion } from '@/lib/search';
+import { listRegions, searchBusinesses, countBusinessesByRegionBatch } from '@/lib/search';
 import type { AuState, Region } from '@/types/database';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
+
+// Pre-render all 8 state hub pages at build time so the first request is fast
+// (Ahrefs Site Audit flagged these as 2.6-4.6s loading time when generated
+// on-demand). Each builds with full region list + business counts.
+export function generateStaticParams() {
+  return [
+    { state: 'vic' }, { state: 'nsw' }, { state: 'qld' }, { state: 'wa' },
+    { state: 'sa' }, { state: 'tas' }, { state: 'nt' }, { state: 'act' },
+  ];
+}
 
 /* ─── Priority region ordering per state ──────────────── */
 
@@ -75,11 +85,11 @@ export default async function StatePage({
   const melbourneZones = code === 'VIC' ? allRegions.filter(isMelbourneZone) : [];
   const nonMelbourneRegions = code === 'VIC' ? allRegions.filter((r) => !isMelbourneZone(r)) : allRegions;
 
-  // Get counts for all regions in parallel
+  // Get counts for all regions in one batched DB query (was N+1; Site Audit
+  // flagged state hubs as 2.6-4.6s loading time because of the per-region
+  // COUNT round-trip storm).
   const regionIds = allRegions.map((r) => r.id);
-  const countResults = await Promise.all(regionIds.map((id) => countBusinessesByRegion(id)));
-  const countMap = new Map<string, number>();
-  regionIds.forEach((id, i) => countMap.set(id, countResults[i]));
+  const countMap = await countBusinessesByRegionBatch(regionIds);
 
   // Melbourne total
   const melbourneTotal = melbourneZones.reduce((sum, r) => sum + (countMap.get(r.id) ?? 0), 0);

@@ -294,6 +294,26 @@ export async function countBusinessesByRegion(regionId: string): Promise<number>
   return count ?? 0;
 }
 
+// Batch counter: one round-trip returning a Map of regionId -> count. Replaces
+// the N+1 pattern that had state-hub pages firing 30-40 concurrent COUNT
+// queries — Site Audit flagged /nsw at 4.6s, /qld at 3s before this fix.
+export async function countBusinessesByRegionBatch(regionIds: string[]): Promise<Map<string, number>> {
+  const map = new Map<string, number>();
+  if (regionIds.length === 0) return map;
+  const supabase = supabaseServerInternal();
+  const { data, error } = await supabase
+    .from('businesses')
+    .select('region_id')
+    .eq('status', 'active')
+    .in('region_id', regionIds);
+  if (error) throw error;
+  for (const row of (data ?? []) as Array<{ region_id: string | null }>) {
+    if (row.region_id) map.set(row.region_id, (map.get(row.region_id) ?? 0) + 1);
+  }
+  for (const id of regionIds) if (!map.has(id)) map.set(id, 0);
+  return map;
+}
+
 // React.cache dedupes calls within a single request — generateMetadata + the page
 // component both call this for the same slug, so we go from 2 DB queries per
 // /salon/[slug] render to 1. Drops salon-page render time noticeably and clears
