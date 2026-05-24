@@ -150,7 +150,14 @@ export async function resolveQuery(q: string): Promise<QueryResolution> {
  * listings — the old OR(region_id, name ILIKE, address ILIKE, …) pattern was too lax.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any> {
+// Returns the builder WRAPPED in an object. This function is async, and a
+// Supabase query builder is thenable — so returning it bare means the caller's
+// `await` resolves (i.e. executes) the query and hands back a response object
+// with no .eq/.ilike/.contains. Any filter chained after the call site then
+// throws "query.eq is not a function" (broke walk_ins/specialty/min_rating/
+// claimed search). The wrapper makes the awaited value a plain, non-thenable
+// object so the builder survives the await.
+async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<{ query: any }> {
   if (filters.region) {
     const region = await getRegionBySlug(filters.region);
     if (region) query = query.eq('region_id', region.id);
@@ -184,7 +191,7 @@ async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<any
     const name = filters.suburb.replace(/-/g, ' ');
     query = query.ilike('suburb', name);
   }
-  return query;
+  return { query };
 }
 
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
@@ -216,7 +223,7 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
     }
   }
 
-  query = await applyGeoAndQuery(query, filters);
+  query = (await applyGeoAndQuery(query, filters)).query;
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
   }
@@ -264,7 +271,7 @@ export async function searchBusinessesCount(filters: Omit<SearchFilters, 'limit'
     }
   }
 
-  query = await applyGeoAndQuery(query, filters);
+  query = (await applyGeoAndQuery(query, filters)).query;
   if (filters.specialty) {
     query = query.contains('specialties', [filters.specialty]);
   }
