@@ -194,17 +194,29 @@ async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<{ q
   return { query };
 }
 
+// Columns needed to render a listing card across every consumer: the /search
+// page + its load-more JSON API (which re-projects to PUBLIC_BUSINESS_COLUMNS),
+// and the /[state] + /[state]/[region] featured lists. confidence_score is here
+// only so the SQL order-by stays identical; it's never rendered. google_hours is
+// added on demand for the open_now JS filter. This replaces select('*'), which
+// pulled full rows (heavy scraped_*/notes/raw-google JSON) on every dynamic
+// query — the egress that tripped the Supabase quota 2026-05-25.
+const SEARCH_CARD_SELECT =
+  'id, slug, name, suburb, state, postcode, business_type, lat, lng, ' +
+  'google_rating, google_review_count, google_photos, specialties, ' +
+  'walk_ins_welcome, is_claimed, featured_until, booking_url, website_url, ' +
+  'confidence_score';
+
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
-  // Internal: returns full Business rows incl. confidence_score for sort + internal
-  // columns rendered server-side. Anon role no longer has SELECT on those columns
-  // post audit row 353f6644.
   const supabase = supabaseServerInternal();
   const userLimit = filters.limit ?? 40;
   // When open_now is active we over-fetch, filter in JS, then trim.
   const dbLimit = filters.open_now ? Math.min(userLimit * 6, 400) : userLimit;
+  // Only pull google_hours when we actually need it (open_now filter).
+  const selectCols = filters.open_now ? `${SEARCH_CARD_SELECT}, google_hours` : SEARCH_CARD_SELECT;
   let query = supabase
     .from('businesses')
-    .select('*')
+    .select(selectCols)
     .eq('status', 'active')
     .order('featured_until', { ascending: false, nullsFirst: false })
     .order('confidence_score', { ascending: false, nullsFirst: false })
@@ -240,7 +252,8 @@ export async function searchBusinesses(filters: SearchFilters): Promise<Business
 
   const { data, error } = await query;
   if (error) throw error;
-  const rows = (data ?? []) as Business[];
+  // Cast via unknown: a dynamic select() string types data as GenericStringError[].
+  const rows = (data ?? []) as unknown as Business[];
   if (filters.open_now) {
     return rows.filter((b) => isOpenNow(b.google_hours)).slice(0, userLimit);
   }
