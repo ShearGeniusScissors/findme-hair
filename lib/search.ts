@@ -483,14 +483,16 @@ export async function getSuburbBusinesses(
   regionSlug: string,
   suburbSlug: string,
 ): Promise<Business[]> {
-  // Internal: getSuburbBusinesses returns full rows + orders by confidence_score.
+  // Renders BusinessCard only (no ai_description/scraped fields on the suburb
+  // page), so select the BusinessCard column set rather than SELECT * — same
+  // crawl-load hardening as getNearbySalonsByDistance (incident 2026-05-27).
   const supabase = supabaseServerInternal();
   const region = await getRegionBySlug(regionSlug);
   if (!region) return [];
   const suburbName = suburbSlug.replace(/-/g, ' ');
   const { data } = await supabase
     .from('businesses')
-    .select('*')
+    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score')
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', region.id)
