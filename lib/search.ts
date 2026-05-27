@@ -411,9 +411,7 @@ export async function getNearbySalonsByDistance(
   limit = 6,
 ): Promise<NearbySalon[]> {
   if (origin.lat == null || origin.lng == null) return [];
-  // Internal: returns full Business rows for the nearby panel which downstream
-  // BusinessCard rendering touches non-public columns. Bypass RLS; status='active'
-  // is the row filter.
+  // Bypass RLS; status='active' is the row filter.
   const supabase = supabaseServerInternal();
 
   // Bounding box pre-filter so we don't pull the whole state.
@@ -423,19 +421,42 @@ export async function getNearbySalonsByDistance(
   const cosLat = Math.max(Math.abs(Math.cos((origin.lat * Math.PI) / 180)), 0.01);
   const lngDelta = (radiusKm * 1.1) / (111.320 * cosLat);
 
-  const { data, error } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('status', 'active')
-    .neq('slug', origin.slug)
-    .not('lat', 'is', null)
-    .not('lng', 'is', null)
-    .gte('lat', origin.lat - latDelta)
-    .lte('lat', origin.lat + latDelta)
-    .gte('lng', origin.lng - lngDelta)
-    .lte('lng', origin.lng + lngDelta)
-    .limit(200);
-  if (error) throw error;
+  // INCIDENT FIX 2026-05-27: this panel ran SELECT * (all heavy TOAST columns:
+  // ai_description, scraped_about/_services, full google_photos JSON) for up to
+  // 200 rows on EVERY salon-page render. Once the SEO work drove real crawl
+  // volume to /salon/[slug], hundreds of these ran concurrently, saturated the
+  // DB, and hit statement_timeout → the whole page 5xx'd. Two changes:
+  //   1. Select ONLY the columns BusinessCard + the distance label render. This
+  //      cuts per-row width ~10x and avoids detoasting the big text/JSON cols.
+  //   2. limit 200 → 60. The box is already radius-bounded; 60 rows is far more
+  //      than enough to fill the 6 nearby slots even in dense metros.
+  // Plus the caller-facing try/catch below: a slow/failed nearby query now
+  // degrades to an empty panel instead of taking the salon page down.
+  const NEARBY_COLS =
+    'id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng';
+
+  let data: unknown[] | null = null;
+  try {
+    const res = await supabase
+      .from('businesses')
+      .select(NEARBY_COLS)
+      .eq('status', 'active')
+      .neq('slug', origin.slug)
+      .not('lat', 'is', null)
+      .not('lng', 'is', null)
+      .gte('lat', origin.lat - latDelta)
+      .lte('lat', origin.lat + latDelta)
+      .gte('lng', origin.lng - lngDelta)
+      .lte('lng', origin.lng + lngDelta)
+      .limit(60);
+    if (res.error) throw res.error;
+    data = res.data;
+  } catch (err) {
+    // Graceful degradation: the nearby panel is non-essential. Never let it
+    // 5xx the salon page. Return empty and let the page render without it.
+    console.error('getNearbySalonsByDistance failed, degrading to empty:', err);
+    return [];
+  }
 
   const sameSuburb = origin.suburb.toLowerCase();
   const withDistance: NearbySalon[] = [];
