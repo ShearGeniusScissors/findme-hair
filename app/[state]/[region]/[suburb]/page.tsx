@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
+import CardRail from '@/components/CardRail';
 import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
 import SuburbGridControls, { type CardFacets } from '@/components/SuburbGridControls';
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
+import { isOpenOnDay } from '@/lib/openNow';
 import {
   getRegionBySlug,
   getSuburbActiveCount,
@@ -293,6 +295,35 @@ export default async function SuburbDirectoryPage({
                     salons, based on Google ratings and review volume.
                   </p>
                 </div>
+              );
+            })()}
+            {/* Card rails (playbook Part 3 #5 — Domain listing-rails rhythm).
+                Only on suburbs big enough that a shortlist adds value (≥10
+                listings) and only when a rail has ≥4 real qualifiers — never
+                pad, never duplicate the whole grid. Businesses arrive in
+                weighted-rating order, so "Top rated" is the head of the list. */}
+            {businesses.length >= 10 && (() => {
+              const railTop = businesses
+                .filter((b) => (b.google_rating ?? 0) >= 4.5 && (b.google_review_count ?? 0) >= 5)
+                .slice(0, 8);
+              const railSat = businesses
+                .filter((b) => isOpenOnDay(b.google_hours, 6))
+                .slice(0, 8);
+              const railWalk = businesses
+                .filter((b) => b.walk_ins_welcome === true)
+                .slice(0, 8);
+              return (
+                <>
+                  {railTop.length >= 4 && (
+                    <CardRail title={`Top rated in ${readable}`} businesses={railTop} />
+                  )}
+                  {railSat.length >= 4 && (
+                    <CardRail title="Open this Saturday" businesses={railSat} />
+                  )}
+                  {railWalk.length >= 4 && (
+                    <CardRail title="Walk-ins welcome" businesses={railWalk} />
+                  )}
+                </>
               );
             })()}
             <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,420px)]">

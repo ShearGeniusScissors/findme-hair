@@ -24,6 +24,13 @@ function nowMinutesInAuLocal(): { day: number; mins: number } {
   return { day: dayMap[wd] ?? 0, mins: hh * 60 + mm };
 }
 
+/** True if the salon has any opening period starting on the given day (0=Sun..6=Sat). */
+export function isOpenOnDay(googleHours: unknown, day: number): boolean {
+  const h = googleHours as { periods?: GooglePeriod[] } | null;
+  if (!h?.periods?.length) return false;
+  return h.periods.some((p) => p.open?.day === day);
+}
+
 export function isOpenNow(googleHours: unknown): boolean {
   const h = googleHours as { periods?: GooglePeriod[] } | null;
   if (!h?.periods?.length) return false;
