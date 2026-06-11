@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import BrandMark from "@/components/BrandMark";
+import TapTracker from "@/components/TapTracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -124,6 +125,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        <TapTracker />
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <SiteFooter />

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import MapView from '@/components/MapView';
+import SuburbGridControls, { type CardFacets } from '@/components/SuburbGridControls';
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import {
   getRegionBySlug,
@@ -93,6 +94,26 @@ export default async function SuburbDirectoryPage({
 
   const fullState = stateName(stateCode);
 
+  // "At a glance" stats — computed from the already-fetched listings, no extra
+  // query (playbook Tactic 7: one data sentence + stat block above the grid).
+  // Real numbers only; each stat renders only when the data backs it.
+  const salonCount = businesses.filter((b) => b.business_type === 'hair_salon').length;
+  const barberCount = businesses.filter((b) => b.business_type === 'barber').length;
+  const unisexCount = businesses.filter((b) => b.business_type === 'unisex').length;
+  const rated = businesses.filter(
+    (b) => b.google_rating != null && (b.google_review_count ?? 0) > 0,
+  );
+  const avgRating =
+    rated.length >= 3
+      ? rated.reduce((sum, b) => sum + (b.google_rating ?? 0), 0) / rated.length
+      : null;
+  const totalReviews = rated.reduce((sum, b) => sum + (b.google_review_count ?? 0), 0);
+  const walkInCount = businesses.filter((b) => b.walk_ins_welcome === true).length;
+  const updatedLabel = new Date().toLocaleDateString('en-AU', {
+    month: 'long',
+    year: 'numeric',
+  });
+
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
       <JsonLd data={{
@@ -122,7 +143,7 @@ export default async function SuburbDirectoryPage({
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
             <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
             <Chevron />
             <Link href={`/${stateCode.toLowerCase()}`} className="hover:text-[var(--color-gold-dark)]">
@@ -155,6 +176,15 @@ export default async function SuburbDirectoryPage({
           <p className="mt-2 text-[var(--color-ink-light)]">
             {businesses.length} verified {businesses.length === 1 ? 'listing' : 'listings'}
           </p>
+          {businesses.length > 1 && (
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-ink-light)]">
+              Compare {businesses.length} hair salons and barbers in {readable} &mdash;{' '}
+              {totalReviews > 0
+                ? `real Google ratings from ${totalReviews.toLocaleString('en-AU')} reviews, `
+                : ''}
+              opening hours and booking links, all in one place. (Updated {updatedLabel})
+            </p>
+          )}
         </div>
       </div>
 
@@ -171,16 +201,90 @@ export default async function SuburbDirectoryPage({
             </p>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,420px)]">
-            <div className="grid gap-5 sm:grid-cols-2 content-start">
-              {businesses.map((b) => (
-                <BusinessCard key={b.id} business={b} />
-              ))}
+          <>
+            {/* At a glance — real stats from the listings on this page (Tactic 7) */}
+            {businesses.length >= 3 && (
+              <div className="mb-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-6 py-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
+                  {readable} at a glance
+                </p>
+                <dl className="mt-3 flex flex-wrap gap-x-10 gap-y-3">
+                  {salonCount > 0 && (
+                    <div>
+                      <dt className="text-xs text-[var(--color-ink-muted)]">Hair salons</dt>
+                      <dd className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                        {salonCount}
+                      </dd>
+                    </div>
+                  )}
+                  {barberCount > 0 && (
+                    <div>
+                      <dt className="text-xs text-[var(--color-ink-muted)]">Barbers</dt>
+                      <dd className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                        {barberCount}
+                      </dd>
+                    </div>
+                  )}
+                  {unisexCount > 0 && (
+                    <div>
+                      <dt className="text-xs text-[var(--color-ink-muted)]">Unisex</dt>
+                      <dd className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                        {unisexCount}
+                      </dd>
+                    </div>
+                  )}
+                  {avgRating != null && (
+                    <div>
+                      <dt className="text-xs text-[var(--color-ink-muted)]">Average rating on Google</dt>
+                      <dd className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                        {avgRating.toFixed(1)} <span className="text-[var(--color-gold)]">★</span>
+                      </dd>
+                    </div>
+                  )}
+                  {walkInCount > 0 && (
+                    <div>
+                      <dt className="text-xs text-[var(--color-ink-muted)]">Welcome walk-ins</dt>
+                      <dd className="text-lg font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+                        {walkInCount}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+            )}
+            <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,420px)]">
+            <div>
+              {/* Filter sheet + mobile map toggle (Tactic 9). Cards render on
+                  the server and pass through as children — filters are pure
+                  client state, so no new crawlable URLs are minted and every
+                  card stays in the HTML. Facets/pins are trimmed parallel
+                  arrays, not full Business rows, to keep the RSC payload lean. */}
+              <SuburbGridControls
+                facets={businesses.map((b): CardFacets => ({
+                  t: b.business_type,
+                  r: b.google_rating,
+                  w: b.walk_ins_welcome === true,
+                  p: b.google_hours?.periods ?? null,
+                }))}
+                pins={businesses.map((b) => ({
+                  lat: b.lat, lng: b.lng, name: b.name, suburb: b.suburb, state: b.state,
+                }))}
+              >
+                {businesses.map((b) => (
+                  <BusinessCard key={b.id} business={b} />
+                ))}
+              </SuburbGridControls>
             </div>
             <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-              <MapView pins={businesses} height={500} />
+              <MapView
+                pins={businesses.map((b) => ({
+                  lat: b.lat, lng: b.lng, name: b.name, suburb: b.suburb, state: b.state,
+                }))}
+                height={500}
+              />
             </aside>
-          </div>
+            </div>
+          </>
         )}
 
         {/* SEO content section — always shown for internal linking + content */}

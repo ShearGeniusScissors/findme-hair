@@ -1,6 +1,11 @@
 import { cache } from 'react';
 import { supabaseServerInternal } from '@/lib/supabase';
+import { isOpenNow } from '@/lib/openNow';
 import type { AuState, Business, BusinessType, Region, Suburb } from '@/types/database';
+
+// Re-export so existing `import { isOpenNow } from '@/lib/search'` callers keep
+// working — the implementation moved to lib/openNow.ts (client-safe, Tactic 9).
+export { isOpenNow };
 
 export interface SearchFilters {
   q?: string;
@@ -16,51 +21,6 @@ export interface SearchFilters {
   min_rating?: number;
   limit?: number;
   offset?: number;
-}
-
-interface GooglePeriod {
-  open?: { day: number; hour: number; minute: number };
-  close?: { day: number; hour: number; minute: number };
-}
-
-/** Minutes-since-Sunday-00:00 in Australia/Sydney (covers AEDT/AEST). */
-function nowMinutesInAuLocal(): { day: number; mins: number } {
-  const parts = new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'Australia/Sydney',
-    weekday: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).formatToParts(new Date());
-  const wd = parts.find((p) => p.type === 'weekday')?.value ?? 'Sun';
-  const hh = parseInt(parts.find((p) => p.type === 'hour')?.value ?? '0', 10);
-  const mm = parseInt(parts.find((p) => p.type === 'minute')?.value ?? '0', 10);
-  const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-  return { day: dayMap[wd] ?? 0, mins: hh * 60 + mm };
-}
-
-export function isOpenNow(googleHours: unknown): boolean {
-  const h = googleHours as { periods?: GooglePeriod[] } | null;
-  if (!h?.periods?.length) return false;
-  const now = nowMinutesInAuLocal();
-  const nowAbs = now.day * 1440 + now.mins;
-  for (const p of h.periods) {
-    if (!p.open) continue;
-    const openAbs = p.open.day * 1440 + p.open.hour * 60 + p.open.minute;
-    // Missing close = open 24h on that day; treat as open for that day only.
-    if (!p.close) {
-      if (openAbs <= nowAbs && nowAbs < openAbs + 1440) return true;
-      continue;
-    }
-    let closeAbs = p.close.day * 1440 + p.close.hour * 60 + p.close.minute;
-    if (closeAbs <= openAbs) closeAbs += 7 * 1440; // wraps past Saturday night
-    // Check this week and previous week (covers a Saturday-night → Sunday-morning span)
-    if ((openAbs <= nowAbs && nowAbs < closeAbs) ||
-        (openAbs - 7 * 1440 <= nowAbs && nowAbs < closeAbs - 7 * 1440)) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /** Map service filter values to business_type(s) */
@@ -205,22 +165,23 @@ const SEARCH_CARD_SELECT =
   'id, slug, name, suburb, state, postcode, business_type, lat, lng, ' +
   'google_rating, google_review_count, google_photos, specialties, ' +
   'walk_ins_welcome, is_claimed, featured_until, booking_url, website_url, ' +
-  'confidence_score';
+  'confidence_score, phone, google_hours, card_teaser';
 
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
   const supabase = supabaseServerInternal();
   const userLimit = filters.limit ?? 40;
   // When open_now is active we over-fetch, filter in JS, then trim.
   const dbLimit = filters.open_now ? Math.min(userLimit * 6, 400) : userLimit;
-  // Only pull google_hours when we actually need it (open_now filter).
-  const selectCols = filters.open_now ? `${SEARCH_CARD_SELECT}, google_hours` : SEARCH_CARD_SELECT;
   let query = supabase
     .from('businesses')
-    .select(selectCols)
+    .select(SEARCH_CARD_SELECT)
     .eq('status', 'active')
+    // Default sort = Bayesian rating×volume with claimed/photo boosts
+    // (generated column, playbook Tactic 8) — never alphabetical, and a
+    // 5.0★/2-review listing no longer outranks a 4.8★/400-review one.
     .order('featured_until', { ascending: false, nullsFirst: false })
-    .order('confidence_score', { ascending: false, nullsFirst: false })
-    .order('google_rating', { ascending: false, nullsFirst: false })
+    .order('ranking_score', { ascending: false, nullsFirst: false })
+    .order('google_review_count', { ascending: false, nullsFirst: false })
     .limit(dbLimit);
 
   if (filters.state) query = query.eq('state', filters.state);
@@ -492,13 +453,14 @@ export async function getSuburbBusinesses(
   const suburbName = suburbSlug.replace(/-/g, ' ');
   const { data } = await supabase
     .from('businesses')
-    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score')
+    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, card_teaser')
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', region.id)
     .ilike('suburb', suburbName)
-    .order('confidence_score', { ascending: false, nullsFirst: false })
-    .order('google_rating', { ascending: false, nullsFirst: false });
+    .order('featured_until', { ascending: false, nullsFirst: false })
+    .order('ranking_score', { ascending: false, nullsFirst: false })
+    .order('google_review_count', { ascending: false, nullsFirst: false });
   return (data ?? []) as Business[];
 }
 

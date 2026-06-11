@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { stripMarkdown } from '@/lib/seoMeta';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
@@ -198,7 +199,7 @@ export default async function MobileHairdresserCityPage({
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
             <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
             <ChevronIcon />
             <Link href={`/${config.state.toLowerCase()}`} className="hover:text-[var(--color-gold-dark)]">
@@ -271,7 +272,7 @@ export default async function MobileHairdresserCityPage({
                 const specBlurb = interesting.length > 0 ? interesting.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ') : null;
                 const text = b.ai_description
                   ? (() => {
-                      const t = b.ai_description.replace(/\s+/g, ' ').trim();
+                      const t = stripMarkdown(b.ai_description);
                       const stop = t.search(/[.!?]\s/);
                       return stop >= 60 && stop <= 240 ? t.slice(0, stop + 1) : t.slice(0, 220) + (t.length > 220 ? '…' : '');
                     })()

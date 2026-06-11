@@ -53,7 +53,7 @@ export default function ForSalonsPage() {
             />
             <Feature
               title="Photo gallery"
-              description="Showcase your space and work. Photos are pulled from Google automatically, and you can add your own once claimed."
+              description="Showcase your space and work — according to Google, businesses with photos get 42% more direction requests and 35% more website clicks. Add yours free once claimed."
             />
             <Feature
               title="Booking integration"

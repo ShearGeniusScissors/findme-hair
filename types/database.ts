@@ -9,7 +9,12 @@ export type UserRole = 'owner' | 'admin';
 export type MediaType = 'cover' | 'gallery' | 'logo';
 
 export interface GooglePhotoRef {
-  name: string;
+  /** Google Places photo resource name — served via the /api/photo proxy.
+      Optional since 2026-06-11: self-hosted entries carry only `url`. */
+  name?: string;
+  /** Self-hosted (Supabase storage) URL. Preferred over `name` everywhere —
+      zero Google billing at render time (the May 2026 cost incident). */
+  url?: string;
   widthPx?: number;
   heightPx?: number;
 }
@@ -74,6 +79,10 @@ export interface Business {
   claimed_by: string | null;
   featured_until: string | null;
   ai_description: string | null;
+  /** Generated column: first sentence of ai_description (≤160 chars) for listing-card teasers. */
+  card_teaser?: string | null;
+  /** Generated column: Bayesian rating×volume + claimed/photo boosts — the default card sort. */
+  ranking_score?: number | null;
   specialties: string[] | null;
   content_source: string | null;
   content_generated_at: string | null;

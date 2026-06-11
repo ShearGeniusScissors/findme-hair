@@ -3,6 +3,18 @@ interface Props {
   reviewCount?: number | null;
   size?: 'sm' | 'md';
   showCount?: boolean;
+  /** Booking.com-style word anchor (Excellent/Great/Good) + "on Google"
+      attribution. Counts + source attribution are what make stars trusted
+      (Baymard; Places ToS requires the attribution anyway). */
+  showTier?: boolean;
+}
+
+/** Word tier only at/above 4.0 — below that the number speaks plainly. */
+export function ratingTier(rating: number): string | null {
+  if (rating >= 4.8) return 'Excellent';
+  if (rating >= 4.5) return 'Great';
+  if (rating >= 4.0) return 'Good';
+  return null;
 }
 
 export default function StarRating({
@@ -10,6 +22,7 @@ export default function StarRating({
   reviewCount,
   size = 'sm',
   showCount = true,
+  showTier = false,
 }: Props) {
   const fullStars = Math.floor(rating);
   const hasHalf = rating - fullStars >= 0.3;
@@ -44,9 +57,16 @@ export default function StarRating({
       <span className={`font-semibold text-[var(--color-ink)] ${size === 'md' ? 'text-sm' : 'text-xs'}`}>
         {rating.toFixed(1)}
       </span>
+      {showTier && ratingTier(rating) && (
+        <span className={`font-medium text-[var(--color-gold-dark)] ${size === 'md' ? 'text-sm' : 'text-xs'}`}>
+          {ratingTier(rating)}
+        </span>
+      )}
       {showCount && reviewCount != null && (
         <span className={`text-[var(--color-ink-muted)] ${size === 'md' ? 'text-sm' : 'text-xs'}`}>
-          ({reviewCount})
+          {showTier
+            ? `· ${reviewCount.toLocaleString('en-AU')} reviews on Google`
+            : `(${reviewCount})`}
         </span>
       )}
     </div>

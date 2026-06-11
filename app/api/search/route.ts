@@ -13,7 +13,7 @@ const PUBLIC_BUSINESS_COLUMNS = [
   'id', 'slug', 'name', 'suburb', 'state', 'postcode', 'business_type',
   'lat', 'lng', 'google_rating', 'google_review_count', 'google_photos',
   'specialties', 'walk_ins_welcome', 'is_claimed', 'featured_until',
-  'booking_url', 'website_url',
+  'booking_url', 'website_url', 'google_hours', 'card_teaser',
 ] as const;
 type PublicBusinessKey = (typeof PUBLIC_BUSINESS_COLUMNS)[number];
 type PublicBusiness = Pick<Business, PublicBusinessKey>;

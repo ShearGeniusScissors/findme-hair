@@ -111,7 +111,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
 
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
             <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
             <span>›</span>
             <Link href={`/${config.state.toLowerCase()}`} className="hover:text-[var(--color-gold-dark)]">{fullState}</Link>

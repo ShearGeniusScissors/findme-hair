@@ -1,0 +1,109 @@
+{
+  "ranAt": "2026-06-11T13:17:26.266Z",
+  "limit": 20,
+  "ok": 20,
+  "noPhoto": 0,
+  "failed": 0,
+  "results": [
+    {
+      "slug": "the-margate-train-margate",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJvyYlJ97WbaoRHqYf7XB_PqM/0.jpg"
+    },
+    {
+      "slug": "ace-cutz-gungahlin",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJnQX8-p5VFmsRjDl7ZLcYIL0/0.jpg"
+    },
+    {
+      "slug": "happys-barber-shop-west-richmond-west-richmond",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJq8vFQnnFsGoRPJSwT43HzCw/0.jpg"
+    },
+    {
+      "slug": "m7-barbers-kippax-holt",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJBToL2PetF2sRIBUOXm66J0Q/0.jpg"
+    },
+    {
+      "slug": "gold-blade-barbers-belconnen-belconnen",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJMRwjMV6tF2sRbNP53YPcZJM/0.jpg"
+    },
+    {
+      "slug": "sheike-hair-and-beauty-greenway",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJN4U_-oTKF2sRjIP746-F1_k/0.jpg"
+    },
+    {
+      "slug": "bennys-barber-shop-prospect",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJVczoTvnIsGoRkvyYDg7HTJ0/0.jpg"
+    },
+    {
+      "slug": "boss-hair-and-body-greenway",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJVfyakoXKF2sRtmHBBiHTDjE/0.jpg"
+    },
+    {
+      "slug": "big-barber-belconnen-belconnen",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJe-siIXGtF2sRFoWGYKN1aEw/0.jpg"
+    },
+    {
+      "slug": "fanaeians-barber-shop-braddon",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJ2wDH5dpNFmsRYzku6wjc3Bw/0.jpg"
+    },
+    {
+      "slug": "just-cuts-belconnen",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJn072YXytF2sRWlT8r_xpAhY/0.jpg"
+    },
+    {
+      "slug": "mr-cuts-greenway",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJ97KpIdrLF2sRdCY-xEPwXbI/0.jpg"
+    },
+    {
+      "slug": "style-lance-belconnen",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJ88TTALatF2sRy8HG2bXoIFc/0.jpg"
+    },
+    {
+      "slug": "alkami-belconnen",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJzQTJQXCtF2sRlNaLm7Q8XR8/0.jpg"
+    },
+    {
+      "slug": "just-cuts-modbury",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJw7Vkzu20sGoR7G1RVSOxrd4/0.jpg"
+    },
+    {
+      "slug": "face-clinik-kingswood",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJddcrQ0uPEmsRjveG5kuFMWo/0.jpg"
+    },
+    {
+      "slug": "golden-1-barber-armidale",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJG_8PEgCfn2sRGOoVUBXq4X0/0.jpg"
+    },
+    {
+      "slug": "just-cuts-woden-phillip",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJ_UP8pby0F2sRcJ3zFMJYaTw/0.jpg"
+    },
+    {
+      "slug": "hairhouse-tuggeranong-greenway",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJD413KYXKF2sRn-jSP-sDdMY/0.jpg"
+    },
+    {
+      "slug": "uncle-ginos-barber-shop-melrose-park",
+      "status": "ok",
+      "url": "https://taxuueemqtquihhzhgnr.supabase.co/storage/v1/object/public/business-media/ChIJ10ESJjLRsGoRnkqTTedwAgM/0.jpg"
+    }
+  ]
+}

@@ -8,12 +8,14 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
-import { stripMarkdown } from '@/lib/seoMeta';
+import { stripMarkdown, toParagraphs } from '@/lib/seoMeta';
 import { formatTag } from '@/lib/formatTag';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
 import ShearGeniusBadge from '@/components/ShearGeniusBadge';
+import EngagementTracker from '@/components/EngagementTracker';
+import PhotoGallery from '@/components/PhotoGallery';
 import type { AuState } from '@/types/database';
 import type { Metadata } from 'next';
 
@@ -116,11 +118,14 @@ function filterQualityServices(services: string[] | null): string[] {
   });
 }
 
-function PhotoUrl(photoName: string, maxHeight = 600) {
-  // Routed through the local /api/photo proxy so site-audit crawlers see
-  // findme.hair URLs (blocked by robots.txt) instead of crawling Google's
-  // places.googleapis.com CDN as if it were part of our site.
-  return `/api/photo?name=${encodeURIComponent(photoName)}&h=${maxHeight}`;
+function PhotoUrl(p: { url?: string; name?: string }, maxHeight = 600): string | null {
+  // Self-hosted storage URL preferred — zero Google billing at render time
+  // (the May 2026 cost incident). Fallback: the local /api/photo proxy so
+  // site-audit crawlers see findme.hair URLs (blocked by robots.txt) instead
+  // of crawling Google's places.googleapis.com CDN as if it were our site.
+  if (p.url) return p.url;
+  if (p.name) return `/api/photo?name=${encodeURIComponent(p.name)}&h=${maxHeight}`;
+  return null;
 }
 
 export async function generateMetadata({
@@ -135,8 +140,10 @@ export async function generateMetadata({
   const ratingStr = business.google_rating ? `${business.google_rating}★ from ${business.google_review_count ?? 0} Google reviews. ` : '';
   // Per-salon dynamic OG when no Google photo exists. /og-image.jpg is the
   // static brand-tile fallback if the generator errors. Audit row 25f65d1a.
-  const photoUrl = business.google_photos?.[0]?.name
-    ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(business.google_photos[0].name)}&h=630`
+  const heroRef = business.google_photos?.[0];
+  const heroPhoto = heroRef ? PhotoUrl(heroRef, 630) : null;
+  const photoUrl = heroPhoto
+    ? (heroPhoto.startsWith('http') ? heroPhoto : `https://www.findme.hair${heroPhoto}`)
     : `https://www.findme.hair/api/og?slug=${encodeURIComponent(business.slug)}`;
   const path = `https://www.findme.hair/salon/${business.slug}`;
   // Title hard-capped at <60 chars: drop the "Hair Salon in" phrase and brand suffix on long names.
@@ -229,6 +236,30 @@ export default async function BusinessProfilePage({
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
 
+  // Narrative fact paragraph (playbook Tactic 4 — Domain/Zillow data→prose
+  // pattern). Every clause is a live DB fact; only true clauses render.
+  // One cheap head-count query per render (ISR-cached 1h).
+  const { count: suburbCount } = await supabaseServerInternal()
+    .from('businesses')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .eq('suburb', business.suburb)
+    .eq('state', business.state);
+  const factClauses: string[] = [];
+  if (suburbCount && suburbCount > 1) {
+    factClauses.push(`${business.name} is one of ${suburbCount} hair salons and barbers listed in ${business.suburb}, ${stateName(business.state)}.`);
+  }
+  if (business.google_rating != null && (business.google_review_count ?? 0) >= 5 && business.google_rating >= 4.0) {
+    factClauses.push(`It holds a ${business.google_rating.toFixed(1)}-star rating from ${business.google_review_count} reviews on Google.`);
+  }
+  if (business.walk_ins_welcome === true) {
+    factClauses.push('Walk-ins are welcome.');
+  }
+  if (business.is_claimed) {
+    factClauses.push('Details on this page are confirmed by the owner.');
+  }
+  const factParagraph = factClauses.length >= 2 ? factClauses.join(' ') : null;
+
   // ShearGenius badge: only show in active service territories
   const SG_TERRITORIES = new Set<AuState>(['VIC', 'SA', 'TAS']);
   const showSgBadge = SG_TERRITORIES.has(business.state);
@@ -272,7 +303,8 @@ export default async function BusinessProfilePage({
   })();
 
   return (
-    <main className="min-h-screen bg-[var(--color-surface)]">
+    <main className="min-h-screen bg-[var(--color-surface)]" data-track-business={business.id}>
+      <EngagementTracker businessId={business.id} />
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': business.business_type === 'barber' ? 'BarberShop' : 'HairSalon',
@@ -316,9 +348,11 @@ export default async function BusinessProfilePage({
         // ImageObject only requires url per schema.org spec.
         image: {
           '@type': 'ImageObject',
-          url: photos.length > 0
-            ? `https://www.findme.hair/api/photo?name=${encodeURIComponent(photos[0].name)}&h=800`
-            : `https://www.findme.hair/api/og?slug=${encodeURIComponent(business.slug)}`,
+          url: (() => {
+            const p = photos.length > 0 ? PhotoUrl(photos[0], 800) : null;
+            if (!p) return `https://www.findme.hair/api/og?slug=${encodeURIComponent(business.slug)}`;
+            return p.startsWith('http') ? p : `https://www.findme.hair${p}`;
+          })(),
         },
         priceRange: '$$',
         // paymentAccepted is Text per schema.org spec — array form trips strict
@@ -343,7 +377,7 @@ export default async function BusinessProfilePage({
       {/* ─── Breadcrumb ───────────────────────────────── */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
             <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
             <Chevron />
             <Link href={`/${business.state.toLowerCase()}`} className="hover:text-[var(--color-gold-dark)]">
@@ -362,44 +396,37 @@ export default async function BusinessProfilePage({
         </div>
       </div>
 
-      {/* ─── Photo gallery ────────────────────────────── */}
-      {photos.length > 0 && (
+      {/* ─── Photo gallery (Tactic 10) ────────────────── */}
+      {photos.length > 0 ? (
+        <PhotoGallery
+          photos={photos.map((p) => PhotoUrl(p, 800)).filter((u): u is string => u != null)}
+          name={business.name}
+        />
+      ) : (
+        /* Zero-photo claim-bait empty state — photos are listing inventory;
+           the gap itself is the pitch. Black/gold, kept slim so 13k+
+           photo-less profiles don't feel broken. */
         <div className="bg-[var(--color-white)]">
           <div className="mx-auto max-w-6xl px-6 py-4">
-            {photos.length === 1 ? (
-              <div className="overflow-hidden rounded-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={PhotoUrl(photos[0].name, 800)!}
-                  alt={business.name}
-                  className="w-full h-72 sm:h-96 object-cover"
-                />
+            <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-warm)] px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <svg className="h-8 w-8 flex-shrink-0 text-[var(--color-gold-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                </svg>
+                <p className="text-sm text-[var(--color-ink-light)]">
+                  Photos are managed by the salon.{' '}
+                  <span className="font-medium text-[var(--color-ink)]">Own {business.name}?</span>{' '}
+                  Add yours free.
+                </p>
               </div>
-            ) : (
-              <div className="grid gap-2 rounded-xl overflow-hidden" style={{
-                gridTemplateColumns: photos.length >= 3 ? '2fr 1fr' : '1fr 1fr',
-                gridTemplateRows: photos.length >= 3 ? '1fr 1fr' : '1fr',
-                height: '24rem',
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={PhotoUrl(photos[0].name, 800)!}
-                  alt={`${business.name} photo 1`}
-                  className="w-full h-full object-cover"
-                  style={photos.length >= 3 ? { gridRow: '1 / -1' } : undefined}
-                />
-                {photos.slice(1, photos.length >= 3 ? 3 : 2).map((p, idx) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={p.name + idx}
-                    src={PhotoUrl(p.name, 400)!}
-                    alt={`${business.name} photo ${idx + 2}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            )}
+              <Link
+                href={`/claim?slug=${business.slug}`}
+                className="btn-outline text-sm whitespace-nowrap"
+              >
+                Add photos free
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -448,6 +475,7 @@ export default async function BusinessProfilePage({
                   rating={business.google_rating}
                   reviewCount={business.google_review_count}
                   size="md"
+                  showTier
                 />
               )}
               <OpenStatus hours={business.google_hours} />
@@ -462,6 +490,8 @@ export default async function BusinessProfilePage({
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                   className="btn-outline text-sm gap-2"
+                  data-track="website"
+                  data-track-source="profile"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -475,6 +505,8 @@ export default async function BusinessProfilePage({
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                   className="btn-outline text-sm gap-2"
+                  data-track="maps"
+                  data-track-source="profile"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -488,6 +520,14 @@ export default async function BusinessProfilePage({
             {/* Divider */}
             <div className="my-10 h-px bg-[var(--color-border)]" />
 
+            {/* Narrative fact paragraph — live DB facts, unique per page
+                (playbook Tactic 4). Body content only; schema/H1 untouched. */}
+            {factParagraph && (
+              <p className="mb-8 rounded-xl bg-[var(--color-surface-warm)] px-5 py-4 text-sm leading-relaxed text-[var(--color-ink-light)]">
+                {factParagraph}
+              </p>
+            )}
+
             {/* Description */}
             {(business.ai_description || business.description) && (
               <section>
@@ -498,9 +538,13 @@ export default async function BusinessProfilePage({
                   About {business.name}
                 </h2>
                 {business.ai_description && (
-                  <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed">
-                    {business.ai_description}
-                  </p>
+                  <div className="mt-4 space-y-3">
+                    {toParagraphs(business.ai_description).map((p, i) => (
+                      <p key={i} className="text-[var(--color-ink-light)] leading-relaxed">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
                 )}
                 {business.description && (
                   <p className={`${business.ai_description ? 'mt-3' : 'mt-4'} text-[var(--color-ink-light)] leading-relaxed whitespace-pre-wrap`}>
@@ -548,10 +592,14 @@ export default async function BusinessProfilePage({
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
-                  Hours not yet available.{' '}
                   {business.is_claimed
-                    ? 'The owner can add them from the dashboard.'
-                    : 'Claim this listing to add hours.'}
+                    ? 'Hours not listed yet — the owner can add them from the dashboard.'
+                    : 'Hours not listed yet — own this salon? '}
+                  {!business.is_claimed && (
+                    <Link href={`/claim?slug=${business.slug}`} className="font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                      Add them free
+                    </Link>
+                  )}
                 </p>
               )}
             </section>
@@ -754,7 +802,7 @@ export default async function BusinessProfilePage({
                 </DetailRow>
                 {business.phone && (
                   <DetailRow label="Phone">
-                    <a href={`tel:${business.phone}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                    <a href={`tel:${business.phone}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]" data-track="call" data-track-source="profile">
                       {business.phone}
                     </a>
                   </DetailRow>
@@ -818,7 +866,7 @@ export default async function BusinessProfilePage({
             })()}
 
             {/* Claim banner */}
-            {!business.is_claimed && <ClaimBanner slug={business.slug} />}
+            {!business.is_claimed && <ClaimBanner slug={business.slug} name={business.name} />}
           </aside>
         </div>
       </div>
@@ -828,35 +876,48 @@ export default async function BusinessProfilePage({
         <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} />
       )}
 
-      {/* ─── Sticky mobile booking CTA ─────────────── */}
-      {(business.booking_url || business.phone) && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-[var(--color-border)] bg-[var(--color-white)] p-3">
-          {business.booking_url ? (
-            <a
-              href={business.booking_url}
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-              className="btn-gold w-full text-center gap-2"
+      {/* ─── Sticky mobile action bar — Call / Directions / Book ───
+          Playbook Tactic 1: max 3 buttons, never a dead one. Calls convert
+          30–50% vs 1–2% for web clicks, so Call is always present when a
+          phone exists. Directions deep-links Maps via place_id/lat-lng. */}
+      {(() => {
+        const directionsHref = business.google_place_id
+          ? `https://www.google.com/maps/place/?q=place_id:${business.google_place_id}`
+          : business.lat != null && business.lng != null
+            ? `https://www.google.com/maps/dir/?api=1&destination=${business.lat},${business.lng}`
+            : null;
+        const buttons: Array<{ key: string; href: string; label: string; external: boolean; primary: boolean; track: string }> = [];
+        if (business.phone) buttons.push({ key: 'call', href: `tel:${business.phone}`, label: 'Call', external: false, primary: !business.booking_url, track: 'call' });
+        if (directionsHref) buttons.push({ key: 'dir', href: directionsHref, label: 'Directions', external: true, primary: false, track: 'directions' });
+        if (business.booking_url) buttons.push({ key: 'book', href: business.booking_url, label: 'Book', external: true, primary: true, track: 'book' });
+        else if (business.website_url && buttons.length < 3) buttons.push({ key: 'web', href: business.website_url, label: 'Website', external: true, primary: buttons.length === 0, track: 'website' });
+        if (buttons.length === 0) return null;
+        return (
+          <>
+            <div
+              className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-[var(--color-border)] bg-[var(--color-white)] p-3"
+              style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-              </svg>
-              Book appointment
-            </a>
-          ) : business.phone ? (
-            <a href={`tel:${business.phone}`} className="btn-gold w-full text-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-              </svg>
-              Call {business.phone}
-            </a>
-          ) : null}
-        </div>
-      )}
-      {/* Bottom spacer for sticky CTA on mobile */}
-      {(business.booking_url || business.phone) && (
-        <div className="h-16 lg:hidden" />
-      )}
+              <div className={`grid gap-2 ${buttons.length === 3 ? 'grid-cols-3' : buttons.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                {buttons.map((b) => (
+                  <a
+                    key={b.key}
+                    href={b.href}
+                    {...(b.external ? { target: '_blank', rel: 'nofollow noopener noreferrer' } : {})}
+                    className={`${b.primary ? 'btn-gold' : 'btn-outline'} w-full justify-center text-center text-sm`}
+                    data-track={b.track}
+                    data-track-source="sticky"
+                  >
+                    {b.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+            {/* Bottom spacer for sticky CTA on mobile */}
+            <div className="h-20 lg:hidden" />
+          </>
+        );
+      })()}
     </main>
   );
 }

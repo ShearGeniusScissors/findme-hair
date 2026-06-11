@@ -69,7 +69,7 @@ export default function NearMePage({ content }: { content: NearMeContent }) {
       {/* Breadcrumb */}
       <div className="bg-[var(--color-white)] border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-6xl px-6 py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-ink-muted)]">
             <Link href="/" className="hover:text-[var(--color-gold-dark)]">Home</Link>
             <ChevronIcon />
             <span className="text-[var(--color-ink)] font-medium">{content.h1}</span>

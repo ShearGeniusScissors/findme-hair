@@ -79,24 +79,26 @@ export default function ClaimForm() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50">
-      <header className="border-b border-neutral-200 bg-white">
+    <main className="min-h-screen bg-[var(--color-surface)]">
+      <header className="border-b border-[var(--color-border)] bg-[var(--color-white)]">
         <div className="mx-auto max-w-3xl px-6 py-6">
-          <Link href="/" className="text-sm font-semibold text-rose-600 hover:text-rose-500">
+          <Link href="/" className="text-sm font-semibold text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
             ← findme.hair
           </Link>
         </div>
       </header>
 
-      <div className="mx-auto max-w-xl px-6 py-16">
-        <h1 className="text-3xl font-semibold text-neutral-900">Claim your listing</h1>
-        <p className="mt-2 text-neutral-600">
+      <div className="mx-auto max-w-xl px-6 py-10">
+        <h1 className="text-3xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+          Claim your free listing
+        </h1>
+        <p className="mt-2 text-[var(--color-ink-light)]">
           We&rsquo;ll send a magic link to your email. If your email matches the salon&rsquo;s
           website, you&rsquo;re in instantly. Otherwise we&rsquo;ll verify ownership within 24 hours.
         </p>
 
         {slug && (
-          <p className="mt-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <p className="mt-4 rounded-lg border border-[var(--color-gold)] bg-[var(--color-gold-light)] px-4 py-3 text-sm text-[var(--color-ink)]">
             Claiming: <span className="font-semibold">{slug}</span>
           </p>
         )}
@@ -125,29 +127,29 @@ export default function ClaimForm() {
         ) : (
           <form onSubmit={submit} className="mt-8 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-neutral-700">
+              <label className="block text-sm font-medium text-[var(--color-ink)]">
                 Your email
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-3 text-sm focus:border-[var(--color-gold)] focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-light)]"
                   placeholder="you@yoursalon.com.au"
                 />
-                <span className="mt-1 block text-xs text-neutral-500">
+                <span className="mt-1 block text-xs text-[var(--color-ink-muted)]">
                   Tip: use the email at your salon&rsquo;s domain for instant verification.
                 </span>
               </label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700">
+              <label className="block text-sm font-medium text-[var(--color-ink)]">
                 Tell us a bit about yourself (optional)
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={3}
-                  className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-3 text-sm focus:border-[var(--color-gold)] focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-light)]"
                   placeholder="Owner of Example Salon, opened 2018…"
                 />
               </label>
@@ -155,13 +157,28 @@ export default function ClaimForm() {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="inline-flex w-full items-center justify-center rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-rose-400 disabled:opacity-60"
+              className="btn-gold w-full justify-center disabled:opacity-60"
             >
-              {status === 'sending' ? 'Sending magic link…' : 'Send me a magic link'}
+              {status === 'sending' ? 'Sending magic link…' : 'Claim my free listing'}
             </button>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-[#b3261e]">{error}</p>}
           </form>
         )}
+
+        {/* Why claim — real benefits, no urgency (playbook Part 4 locked copy) */}
+        <div className="mt-10 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] p-6">
+          <p className="text-sm font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+            Why claim your listing?
+          </p>
+          <ul className="mt-3 space-y-2 text-sm text-[var(--color-ink-light)]">
+            <li>✓ Update your details, hours and booking link</li>
+            <li>✓ Add your own photos</li>
+            <li>✓ See how many people viewed your page</li>
+          </ul>
+          <p className="mt-4 text-xs text-[var(--color-ink-muted)]">
+            Free forever · Takes 2 minutes · You control what customers see
+          </p>
+        </div>
       </div>
     </main>
   );
