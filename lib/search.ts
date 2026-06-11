@@ -464,6 +464,27 @@ export async function getSuburbBusinesses(
   return (data ?? []) as Business[];
 }
 
+/**
+ * Active-listing count for one suburb — count-only HEAD request, zero row
+ * transfer. Powers the counted nearby-suburb links (playbook Part 3 #10,
+ * Zillow child-geography pattern). Called ~5× per suburb-page ISR render.
+ */
+export async function getSuburbActiveCount(
+  state: AuState,
+  regionId: string,
+  suburbName: string,
+): Promise<number> {
+  const supabase = supabaseServerInternal();
+  const { count } = await supabase
+    .from('businesses')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .eq('state', state)
+    .eq('region_id', regionId)
+    .ilike('suburb', suburbName);
+  return count ?? 0;
+}
+
 export async function getSuburbByRegionAndSlug(
   regionId: string,
   suburbSlug: string,

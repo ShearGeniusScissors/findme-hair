@@ -8,6 +8,7 @@ import SuburbGridControls, { type CardFacets } from '@/components/SuburbGridCont
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import {
   getRegionBySlug,
+  getSuburbActiveCount,
   getSuburbBusinesses,
   getSuburbByRegionAndSlug,
   listSuburbsInRegion,
@@ -86,11 +87,19 @@ export default async function SuburbDirectoryPage({
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
 
-  // Nearby suburbs for internal linking
+  // Nearby suburbs for internal linking — counted links (Zillow
+  // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons"
+  // beats a bare name. Count is a HEAD request per suburb (5 max, hourly ISR).
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
-  const nearbySuburbs = allSuburbs
-    .filter((s) => s.slug !== suburb)
-    .slice(0, 5);
+  const nearbySuburbs = await Promise.all(
+    allSuburbs
+      .filter((s) => s.slug !== suburb)
+      .slice(0, 5)
+      .map(async (s) => ({
+        ...s,
+        count: regionRow ? await getSuburbActiveCount(stateCode, regionRow.id, s.name) : 0,
+      })),
+  );
 
   const fullState = stateName(stateCode);
 
@@ -252,6 +261,40 @@ export default async function SuburbDirectoryPage({
                 </dl>
               </div>
             )}
+
+            {/* Answer-first block (playbook Part 3 #4) — the question users
+                and AI engines both ask, answered in one sentence with the top
+                three named and linked. Cards are already in weighted-rating
+                order; require ≥5 reviews so a 5.0★/2-review listing can't
+                headline the suburb. Real data only. */}
+            {(() => {
+              const topRated = businesses
+                .filter((b) => b.google_rating != null && (b.google_review_count ?? 0) >= 5)
+                .slice(0, 3);
+              if (topRated.length < 3) return null;
+              return (
+                <div className="mb-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-6 py-5">
+                  <h2 className="text-base font-semibold text-[var(--color-ink)]">
+                    Which are the highest-rated salons in {readable}?
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">
+                    {topRated.map((b, i) => (
+                      <span key={b.id}>
+                        {i === 2 ? ' and ' : i === 1 ? ', ' : ''}
+                        <Link
+                          href={`/salon/${b.slug}`}
+                          className="font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                        >
+                          {b.name}
+                        </Link>
+                      </span>
+                    ))}{' '}
+                    are currently the highest-rated of {readable}&rsquo;s {businesses.length} listed
+                    salons, based on Google ratings and review volume.
+                  </p>
+                </div>
+              );
+            })()}
             <div className="grid gap-8 lg:grid-cols-[1fr_minmax(0,420px)]">
             <div>
               {/* Filter sheet + mobile map toggle (Tactic 9). Cards render on
@@ -283,6 +326,24 @@ export default async function SuburbDirectoryPage({
                 height={500}
               />
             </aside>
+            </div>
+
+            {/* Claim interleave (playbook Part 3 #8, Zillow/Domain pattern) —
+                owners scanning this page for their own salon see the pitch
+                right where they finish scanning. Locked CTA wording; neutral
+                fact only, no urgency. */}
+            <div className="mt-10 rounded-xl border border-[var(--color-gold)] bg-[var(--color-gold-light)] px-6 py-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div>
+                <p className="text-base font-semibold text-[var(--color-ink)]">
+                  Run one of these salons?
+                </p>
+                <p className="mt-1 text-sm text-[var(--color-ink-light)]">
+                  Claim your free listing to update photos, hours and booking links.
+                </p>
+              </div>
+              <Link href="/claim" className="btn-gold mt-4 inline-block flex-shrink-0 text-sm sm:mt-0">
+                Claim my free listing
+              </Link>
             </div>
           </>
         )}
@@ -338,6 +399,11 @@ export default async function SuburbDirectoryPage({
                     >
                       {titleCase(s.name)}
                     </Link>
+                    {s.count > 0 && (
+                      <span className="text-[var(--color-ink-muted)]">
+                        {' '}&mdash; {s.count} {s.count === 1 ? 'salon' : 'salons'}
+                      </span>
+                    )}
                   </span>
                 ))}
               </p>

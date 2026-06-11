@@ -517,6 +517,16 @@ export default async function BusinessProfilePage({
               )}
             </div>
 
+            {/* Who-am-I-dealing-with microcopy (playbook Part 2): directories
+                carry a unique anxiety — who answers when I tap? Say it plainly. */}
+            {(business.booking_url || business.phone) && (
+              <p className="mt-2.5 text-xs text-[var(--color-ink-muted)]">
+                {business.booking_url
+                  ? 'Booking opens the salon’s own booking page. Calls go straight to the salon.'
+                  : 'Calls go straight to the salon.'}
+              </p>
+            )}
+
             {/* Divider */}
             <div className="my-10 h-px bg-[var(--color-border)]" />
 
