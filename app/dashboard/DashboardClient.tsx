@@ -408,6 +408,42 @@ export default function DashboardClient() {
                 );
               })()}
 
+              {/* Top Rated badge — embed snippet for winners (top 10% of
+                  active listings by Google rating). The wrapped link back to
+                  the profile is the backlinks flywheel. */}
+              {b.top_rated_year != null && (
+                <div className="border-t border-neutral-100 bg-amber-50/50 px-5 py-4">
+                  <p className="text-sm font-semibold text-amber-900">
+                    🏆 You earned the findme.hair Top Rated {b.top_rated_year} badge
+                  </p>
+                  <p className="mt-1 text-xs text-amber-800">
+                    Your salon is in the top 10% of Australian salons and barbers on
+                    findme.hair by Google rating. Add the badge to your website —
+                    copy this snippet:
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <input
+                      readOnly
+                      value={`<a href="https://www.findme.hair/salon/${b.slug}"><img src="https://www.findme.hair/api/badge/${b.slug}" alt="${b.name} — findme.hair Top Rated ${b.top_rated_year}" width="220" height="72"/></a>`}
+                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 font-mono text-[11px] text-neutral-600"
+                      onFocus={(e) => e.target.select()}
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
+                        void navigator.clipboard.writeText(input.value);
+                        e.currentTarget.textContent = 'Copied!';
+                        setTimeout(() => { (e.target as HTMLButtonElement).textContent = 'Copy'; }, 1500);
+                      }}
+                      className="shrink-0 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {expandedId === b.id && (
                 <div className="border-t border-neutral-100 px-5 pb-5 pt-4 space-y-5">
 

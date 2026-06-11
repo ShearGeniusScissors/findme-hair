@@ -91,6 +91,8 @@ export interface Business {
   scraped_at: string | null;
   walk_ins_welcome: boolean | null;
   walk_ins_source: string | null;
+  /** FindMe Hair Top Rated badge year — top 10% of active listings by Bayesian-weighted Google rating. NULL = no badge. */
+  top_rated_year?: number | null;
   preferred_scissor_supplier_url: string | null;
   created_at: string;
   updated_at: string;

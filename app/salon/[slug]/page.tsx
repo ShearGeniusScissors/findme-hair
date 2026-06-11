@@ -495,6 +495,17 @@ export default async function BusinessProfilePage({
             <div className="flex flex-wrap items-start gap-3">
               <span className="badge badge-type">{TYPE_LABEL[business.business_type]}</span>
               {business.is_claimed && <span className="badge badge-gold">Claimed</span>}
+              {business.top_rated_year != null && (
+                <span
+                  className="inline-flex items-center gap-1 rounded-full border border-[var(--color-gold)] bg-white px-3 py-1 text-xs font-bold text-[var(--color-gold-dark)]"
+                  title={`Top 10% of Australian salons and barbers on findme.hair by Google rating, ${business.top_rated_year}`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.11l-4.94 2.6.94-5.5-4-3.9 5.53-.8L10 1.5z" />
+                  </svg>
+                  Top Rated {business.top_rated_year}
+                </span>
+              )}
               {isFeatured && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-gold)] px-3 py-1 text-xs font-bold text-white">
                   <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
