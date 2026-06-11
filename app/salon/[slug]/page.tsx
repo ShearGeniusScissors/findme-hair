@@ -243,12 +243,16 @@ export default async function BusinessProfilePage({
   // comparative only when flattering) → distinctive fact → service identity
   // → claim state. One suburb-peer query per render (ISR-cached 1h; suburbs
   // top out around ~100 rows so this stays light).
+  // Filter by region_id too so the peer pool matches getSuburbBusinesses
+  // (the suburb-page pool) — without it, same-named suburbs in other
+  // regions inflate the count and the profile disagrees with the page.
   const { data: suburbPeerRows } = await supabaseServerInternal()
     .from('businesses')
     .select('id, google_rating, google_review_count, google_hours, walk_ins_welcome')
     .eq('status', 'active')
     .eq('suburb', business.suburb)
-    .eq('state', business.state);
+    .eq('state', business.state)
+    .eq('region_id', business.region_id);
   const peers = (suburbPeerRows ?? []) as Array<{
     id: string;
     google_rating: number | null;
