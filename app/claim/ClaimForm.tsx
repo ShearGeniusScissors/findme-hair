@@ -18,9 +18,17 @@ interface InitResponse {
   claim_attempt_id: string;
 }
 
-export default function ClaimForm() {
+export interface ClaimSalon {
+  slug: string;
+  name: string;
+  address: string | null;
+  suburb: string;
+  state: string;
+}
+
+export default function ClaimForm({ salon }: { salon?: ClaimSalon | null }) {
   const params = useSearchParams();
-  const slug = params.get('slug') ?? '';
+  const slug = salon?.slug ?? params.get('slug') ?? '';
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -97,11 +105,25 @@ export default function ClaimForm() {
           website, you&rsquo;re in instantly. Otherwise we&rsquo;ll verify ownership within 24 hours.
         </p>
 
-        {slug && (
+        {/* Screen 1 — Confirm (playbook Part 3): the salon they came from,
+            name + address shown, never make them search. Falls back to the
+            slug when the server lookup missed. */}
+        {salon ? (
+          <div className="mt-4 rounded-lg border border-[var(--color-gold)] bg-[var(--color-gold-light)] px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
+              Your salon
+            </p>
+            <p className="mt-1 text-base font-semibold text-[var(--color-ink)]">{salon.name}</p>
+            <p className="text-sm text-[var(--color-ink-light)]">
+              {salon.address ? `${salon.address}, ` : ''}
+              {salon.suburb}, {salon.state}
+            </p>
+          </div>
+        ) : slug ? (
           <p className="mt-4 rounded-lg border border-[var(--color-gold)] bg-[var(--color-gold-light)] px-4 py-3 text-sm text-[var(--color-ink)]">
             Claiming: <span className="font-semibold">{slug}</span>
           </p>
-        )}
+        ) : null}
 
         {status === 'sent' ? (
           verdict === 'verified_owner' ? (
