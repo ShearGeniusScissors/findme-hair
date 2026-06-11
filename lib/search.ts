@@ -453,7 +453,7 @@ export async function getSuburbBusinesses(
   const suburbName = suburbSlug.replace(/-/g, ' ');
   const { data } = await supabase
     .from('businesses')
-    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, card_teaser')
+    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, card_teaser, address_line1')
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', region.id)

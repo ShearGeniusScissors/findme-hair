@@ -8,6 +8,7 @@ import MapView from '@/components/MapView';
 import SuburbGridControls, { type CardFacets } from '@/components/SuburbGridControls';
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import { isOpenOnDay } from '@/lib/openNow';
+import { findSalonStrips } from '@/lib/streets';
 import {
   getRegionBySlug,
   getSuburbActiveStats,
@@ -401,6 +402,22 @@ export default async function SuburbDirectoryPage({
                     : ''}
                   {' '}Popular services include haircuts, colour treatments and barber services.
                 </p>
+                {(() => {
+                  // Salon-strip sentence — only when a street genuinely
+                  // dominates (real address data, can't overstate).
+                  const strip = findSalonStrips(
+                    businesses.map((b) => b.address_line1 ?? null),
+                    businesses.length,
+                  );
+                  if (!strip) return null;
+                  return (
+                    <p>
+                      {strip.streets.length === 1
+                        ? `${strip.streets[0]} is ${readable}'s main salon strip, home to ${strip.count} of its ${businesses.length} hair salons and barbers.`
+                        : `${strip.streets[0]} and ${strip.streets[1]} are ${readable}'s main salon strips — ${strip.count} of its ${businesses.length} listings sit between them.`}
+                    </p>
+                  );
+                })()}
                 <p>
                   Every listing on findme.hair is hand-verified against
                   Google, TrueLocal, and Yellow Pages. Browse {readable}&rsquo;s verified
