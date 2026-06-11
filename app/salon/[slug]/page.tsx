@@ -1019,7 +1019,13 @@ export default async function BusinessProfilePage({
             })()}
 
             {/* Claim banner */}
-            {!business.is_claimed && <ClaimBanner slug={business.slug} name={business.name} />}
+            {!business.is_claimed && (
+              <ClaimBanner
+                slug={business.slug}
+                name={business.name}
+                topRatedYear={business.top_rated_year}
+              />
+            )}
           </aside>
         </div>
       </div>
