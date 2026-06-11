@@ -10,6 +10,7 @@ import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
 import { stripMarkdown, toParagraphs } from '@/lib/seoMeta';
 import { formatTag } from '@/lib/formatTag';
+import { isOpenOnDay } from '@/lib/openNow';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
@@ -236,23 +237,77 @@ export default async function BusinessProfilePage({
   const photos = business.google_photos ?? [];
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
 
-  // Narrative fact paragraph (playbook Tactic 4 — Domain/Zillow data→prose
-  // pattern). Every clause is a live DB fact; only true clauses render.
-  // One cheap head-count query per render (ISR-cached 1h).
-  const { count: suburbCount } = await supabaseServerInternal()
+  // Narrative fact paragraph (playbook Tactic 4 + Part 4 profile formula —
+  // Domain/Zillow data→prose pattern). Every clause is a live DB fact; only
+  // true clauses render, in the formula order: position → rating (+
+  // comparative only when flattering) → distinctive fact → service identity
+  // → claim state. One suburb-peer query per render (ISR-cached 1h; suburbs
+  // top out around ~100 rows so this stays light).
+  const { data: suburbPeerRows } = await supabaseServerInternal()
     .from('businesses')
-    .select('id', { count: 'exact', head: true })
+    .select('id, google_rating, google_review_count, google_hours, walk_ins_welcome')
     .eq('status', 'active')
     .eq('suburb', business.suburb)
     .eq('state', business.state);
+  const peers = (suburbPeerRows ?? []) as Array<{
+    id: string;
+    google_rating: number | null;
+    google_review_count: number | null;
+    google_hours: { periods?: unknown[] } | null;
+    walk_ins_welcome: boolean | null;
+  }>;
+  const suburbCount = peers.length;
   const factClauses: string[] = [];
-  if (suburbCount && suburbCount > 1) {
+  if (suburbCount > 1) {
     factClauses.push(`${business.name} is one of ${suburbCount} hair salons and barbers listed in ${business.suburb}, ${stateName(business.state)}.`);
   }
   if (business.google_rating != null && (business.google_review_count ?? 0) >= 5 && business.google_rating >= 4.0) {
-    factClauses.push(`It holds a ${business.google_rating.toFixed(1)}-star rating from ${business.google_review_count} reviews on Google.`);
+    // Comparative clause only when flattering: weighted (rating × log review
+    // volume) rank in the suburb's top 3, with enough rated peers that
+    // "top-rated" means something. Never render an unflattering comparison.
+    const weighted = (r: number | null, c: number | null) =>
+      (r ?? 0) * Math.log10((c ?? 0) + 2);
+    const ratedPeers = peers.filter((p) => p.google_rating != null && (p.google_review_count ?? 0) >= 5);
+    const myScore = weighted(business.google_rating, business.google_review_count);
+    const rank = ratedPeers.filter((p) => weighted(p.google_rating, p.google_review_count) > myScore).length + 1;
+    const comparative = ratedPeers.length >= 8 && rank <= 3 ? ' — among the top-rated in the suburb' : '';
+    factClauses.push(`It holds a ${business.google_rating.toFixed(1)}-star rating from ${business.google_review_count} reviews on Google${comparative}.`);
   }
-  if (business.walk_ins_welcome === true) {
+  // Distinctive real fact — first true, scarce-enough clause wins.
+  let walkInsUsedAsDistinctive = false;
+  {
+    const reviewCounts = peers.map((p) => p.google_review_count ?? 0);
+    const isMostReviewed =
+      (business.google_review_count ?? 0) >= 10 &&
+      suburbCount > 3 &&
+      reviewCounts.filter((c) => c >= (business.google_review_count ?? 0)).length === 1;
+    const satCount = peers.filter((p) => isOpenOnDay(p.google_hours, 6)).length;
+    const walkInCount = peers.filter((p) => p.walk_ins_welcome === true).length;
+    if (isMostReviewed) {
+      factClauses.push(`It's the most-reviewed salon in ${business.suburb}.`);
+    } else if (
+      isOpenOnDay(business.google_hours, 6) &&
+      satCount > 0 && suburbCount > 3 && satCount <= Math.ceil(suburbCount / 2)
+    ) {
+      factClauses.push(`It's one of ${satCount === 1 ? 'the few' : satCount} ${business.suburb} salons open Saturdays.`);
+    } else if (
+      business.walk_ins_welcome === true &&
+      walkInCount > 0 && suburbCount > 3 && walkInCount <= Math.ceil(suburbCount / 2)
+    ) {
+      factClauses.push(`It's one of ${walkInCount === 1 ? 'the few' : walkInCount} ${business.suburb} salons taking walk-ins.`);
+      walkInsUsedAsDistinctive = true;
+    }
+  }
+  // Service identity — real specialty tags only.
+  if (business.specialties && business.specialties.length > 0) {
+    // "colour specialist ... work" reads awkwardly — drop the role suffix in prose.
+    const tags = business.specialties.slice(0, 3).map((s) =>
+      formatTag(s).toLowerCase().replace(/\s+specialist$/, ''),
+    );
+    const tagList = tags.length === 1 ? tags[0] : `${tags.slice(0, -1).join(', ')} and ${tags[tags.length - 1]}`;
+    factClauses.push(`The salon is known for ${tagList} work.`);
+  }
+  if (business.walk_ins_welcome === true && !walkInsUsedAsDistinctive) {
     factClauses.push('Walk-ins are welcome.');
   }
   if (business.is_claimed) {
