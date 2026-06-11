@@ -10,7 +10,7 @@ import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import { isOpenOnDay } from '@/lib/openNow';
 import {
   getRegionBySlug,
-  getSuburbActiveCount,
+  getSuburbActiveStats,
   getSuburbBusinesses,
   getSuburbByRegionAndSlug,
   listSuburbsInRegion,
@@ -90,17 +90,19 @@ export default async function SuburbDirectoryPage({
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
 
   // Nearby suburbs for internal linking — counted links (Zillow
-  // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons"
-  // beats a bare name. Count is a HEAD request per suburb (5 max, hourly ISR).
+  // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons
+  // · 4.6★ avg" beats a bare name. One light query per suburb (5 max, hourly ISR).
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const nearbySuburbs = await Promise.all(
     allSuburbs
       .filter((s) => s.slug !== suburb)
       .slice(0, 5)
-      .map(async (s) => ({
-        ...s,
-        count: regionRow ? await getSuburbActiveCount(stateCode, regionRow.id, s.name) : 0,
-      })),
+      .map(async (s) => {
+        const stats = regionRow
+          ? await getSuburbActiveStats(stateCode, regionRow.id, s.name)
+          : { count: 0, avgRating: null };
+        return { ...s, count: stats.count, avgRating: stats.avgRating };
+      }),
   );
 
   const fullState = stateName(stateCode);
@@ -433,6 +435,7 @@ export default async function SuburbDirectoryPage({
                     {s.count > 0 && (
                       <span className="text-[var(--color-ink-muted)]">
                         {' '}&mdash; {s.count} {s.count === 1 ? 'salon' : 'salons'}
+                        {s.avgRating != null && <> &middot; {s.avgRating.toFixed(1)}&#9733; avg</>}
                       </span>
                     )}
                   </span>

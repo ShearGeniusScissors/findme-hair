@@ -485,6 +485,35 @@ export async function getSuburbActiveCount(
   return count ?? 0;
 }
 
+/**
+ * Count + average Google rating for a suburb's active listings — extends the
+ * counted nearby links to the full Zillow child-geography pattern:
+ * "Collingwood — 19 salons · 4.6★ avg". One light single-column fetch per
+ * suburb per hourly ISR render; avg is null below 3 rated listings so a
+ * single 5.0★ outlier can't headline a suburb.
+ */
+export async function getSuburbActiveStats(
+  state: AuState,
+  regionId: string,
+  suburbName: string,
+): Promise<{ count: number; avgRating: number | null }> {
+  const supabase = supabaseServerInternal();
+  const { data } = await supabase
+    .from('businesses')
+    .select('google_rating')
+    .eq('status', 'active')
+    .eq('state', state)
+    .eq('region_id', regionId)
+    .ilike('suburb', suburbName);
+  const rows = (data ?? []) as Array<{ google_rating: number | null }>;
+  const rated = rows.filter((r) => r.google_rating != null).map((r) => r.google_rating as number);
+  const avgRating =
+    rated.length >= 3
+      ? Math.round((rated.reduce((a, b) => a + b, 0) / rated.length) * 10) / 10
+      : null;
+  return { count: rows.length, avgRating };
+}
+
 export async function getSuburbByRegionAndSlug(
   regionId: string,
   suburbSlug: string,
