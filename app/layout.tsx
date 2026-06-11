@@ -318,6 +318,11 @@ function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/top-rated" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                  Top Rated 2026
+                </Link>
+              </li>
+              <li>
                 <Link href="/stats" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
                   Industry Stats
                 </Link>
