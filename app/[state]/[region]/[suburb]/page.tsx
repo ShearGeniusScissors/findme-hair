@@ -418,6 +418,27 @@ export default async function SuburbDirectoryPage({
                     </p>
                   );
                 })()}
+                {(() => {
+                  // Top Rated 2026 sentence — real badge data only (top 10%
+                  // nationally by weighted Google rating; see /top-rated).
+                  const topRated = businesses.filter((b) => b.top_rated_year === 2026);
+                  if (topRated.length === 0) return null;
+                  const names = topRated.slice(0, 3).map((b) => b.name);
+                  return (
+                    <p>
+                      {topRated.length === 1
+                        ? `${names[0]} holds`
+                        : `${topRated.length} ${readable} ${topRated.length === businesses.length ? 'listings' : 'salons'} hold`}{' '}
+                      the findme.hair{' '}
+                      <Link href="/top-rated" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                        Top Rated 2026
+                      </Link>{' '}
+                      badge — awarded to the top 10% of Australian salons and barbers by
+                      weighted Google rating
+                      {topRated.length > 1 ? `: ${names.join(', ')}${topRated.length > 3 ? ` and ${topRated.length - 3} more` : ''}` : ''}.
+                    </p>
+                  );
+                })()}
                 <p>
                   Every listing on findme.hair is hand-verified against
                   Google, TrueLocal, and Yellow Pages. Browse {readable}&rsquo;s verified
