@@ -40,6 +40,10 @@ export default function DashboardClient() {
   >(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  // Onboarding checklist (claim funnel Screen 3): live check-off state for
+  // photos + hours, batch-loaded on mount so collapsed cards show progress.
+  // Booking link is read straight off the listing row.
+  const [setupDone, setSetupDone] = useState<Record<string, { photos: boolean; hours: boolean }>>({});
 
   const fetchPhotoUrl = useCallback(async (storagePath: string) => {
     // Bucket is private (audit 4ad5ca94) — getPublicUrl no longer works.
@@ -80,6 +84,7 @@ export default function DashboardClient() {
     if (!res.ok) { flash(`Upload error: ${json.error}`); return; }
     flash('Photo uploaded ✓');
     await loadMedia(businessId);
+    setSetupDone((prev) => ({ ...prev, [businessId]: { ...prev[businessId], photos: true } }));
   }
 
   async function deletePhoto(businessId: string, mediaId: string) {
@@ -92,10 +97,11 @@ export default function DashboardClient() {
     });
     if (!res.ok) { flash('Delete failed'); return; }
     flash('Deleted ✓');
-    setMedia((prev) => ({
-      ...prev,
-      [businessId]: (prev[businessId] ?? []).filter((m) => m.id !== mediaId),
-    }));
+    setMedia((prev) => {
+      const remaining = (prev[businessId] ?? []).filter((m) => m.id !== mediaId);
+      setSetupDone((d) => ({ ...d, [businessId]: { ...d[businessId], photos: remaining.length > 0 } }));
+      return { ...prev, [businessId]: remaining };
+    });
   }
 
   const loadHours = useCallback(async (businessId: string) => {
@@ -156,7 +162,34 @@ export default function DashboardClient() {
         .select('*')
         .eq('claimed_by', user.id)
         .order('updated_at', { ascending: false });
-      setListings(data ?? []);
+      const rows = data ?? [];
+      setListings(rows);
+
+      // Batch-load checklist state (photos / saved hours) for every listing.
+      const ids = rows.map((b: Business) => b.id);
+      if (ids.length > 0) {
+        const [{ data: mediaRows }, { data: hourRows }] = await Promise.all([
+          supabase.from('business_media').select('business_id').in('business_id', ids),
+          supabase.from('opening_hours').select('business_id').in('business_id', ids),
+        ]);
+        const hasPhotos = new Set((mediaRows ?? []).map((m: { business_id: string }) => m.business_id));
+        const hasHours = new Set((hourRows ?? []).map((h: { business_id: string }) => h.business_id));
+        setSetupDone(Object.fromEntries(ids.map((id: string) => [
+          id,
+          { photos: hasPhotos.has(id), hours: hasHours.has(id) },
+        ])));
+      }
+
+      // Screen 3 of the claim funnel: success lands the owner straight in
+      // edit mode on the listing they just claimed.
+      if (slug) {
+        const claimed = rows.find((b: Business) => b.slug === slug);
+        if (claimed) {
+          setExpandedId(claimed.id);
+          void loadHours(claimed.id);
+          void loadMedia(claimed.id);
+        }
+      }
       setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,6 +236,9 @@ export default function DashboardClient() {
       .from('opening_hours')
       .upsert(upsertRows, { onConflict: 'business_id,day_of_week' });
     flash(error ? `Error: ${error.message}` : 'Hours saved ✓');
+    if (!error) {
+      setSetupDone((prev) => ({ ...prev, [businessId]: { ...prev[businessId], hours: true } }));
+    }
   }
 
   function updateHoursLocal(businessId: string, dayIndex: number, patch: Partial<OpeningHours>) {
@@ -317,6 +353,60 @@ export default function DashboardClient() {
                   </button>
                 </div>
               </div>
+
+              {/* Onboarding checklist (claim funnel Screen 3) — hidden once all
+                  three are done. Items click through to the edit panel. */}
+              {(() => {
+                const done = {
+                  photos: setupDone[b.id]?.photos ?? false,
+                  hours: setupDone[b.id]?.hours ?? false,
+                  booking: !!b.booking_url,
+                };
+                if (done.photos && done.hours && done.booking) return null;
+                const items: Array<{ key: keyof typeof done; label: string; hint?: string }> = [
+                  { key: 'photos', label: 'Add photos', hint: 'Businesses with 10+ photos get up to 200% more views (Yelp)' },
+                  { key: 'hours', label: 'Confirm your hours' },
+                  { key: 'booking', label: 'Add your booking link' },
+                ];
+                const remaining = items.filter((i) => !done[i.key]).length;
+                return (
+                  <div className="border-t border-neutral-100 bg-neutral-50/60 px-5 py-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                      Finish setting up · {remaining} step{remaining === 1 ? '' : 's'} left
+                    </p>
+                    <ul className="mt-2 space-y-1.5">
+                      {items.map((item, i) => (
+                        <li key={item.key}>
+                          <button
+                            type="button"
+                            onClick={() => { if (expandedId !== b.id) void toggleExpand(b.id); }}
+                            className="flex w-full items-start gap-2.5 text-left"
+                          >
+                            <span
+                              aria-hidden
+                              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                                done[item.key]
+                                  ? 'bg-emerald-500 text-white'
+                                  : 'border border-neutral-300 bg-white text-neutral-500'
+                              }`}
+                            >
+                              {done[item.key] ? '✓' : i + 1}
+                            </span>
+                            <span>
+                              <span className={`text-sm font-medium ${done[item.key] ? 'text-neutral-400 line-through' : 'text-neutral-800'}`}>
+                                {item.label}
+                              </span>
+                              {item.hint && !done[item.key] && (
+                                <span className="block text-xs text-neutral-500">{item.hint}</span>
+                              )}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
 
               {expandedId === b.id && (
                 <div className="border-t border-neutral-100 px-5 pb-5 pt-4 space-y-5">
