@@ -19,7 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${base}/for-salons`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${base}/search`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    // NOTE: /search is intentionally NOT in the sitemap — it's Disallow'd in robots.ts
+    // (thin, infinite query-combo bot-bait). Listing a robots-blocked URL in the
+    // sitemap is a "blocked URL in sitemap" coverage error. Removed 2026-06-20.
     { url: `${base}/directory`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${base}/press`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-05-22'), changeFrequency: 'yearly', priority: 0.85 },
