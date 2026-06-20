@@ -442,7 +442,7 @@ Requirements:
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 300,
       system: 'You are writing directory listing descriptions for findme.hair, Australia\'s hair salon and barber directory. Write concise, factual, unique descriptions that help people find the right salon. Never fabricate services or claims not supported by the data provided. Focus on what makes this salon unique.',
       messages: [{ role: 'user', content: userPrompt }],
