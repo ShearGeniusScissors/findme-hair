@@ -43,7 +43,22 @@ const CITY_PIVOTS: Record<string, 'hair_salon' | 'barber' | undefined> = {
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
-  const parts = url.pathname.split('/').filter(Boolean);
+  const path = url.pathname;
+
+  // Edge-cost guard: a robots-ignoring crawler hammers the non-indexable utility
+  // routes (/claim and /search are both Disallow in robots.txt). Short-circuit
+  // KNOWN BOTS on these routes with an empty 204 so they never render a page.
+  // UA-gated → real users (normal browser UA) are never affected, and polite
+  // search/AI crawlers respect robots so shouldn't reach here anyway. Mirrors the
+  // prior GPTBot-on-/claim edge-request spike noted in robots.ts.
+  if (path === '/claim' || path.startsWith('/claim/') || path === '/search' || path.startsWith('/search/')) {
+    const ua = req.headers.get('user-agent') ?? '';
+    if (/bot|crawler|spider|slurp|GPTBot|ClaudeBot|anthropic|PerplexityBot|Bytespider|Amazonbot|CCBot|DataForSeo|semrush|AhrefsBot|DotBot|MJ12bot|YandexBot|Baiduspider/i.test(ua)) {
+      return new NextResponse(null, { status: 204 });
+    }
+  }
+
+  const parts = path.split('/').filter(Boolean);
   if (parts.length !== 2) return NextResponse.next();
 
   const [base, slug] = parts;
@@ -69,6 +84,8 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/claim',
+    '/search',
     '/hairdresser/:slug',
     '/hair-salon/:slug',
     '/at-home-hairdresser/:slug',
