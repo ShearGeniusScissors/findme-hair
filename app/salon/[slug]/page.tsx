@@ -218,9 +218,16 @@ export default async function BusinessProfilePage({
   // (Roughly 13.8k profiles × 12 region links = ~165k inbound salon links sitewide.)
   let regionSiblings: Array<{ id: string; slug: string; name: string; suburb: string; google_rating: number | null; google_review_count: number | null }> = [];
   let regionDisplayName = '';
+  // Crawlable suburb-hub URL for the breadcrumb. The suburb crumb used to point
+  // at /search?suburb=… — a route robots.txt BLOCKS — so every one of ~13.7k
+  // profiles leaked its breadcrumb equity (BreadcrumbList schema + the visible
+  // link) into a non-indexable dead-end. Repoint at the real
+  // /[state]/[region]/[suburb] hub, falling back to the (also crawlable) state
+  // page when a slug is missing (~0.2% of rows).
+  let suburbHubUrl = `/${business.state.toLowerCase()}`;
   if (business.region_id) {
     const db = supabaseServerInternal();
-    const [{ data: regionRow }, { data: siblings }] = await Promise.all([
+    const [{ data: regionRow }, { data: siblings }, { data: suburbRow }] = await Promise.all([
       db.from('regions').select('name, slug').eq('id', business.region_id).maybeSingle(),
       db.from('businesses')
         .select('id, slug, name, suburb, google_rating, google_review_count')
@@ -229,9 +236,15 @@ export default async function BusinessProfilePage({
         .neq('slug', business.slug)
         .order('google_review_count', { ascending: false, nullsFirst: false })
         .limit(12),
+      db.from('suburbs').select('slug').eq('id', business.suburb_id ?? '').maybeSingle(),
     ]);
     regionDisplayName = (regionRow as { name?: string } | null)?.name ?? '';
     regionSiblings = (siblings ?? []) as typeof regionSiblings;
+    const regionSlug = (regionRow as { slug?: string } | null)?.slug;
+    const suburbSlug = (suburbRow as { slug?: string } | null)?.slug;
+    if (regionSlug && suburbSlug) {
+      suburbHubUrl = `/${business.state.toLowerCase()}/${regionSlug}/${suburbSlug}`;
+    }
   }
 
   const photos = business.google_photos ?? [];
@@ -425,7 +438,7 @@ export default async function BusinessProfilePage({
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.findme.hair/' },
           { '@type': 'ListItem', position: 2, name: stateName(business.state), item: `https://www.findme.hair/${business.state.toLowerCase()}` },
-          { '@type': 'ListItem', position: 3, name: business.suburb, item: `https://www.findme.hair/search?suburb=${encodeURIComponent(business.suburb)}&state=${business.state}` },
+          { '@type': 'ListItem', position: 3, name: business.suburb, item: `https://www.findme.hair${suburbHubUrl}` },
           { '@type': 'ListItem', position: 4, name: business.name },
         ],
       }} />
@@ -444,7 +457,7 @@ export default async function BusinessProfilePage({
             </Link>
             <Chevron />
             <Link
-              href={`/search?suburb=${encodeURIComponent(business.suburb)}&state=${business.state}`}
+              href={suburbHubUrl}
               className="hover:text-[var(--color-gold-dark)]"
             >
               {business.suburb}

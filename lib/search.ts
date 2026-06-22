@@ -528,6 +528,44 @@ export async function getSuburbByRegionAndSlug(
   return (data as Suburb | null) ?? null;
 }
 
+/**
+ * Resolve a set of suburb NAMES (within one state) to their crawlable geo-hub
+ * URLs (/[state]/[region]/[suburb]). Used to repoint the city-pivot "suburbs
+ * covered" chips off the robots-blocked /search route onto real indexable hubs,
+ * so those impression-earning pages stop leaking crawl equity into a dead-end.
+ * Case-insensitive name match against the suburbs table; any name with no DB
+ * match is omitted, and the caller keeps its existing link — so nothing breaks.
+ */
+export async function getSuburbHubUrls(
+  state: AuState,
+  names: string[],
+): Promise<Record<string, string>> {
+  if (!names.length) return {};
+  const supabase = supabaseServerInternal();
+  const want = new Set(names.map((n) => n.toLowerCase().trim()));
+  const { data: subs } = await supabase
+    .from('suburbs')
+    .select('name, slug, region_id')
+    .eq('state', state);
+  const matched = ((subs ?? []) as Array<{ name: string; slug: string; region_id: string | null }>)
+    .filter((r) => r.region_id && r.slug && want.has(r.name.toLowerCase().trim()));
+  if (!matched.length) return {};
+  const regionIds = Array.from(new Set(matched.map((r) => r.region_id as string)));
+  const { data: regs } = await supabase.from('regions').select('id, slug').in('id', regionIds);
+  const regionSlug = new Map(
+    ((regs ?? []) as Array<{ id: string; slug: string }>).map((r) => [r.id, r.slug]),
+  );
+  const out: Record<string, string> = {};
+  const st = state.toLowerCase();
+  for (const r of matched) {
+    const rs = regionSlug.get(r.region_id as string);
+    if (!rs) continue;
+    const key = r.name.toLowerCase().trim();
+    if (!out[key]) out[key] = `/${st}/${rs}/${r.slug}`;
+  }
+  return out;
+}
+
 export async function listStates(): Promise<AuState[]> {
   const supabase = supabaseServerInternal();
   const { data, error } = await supabase

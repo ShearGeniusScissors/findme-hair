@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { stateName, titleCase } from '@/lib/geo';
+import { getSuburbHubUrls } from '@/lib/search';
 import type { Business } from '@/types/database';
 import type { CityConfig } from '@/lib/cityPivotConfig';
 
@@ -48,10 +49,14 @@ interface Props {
 const interp = (s: string, vars: Record<string, string>): string =>
   s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 
-export default function CityPivotPage({ city, businesses, content, allCities, emptyStateFallbackHref }: Props) {
+export default async function CityPivotPage({ city, businesses, content, allCities, emptyStateFallbackHref }: Props) {
   const fullState = stateName(city.state);
   const year = new Date().getFullYear();
   const hasResults = businesses.length >= 3;
+  // Repoint the "suburbs covered" chips off robots-blocked /search onto the real
+  // crawlable /[state]/[region]/[suburb] hub. Resolved from the DB; any suburb
+  // that doesn't resolve keeps the old link, so this can never regress.
+  const suburbHubUrls = await getSuburbHubUrls(city.state, city.suburbs);
   const vars = { city: city.name, state: fullState, suburbs5: city.suburbs.slice(0, 5).map(titleCase).join(', ') };
   const h1 = `${content.h1Prefix} in ${city.name}${content.h1Suffix ? ' ' + content.h1Suffix : ''} (${year})`;
 
@@ -246,15 +251,18 @@ export default function CityPivotPage({ city, businesses, content, allCities, em
             Suburbs covered in {city.name}
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {city.suburbs.map((s) => (
-              <Link
-                key={s}
-                href={`/search?q=${encodeURIComponent(s)}&state=${city.state}`}
-                className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
-              >
-                {titleCase(s)}
-              </Link>
-            ))}
+            {city.suburbs.map((s) => {
+              const hub = suburbHubUrls[s.toLowerCase().trim()];
+              return (
+                <Link
+                  key={s}
+                  href={hub ?? `/search?q=${encodeURIComponent(s)}&state=${city.state}`}
+                  className="inline-block rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm text-[var(--color-ink-light)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] transition-colors"
+                >
+                  {titleCase(s)}
+                </Link>
+              );
+            })}
           </div>
         </section>
 
