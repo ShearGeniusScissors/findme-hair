@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const TEXT = `# findme.hair
 
-> Australia's hand-verified hair salon and barber directory. Hair only — no beauty, nails, or spa. Every listing cross-checked against Google, TrueLocal and Yellow Pages. 13,000+ verified salons and barber shops across every Australian state and territory.
+> Australia's hand-verified hair salon and barber directory. Hair only — no beauty, nails, or spa. Every listing cross-checked against Google, TrueLocal and Yellow Pages. 13,900+ verified salons and barber shops across every Australian state and territory.
 
 ## Find a haircut
 

@@ -16,7 +16,7 @@ Components: Next.js 16, Supabase, Vercel
 Software: Next.js, TypeScript, Supabase, Tailwind CSS
 
 /* THANKS */
-The 13,000+ Australian hair salons and barber shops who let us list them, and the salon owners who claim and update their listings to keep the directory current.
+The 13,900+ Australian hair salons and barber shops who let us list them, and the salon owners who claim and update their listings to keep the directory current.
 
 /* SCOPE */
 Hair only. No beauty, no nails, no lashes, no spa. One building, one listing.

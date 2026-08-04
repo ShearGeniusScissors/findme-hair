@@ -133,7 +133,7 @@ export default function BadgePage() {
             Not sure if your salon is already listed?
           </h2>
           <p className="text-sm leading-relaxed mb-4">
-            Every active hair salon and barber in Australia is in our directory — 13,800+ businesses across all 8 states and territories. Search for your salon name and claim your listing for free. Claiming lets you update photos, hours, and your booking link.
+            Every active hair salon and barber in Australia is in our directory — 13,900+ businesses across all 8 states and territories. Search for your salon name and claim your listing for free. Claiming lets you update photos, hours, and your booking link.
           </p>
           <Link href="/claim" className="inline-block px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-medium rounded text-sm">Claim your listing →</Link>
         </section>

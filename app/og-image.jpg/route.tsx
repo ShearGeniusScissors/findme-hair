@@ -48,7 +48,7 @@ export async function GET() {
           </div>
         </div>
         <div style={{ fontSize: 28, color: '#666', marginTop: 8 }}>
-          13,000+ verified salons &amp; barbers · VIC · NSW · QLD · WA · SA · TAS · NT · ACT
+          13,900+ verified salons &amp; barbers · VIC · NSW · QLD · WA · SA · TAS · NT · ACT
         </div>
       </div>
     ),

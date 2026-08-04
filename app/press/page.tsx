@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/press";
 const title = "Press & Media — findme.hair | Australia's Hair Directory";
-const description = "Media kit, brand assets, and press contact for findme.hair — Australia's hand-verified hair salon and barber directory with 13,000+ listings.";
+const description = "Media kit, brand assets, and press contact for findme.hair — Australia's hand-verified hair salon and barber directory with 13,900+ listings.";
 
 export const metadata: Metadata = {
   title,
@@ -65,7 +65,7 @@ export default function PressPage() {
       <div className="mx-auto max-w-3xl px-6 py-10 space-y-10">
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>About findme.hair</h2>
-          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">findme.hair is Australia&rsquo;s hand-verified hair salon and barber directory. Hair only — no beauty, nails, or spa. Every listing is cross-checked against Google, TrueLocal and Yellow Pages. The site lists 13,000+ verified hair businesses across all eight Australian states and territories, organised by state, city, region, suburb, service category, and specialty.</p>
+          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">findme.hair is Australia&rsquo;s hand-verified hair salon and barber directory. Hair only — no beauty, nails, or spa. Every listing is cross-checked against Google, TrueLocal and Yellow Pages. The site lists 13,900+ verified hair businesses across all eight Australian states and territories, organised by state, city, region, suburb, service category, and specialty.</p>
         </section>
 
         <section className="card p-8">

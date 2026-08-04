@@ -81,7 +81,7 @@ export default function OgImage() {
             color: '#999999',
           }}
         >
-          <span>13,000+ Verified Listings</span>
+          <span>13,900+ Verified Listings</span>
           <span>8 States &amp; Territories</span>
           <span>Hair Only</span>
         </div>

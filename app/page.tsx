@@ -8,11 +8,11 @@ import { supabaseServerInternal } from '@/lib/supabase';
 export const metadata: Metadata = {
   title: "findme.hair — Australia's Hair Salon & Barber Directory",
   description:
-    "Find verified hair salons and barbers near you. 13,000+ listings across Australia. Hair only — no beauty, no nails, no spa.",
+    "Find verified hair salons and barbers near you. 13,900+ listings across Australia. Hair only — no beauty, no nails, no spa.",
   alternates: { canonical: 'https://www.findme.hair/', languages: { 'en-AU': 'https://www.findme.hair/', 'x-default': 'https://www.findme.hair/' } },
   openGraph: {
     title: "findme.hair — Australia's Hair Salon & Barber Directory",
-    description: 'Find verified hair salons and barbers near you. 13,000+ listings across Australia.',
+    description: 'Find verified hair salons and barbers near you. 13,900+ listings across Australia.',
     url: 'https://www.findme.hair/',
     siteName: 'findme.hair',
     locale: 'en_AU',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "findme.hair — Australia's Hair Salon & Barber Directory",
-    description: 'Find verified hair salons and barbers near you. 13,000+ listings across Australia.',
+    description: 'Find verified hair salons and barbers near you. 13,900+ listings across Australia.',
     images: ['https://www.findme.hair/og-image.jpg'],
   },
 };

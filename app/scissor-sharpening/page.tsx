@@ -131,7 +131,7 @@ export default function ScissorSharpeningPage() {
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Salons we list</h2>
-          <p>findme.hair lists 13,000+ verified hair salons and barber shops across Australia. If you&rsquo;re a stylist running a salon, claim your listing free at <Link href="/claim" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">findme.hair/claim</Link>. If you&rsquo;re a customer looking for a salon, browse the <Link href="/directory" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">full directory</Link> or jump straight to <Link href="/hairdresser-near-me" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">hairdresser near me</Link>.</p>
+          <p>findme.hair lists 13,900+ verified hair salons and barber shops across Australia. If you&rsquo;re a stylist running a salon, claim your listing free at <Link href="/claim" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">findme.hair/claim</Link>. If you&rsquo;re a customer looking for a salon, browse the <Link href="/directory" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">full directory</Link> or jump straight to <Link href="/hairdresser-near-me" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">hairdresser near me</Link>.</p>
         </section>
 
       </div>

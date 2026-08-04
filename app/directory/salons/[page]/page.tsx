@@ -70,7 +70,7 @@ export async function generateMetadata({
       : `findme.hair Salon Directory — Page ${pageNum} | Australia`;
   const description =
     pageNum === 1
-      ? "Complete A-Z directory of every verified hair salon and barber on findme.hair. 13,000+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
+      ? "Complete A-Z directory of every verified hair salon and barber on findme.hair. 13,900+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
       : `Hair salon and barber directory page ${pageNum} of findme.hair — verified Australian listings, sorted by state and suburb.`;
   return {
     title,
