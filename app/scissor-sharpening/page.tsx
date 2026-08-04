@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/scissor-sharpening";
 const title = `Scissor Sharpening Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "How Australian hairdressers and barbers should approach scissor sharpening — frequency, cost, mail-in vs mobile, what to look for. Editorial guide.";
+const description = "How Australian hairdressers and barbers should approach scissor sharpening — how often, what it costs, how to judge a sharpener, and what a convex edge actually needs. Editorial guide.";
 
 export const metadata: Metadata = {
   title,
@@ -49,7 +49,7 @@ export default function ScissorSharpeningPage() {
           { '@type': 'Question', name: 'How often should hairdressing scissors be sharpened?', acceptedAnswer: { '@type': 'Answer', text: 'For a working hairdresser cutting 20+ heads of hair a week, every 6-9 months. For a busy barber doing 40+ cuts, every 4-6 months. For occasional home use, every 2-3 years. Sharpening a Japanese-steel scissor restores it to factory edge.' } },
           { '@type': 'Question', name: 'How much does scissor sharpening cost in Australia?', acceptedAnswer: { '@type': 'Answer', text: 'Professional scissorsmith sharpening in Australia typically runs $70-$80 per scissor for hairdressing and thinning scissors, hand-finished to preserve the convex edge. Budget grinders advertise $20-$40, but a flat machine wheel destroys a convex edge — recovering a ruined edge costs more than sharpening it properly the first time.' } },
           { '@type': 'Question', name: 'What is the difference between sharpening and re-edging?', acceptedAnswer: { '@type': 'Answer', text: 'Sharpening restores an existing edge that has dulled. Re-edging creates a new edge, often after the previous one has rolled or chipped beyond simple sharpening. Re-edging takes longer and costs more, but extends the scissor lifespan.' } },
-          { '@type': 'Question', name: 'Mail-in vs mobile scissor sharpening — which is better?', acceptedAnswer: { '@type': 'Answer', text: 'Mobile sharpening is faster (no shipping time) and lets you ask the sharpener questions in person, but is only available in specific service areas. Mail-in lets any Australian hairdresser access the same Scissorsmith — quality is identical, turnaround is 5-10 days including post.' } },
+          { '@type': 'Question', name: 'Is a mobile scissor sharpening service better than sending scissors away?', acceptedAnswer: { '@type': 'Answer', text: 'A mobile scissorsmith who visits your salon is generally better: you get the scissors back the same day, you can watch the work, and you can ask what the edge condition actually tells you about your cutting. The trade-off is that mobile services run fixed territories, so availability depends on where you are. If you send scissors away instead, ask who physically does the work, whether the convex edge is restored by hand on stones, and what the turnaround is before you post anything.' } },
           { '@type': 'Question', name: 'Can I sharpen my own scissors?', acceptedAnswer: { '@type': 'Answer', text: 'For everyday stainless household scissors, yes. For professional Japanese-steel hairdressing scissors with a convex edge, no. The angle and finish on a convex edge requires a specialised stone setup and significant practice. A poorly self-sharpened pair often costs more to recover than to send out.' } },
         ],
       }} />
@@ -108,24 +108,24 @@ export default function ScissorSharpeningPage() {
         </section>
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
-          <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Mail-in vs mobile</h2>
-          <p>Both work. Mobile gets your scissors back same-day; mail-in adds 5-10 days for postage but is the only option for stylists outside the major mobile-service areas.</p>
-          <p className="mt-3">If you&rsquo;re in <strong>Victoria, Tasmania or South Australia</strong>, you have both options. The mobile service typically visits salons on a fixed schedule. <strong>NSW, QLD, WA, NT, ACT</strong> stylists usually rely on mail-in — turnaround is reliable.</p>
+          <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Mobile service vs sending scissors away</h2>
+          <p>A mobile scissorsmith who comes to the salon is the better option where you can get one: same-day turnaround, no postage risk, and you can ask questions while the work is in front of you. The limit is geography — mobile sharpeners run fixed territories on a repeating schedule.</p>
+          <p className="mt-3">If you&rsquo;re in <strong>Victoria, Tasmania or South Australia</strong>, an on-road service reaches most towns on a regular run. Outside those states, you&rsquo;ll be looking at a local sharpener or posting scissors away — in which case ask who actually does the work, whether the convex edge is restored by hand on stones rather than a machine wheel, and what the turnaround is before you send anything.</p>
         </section>
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Where Australian hairdressers send their scissors</h2>
-          <p>findme.hair&rsquo;s sister brand, <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">ShearGenius</a>, runs an Australia-wide mail-in sharpening service plus a mobile run across VIC/TAS/SA. Founded in 2007 by Scissorsmith Matt Grumley, it&rsquo;s sharpened over 100,000 scissors across the country.</p>
+          <p>findme.hair&rsquo;s sister brand ShearGenius <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">runs a mobile scissor-sharpening service</a> across Victoria, Tasmania and South Australia, visiting salons on a repeating territory run. Founded in 2007 by scissorsmith Matt Grumley, it has sharpened over 100,000 scissors — every convex edge restored by hand on Japanese water stones rather than a machine wheel.</p>
           <p className="mt-3"><strong>City-specific guides:</strong></p>
           <ul className="grid gap-1 mt-2 sm:grid-cols-2">
-            <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-sydney" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Sydney</a></li>
+            <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-launceston" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Launceston</a></li>
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-melbourne" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Melbourne</a></li>
-            <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-adelaide" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Adelaide</a></li>
+            <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-devonport" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Devonport</a></li>
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-hobart" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Hobart</a></li>
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-ballarat" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Ballarat</a></li>
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-bendigo" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Bendigo</a></li>
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-geelong" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Geelong</a></li>
-            <li>· <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Australia-wide mail-in service</a></li>
+            <li>· <a href="https://www.sheargenius.com.au/pages/service-areas" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Every town on the run</a></li>
           </ul>
         </section>
 
