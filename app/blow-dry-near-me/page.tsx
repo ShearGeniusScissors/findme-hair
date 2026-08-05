@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Can I get a same-day blow dry?", a: "Most salons take same-day blow dry bookings, especially weekday mornings. Friday afternoon and Saturday morning are the busiest. Many salons advertise 'express blow dry' slots that take 25-30 minutes for last-minute walk-ins." },
         { q: "Do I need to wash my hair before a blow dry appointment?", a: "No — most blow dry services include the wash. Some quick-finish or budget options assume you arrive with washed, towel-dried hair. Confirm at booking." },
       ],
-      scissorPlug: { text: "Top blow-dry stylists in Australia keep their scissors sharp between washes. ShearGenius supplies", linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top blow-dry stylists in Australia keep their scissors sharp between washes. ShearGenius supplies", linkText: "professional hairdressing scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

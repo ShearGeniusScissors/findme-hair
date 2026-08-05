@@ -83,7 +83,7 @@ Examples: /hairdresser/south-yarra, /barber/surry-hills, /hair-salon/parramatta,
 
 ## Sister brand
 
-ShearGenius — premium professional scissors and Australia-wide sharpening service, founded 2007 by Scissorsmith Matt Grumley. https://www.sheargenius.com.au
+ShearGenius — professional scissors hand-finished in Australia, founded 2007 by scissorsmith Matt Grumley. https://www.sheargenius.com.au
 `;
 
 export async function GET() {

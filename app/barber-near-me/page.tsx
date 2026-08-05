@@ -47,7 +47,7 @@ export default function Page() {
         ],
         scissorPlug: {
           text: "Top barbers in Australia put their scissors through 30+ cuts a week. ShearGenius supplies",
-          linkText: "professional Japanese-steel barber scissors and Australia-wide mail-in sharpening",
+          linkText: "professional barber scissors, hand-finished in Australia",
           linkHref: "https://www.sheargenius.com.au/collections/barber-scissors",
         },
       }}

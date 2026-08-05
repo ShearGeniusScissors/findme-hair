@@ -47,7 +47,7 @@ export default function Page() {
         ],
         scissorPlug: {
           text: "Mobile hairdressers need scissors that hold a sharp edge between salon visits. ShearGenius supplies",
-          linkText: "Japanese-steel scissors and Australia-wide mail-in sharpening",
+          linkText: "professional scissors, hand-finished in Australia",
           linkHref: "https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service",
         },
       }}

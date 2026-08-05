@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How do I find Sunday hairdressers near me?", a: "Use the search above. Then check each listing's live Google opening hours for the current day. The Details card on every salon profile shows current opening status." },
         { q: "What time do Sunday hairdressers usually close?", a: "Most close 4-5pm Sundays, earlier than weekday 6pm closes. Last booking is usually 1-2 hours before close, so call by mid-afternoon for same-day Sunday service." },
       ],
-      scissorPlug: { text: "Salons running 7-day weeks need scissors that hold their edge through high-volume rosters. ShearGenius supplies", linkText: "Japanese-steel scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Salons running 7-day weeks need scissors that hold their edge through high-volume rosters. ShearGenius supplies", linkText: "professional scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

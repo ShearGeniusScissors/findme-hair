@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How often should I get my hair coloured?", a: "Single-tone all-over colour: every 4-6 weeks for root retouch. Foils: every 6-10 weeks. Balayage: every 4-6 months for refresh. Lived-in colour grows out softly so refresh cadence is the most flexible." },
         { q: "Can a colourist fix bad colour?", a: "Yes — corrective colour specialists rebuild bleached, brassy, or banded hair into a healthier tone. Costs $400-$1500+ depending on starting condition. Always book a consultation first; a strand test confirms the hair can take the correction." },
       ],
-      scissorPlug: { text: "Top colourists pair colour service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "Japanese-steel scissors and thinners with Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top colourists pair colour service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "professional scissors and thinners, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

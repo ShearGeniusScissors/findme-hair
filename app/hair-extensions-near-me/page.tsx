@@ -40,7 +40,7 @@ export default function Page() {
         { q: "What's the difference between Russian Remy and standard human hair?", a: "Russian Remy is the highest grade — collected with cuticles aligned in one direction, never chemically stripped, and lasts 12-18+ months. Standard human hair is often acid-bath stripped to remove cuticles, then synthetic-coated, which gives a shorter lifespan." },
         { q: "How do I find a hair extension specialist near me?", a: "Type your suburb above, or pick a major city below. Read recent reviews specifically mentioning blend, comfort, and the 6-month grow-out experience — not just the install day." },
       ],
-      scissorPlug: { text: "Extension stylists rely on specialised scissors to blend tape and weft into the natural hair. ShearGenius supplies", linkText: "Japanese-steel scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Extension stylists rely on specialised scissors to blend tape and weft into the natural hair. ShearGenius supplies", linkText: "professional scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

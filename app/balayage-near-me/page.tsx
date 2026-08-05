@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How do I find the best balayage near me?", a: "Type your suburb above. Then check the salon's Instagram for fresh balayage in tones similar to what you want. Read recent reviews mentioning grow-out — that's the real test of balayage placement." },
         { q: "What's the difference between balayage, ombré and highlights?", a: "Highlights are foiled mid-shaft, balayage is painted freehand, ombré is a horizontal gradient root-to-tip. Balayage gives the softest grow-out, highlights give the most uniform lift, ombré gives the strongest contrast. Many salons combine techniques." },
       ],
-      scissorPlug: { text: "Balayage specialists pair colour service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "Japanese-steel scissors and thinners with Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors" },
+      scissorPlug: { text: "Balayage specialists pair colour service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "professional scissors and thinners, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors" },
     }} />
   );
 }

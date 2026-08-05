@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How often should I get hair color refreshed?", a: "Single-tone all-over color: every 4-6 weeks for root retouch. Foils: every 6-10 weeks. Balayage: every 4-6 months for refresh. Lived-in color grows out softly so refresh cadence is the most flexible." },
         { q: "Is 'hair color' the same as 'hair colour'?", a: "Yes — 'color' is American spelling, 'colour' is Australian and British. Same service, same chemistry. Australian salons use both spellings on their websites." },
       ],
-      scissorPlug: { text: "Top color stylists pair color service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "Japanese-steel scissors and thinners with Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top color stylists pair color service with weight-removal scissors and chip-cutting techniques. ShearGenius supplies", linkText: "professional scissors and thinners, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

@@ -401,7 +401,7 @@ export default async function BestBarberCityPage({
               <a href="https://www.sheargenius.com.au/collections/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_barber_city&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 barber scissors
               </a>{' '}
-              made from Japanese ATS-314 steel, kept{' '}
+              in named Japanese steel, kept{' '}
               <a href="https://www.sheargenius.com.au/pages/scissor-sharpening?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_barber_city&utm_content=scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 professionally sharpened
               </a>{' '}

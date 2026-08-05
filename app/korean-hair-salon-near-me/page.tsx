@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Do Korean salons in Australia also do colour?", a: "Yes — most Korean hair salons offer balayage, ash tones, and the soft brown shades popular in K-beauty. Discuss colour history and any past straightening when you book, since chemically treated hair needs gentler colour." },
         { q: "Where can I find a Korean hair salon near me?", a: "Korean hair salons cluster in major Australian cities — Sydney's Strathfield and Eastwood, Melbourne's Box Hill and Glen Waverley, Brisbane's Sunnybank. Use the city or suburb search above to see the verified shortlist." },
       ],
-      scissorPlug: { text: "Korean stylists rely on precision Japanese-steel scissors for soft layering and chip-cutting. ShearGenius supplies", linkText: "Hitachi ATS-314 Japanese steel scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Korean stylists rely on precision Japanese-steel scissors for soft layering and chip-cutting. ShearGenius supplies", linkText: "professional scissors in named Japanese steel", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

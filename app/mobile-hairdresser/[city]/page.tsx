@@ -328,7 +328,7 @@ export default async function MobileHairdresserCityPage({
               </a>
               {' '}and a sharpening service to keep them at salon quality between visits. ShearGenius offers{' '}
               <a href="https://www.sheargenius.com.au/pages/scissor-sharpening?utm_source=findme_hair&utm_medium=referral&utm_campaign=mobile_hairdresser_city&utm_content=scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                Australia-wide mail-in sharpening
+                on-road sharpening across Victoria and Tasmania
               </a>
               {' '}— a tool tip for any mobile stylist.
             </p>

@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Korean hair specialists in {city} rely on precision Japanese-steel scissors for soft layering and chip-cutting. ShearGenius supplies",
-          linkText: "Hitachi ATS-314 Japanese steel scissors and Australia-wide sharpening",
+          linkText: "professional scissors in named Japanese steel",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

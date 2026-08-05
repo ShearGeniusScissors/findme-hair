@@ -100,7 +100,7 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
         ],
         scissorPlug: {
           text: "Top hairdressers in {suburb} put their scissors through hundreds of cuts a year. ShearGenius supplies",
-          linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening",
+          linkText: "professional hairdressing scissors, hand-finished in Australia",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

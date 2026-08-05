@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Can I get a same-day haircut?", a: "Yes — many salons hold walk-in slots, especially for trims, blow-dries and men's cuts. For colour, balayage or any senior-stylist work, same-day is harder. Call ahead, or book through the salon's online booking link." },
         { q: "What if my regular salon is closed?", a: "Use the search above to find verified salons in nearby suburbs. The shortlists are ranked by Google rating and review count, so even an unfamiliar salon should deliver a quality cut if it ranks high." },
       ],
-      scissorPlug: { text: "Salons running long hours need scissors that hold their edge through high-volume days. ShearGenius supplies", linkText: "Japanese-steel scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Salons running long hours need scissors that hold their edge through high-volume days. ShearGenius supplies", linkText: "professional scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

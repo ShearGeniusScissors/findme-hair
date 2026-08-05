@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Balayage specialists in {city} use weight-removal and chip-cutting scissors to expose the painted lengths. ShearGenius supplies",
-          linkText: "Japanese-steel scissors and thinners with Australia-wide mail-in sharpening",
+          linkText: "professional scissors and thinners, hand-finished in Australia",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

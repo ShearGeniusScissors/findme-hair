@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         ],
         scissorPlug: {
           text: "Bridal stylists in {city} use precision scissors for veil cutting, fringe trims and morning-of clean-ups. ShearGenius supplies",
-          linkText: "Japanese-steel scissors and Australia-wide mail-in sharpening",
+          linkText: "professional scissors, hand-finished in Australia",
           linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}

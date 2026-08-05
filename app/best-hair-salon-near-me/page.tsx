@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Are the best salons booked out far in advance?", a: "For senior stylists, expect 2-6 weeks lead time at top salons. Junior stylists at the same salons often have same-week availability and deliver excellent work because they're trained by the seniors. Junior bookings are how to access top salons without the wait." },
         { q: "Can I trust 5-star ratings on hair salons?", a: "Mostly yes, but read the actual reviews. Beware of salons with high lifetime ratings but few recent reviews (stylists may have moved on). The strongest signal is consistent recent reviews mentioning specific cuts or colours similar to what you want." },
       ],
-      scissorPlug: { text: "Top hair salons in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top hair salons in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "professional hairdressing scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Where can I find a men's haircut open near me right now?", a: "Type your suburb above to find barbers and men's stylists nearby. Most shops post live opening hours on Google. Friday afternoon and Saturday morning are the busiest." },
         { q: "What's a good men's haircut for thinning hair?", a: "Short scissor cuts with light texture mask thinning better than fades, which expose the scalp. A senior barber can recommend a cut suited to your hair density at consultation." },
       ],
-      scissorPlug: { text: "Top barbers and men's stylists put their scissors through 30+ cuts a week. ShearGenius supplies", linkText: "professional Japanese-steel barber scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/barber-scissors" },
+      scissorPlug: { text: "Top barbers and men's stylists put their scissors through 30+ cuts a week. ShearGenius supplies", linkText: "professional barber scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/barber-scissors" },
     }} />
   );
 }

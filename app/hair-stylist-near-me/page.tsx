@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Can I book the same hair stylist every time?", a: "Yes — most salons let you book by stylist name, not just date. Booking the same stylist consistently is the single fastest way to get great hair. Your stylist learns your hair, your preferences, your tolerance for change." },
         { q: "How far in advance should I book a hair stylist?", a: "For senior stylists at top salons, 2-6 weeks ahead. For junior stylists or routine cuts, often same-week availability. For bridal hair, 6-12 months. Use the listings above to check live booking availability." },
       ],
-      scissorPlug: { text: "Top hair stylists in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top hair stylists in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "professional hairdressing scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

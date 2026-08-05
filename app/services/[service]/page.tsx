@@ -44,7 +44,7 @@ const SERVICES: ServiceConfig[] = [
         'Confirm they have public liability insurance',
       ],
       closing: 'Mobile hairdressing is one of the fastest-growing segments of the Australian hair industry. Many experienced salon stylists now offer mobile services alongside their regular bookings.',
-      proTip: { text: 'Mobile stylists need reliable tools that stay sharp between salon visits. Professional scissors benefit from regular sharpening —', linkText: 'ShearGenius offers Australia-wide mail-in sharpening', linkHref: 'https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service' },
+      proTip: { text: 'Mobile stylists need reliable tools that stay sharp between salon visits. Professional scissors benefit from regular sharpening —', linkText: 'ShearGenius is run by a working Australian scissorsmith', linkHref: 'https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service' },
     },
   },
   {
@@ -185,7 +185,7 @@ const SERVICES: ServiceConfig[] = [
         'Look at photos of recent work, especially for fades and detailed cuts',
       ],
       closing: 'Men\'s haircuts in Australia typically range from $25 for a basic barber cut to $70+ at premium salons. Regular visits every 3-4 weeks keep fades and short styles looking sharp.',
-      proTip: { text: 'The best barbers and stylists maintain their scissors with regular professional sharpening. Quality hairdressing scissors from Japanese steel last decades with proper care —', linkText: 'ShearGenius offers scissors and sharpening Australia-wide', linkHref: 'https://www.sheargenius.com.au' },
+      proTip: { text: 'The best barbers and stylists maintain their scissors with regular professional sharpening. Quality hairdressing scissors from Japanese steel last decades with proper care —', linkText: 'ShearGenius makes professional scissors, hand-finished in Australia', linkHref: 'https://www.sheargenius.com.au' },
     },
   },
   {
@@ -204,7 +204,7 @@ const SERVICES: ServiceConfig[] = [
         'Ask whether they cut dry or wet — dry cutting suits curls and fringe detail; wet cutting suits precision bobs',
       ],
       closing: 'Ladies haircuts in Australia typically range from $65 for a trim at a local salon to $200+ at a senior stylist in a premium salon. Most stylists recommend a cut every 8–12 weeks to keep the shape fresh.',
-      proTip: { text: 'Precision cutting relies on sharp, well-balanced scissors. Senior stylists often invest in Japanese-steel shears that hold an edge for years —', linkText: 'ShearGenius offers professional scissors and Australia-wide sharpening', linkHref: 'https://www.sheargenius.com.au' },
+      proTip: { text: 'Precision cutting relies on sharp, well-balanced scissors. Senior stylists often invest in Japanese-steel shears that hold an edge for years —', linkText: 'ShearGenius makes professional scissors, hand-finished in Australia', linkHref: 'https://www.sheargenius.com.au' },
     },
   },
   {
@@ -245,7 +245,7 @@ const SERVICES: ServiceConfig[] = [
         'Many Japanese salons include a head spa or scalp treatment with every service',
       ],
       closing: 'Japanese hairdressers in Australia are particularly popular in Sydney and Melbourne, where there are established communities. Their attention to detail and customer service is consistently rated highly.',
-      proTip: { text: 'Japanese-trained stylists demand the best tools. Most use scissors forged from Japanese Hitachi steel — the same ATS-314 alloy used by', linkText: 'ShearGenius professional hairdressing scissors', linkHref: 'https://www.sheargenius.com.au' },
+      proTip: { text: 'Japanese-trained stylists tend to be particular about their tools, and the steel is where it shows — a named grade rather than unspecified "Japanese steel", as used by', linkText: 'ShearGenius professional hairdressing scissors', linkHref: 'https://www.sheargenius.com.au' },
     },
   },
   {

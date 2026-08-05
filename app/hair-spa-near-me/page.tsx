@@ -40,7 +40,7 @@ export default function Page() {
         { q: "Are hair spas worth it?", a: "For dry, damaged, color-treated or stressed hair, yes — the cumulative effect of monthly hair spa visits over a year is often more visible than a single high-end colour service. For low-maintenance hair, occasional treatments are enough." },
         { q: "Where can I find Japanese head-spa near me?", a: "Japanese head-spa specialists cluster in major Australian cities — Sydney's Strathfield and Eastwood, Melbourne's Box Hill and Glen Waverley, Brisbane's Sunnybank. Use the city or suburb search above to see Japanese hairdressers, many of whom offer head-spa." },
       ],
-      scissorPlug: { text: "Premium hair spa salons need scissors maintained to salon-spa standard. ShearGenius supplies", linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Premium hair spa salons need scissors maintained to salon-spa standard. ShearGenius supplies", linkText: "professional hairdressing scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

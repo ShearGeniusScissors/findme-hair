@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How do I find a women's haircut open near me right now?", a: "Type your suburb above. Then check Google for live opening hours. Walk-ins are common at quick-cut salons but uncommon at senior-stylist salons — call ahead for major changes." },
         { q: "Should I get my haircut done at a hairdresser or a barber?", a: "If you want a fade, a barber. Anything longer than a pixie, a hairdresser. Some women regularly use barbers for short pixies and fades — both venues work, the cut matters more than the gendered label." },
       ],
-      scissorPlug: { text: "Top hairdressers in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "Japanese-steel hairdressing scissors and Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Top hairdressers in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies", linkText: "professional hairdressing scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

@@ -40,7 +40,7 @@ export default function Page() {
         { q: "How often should I get a curly cut?", a: "Curly clients usually return every 3-6 months. Curls grow in different patterns, so it doesn't follow the typical 6-week cycle. Listen to your hair — when the shape feels off or weight is uneven, book in." },
         { q: "Where can I find a curly specialist near me?", a: "Curly specialists cluster in inner-city suburbs of major Australian cities. Use the city or suburb search above to see the verified shortlist, all ranked by Google rating and review count." },
       ],
-      scissorPlug: { text: "Curly cutters need scissors that hold a fine edge for chip and slide cutting on dry hair. ShearGenius supplies", linkText: "Japanese Hitachi ATS-314 scissors with Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Curly cutters need scissors that hold a fine edge for chip and slide cutting on dry hair. ShearGenius supplies", linkText: "professional scissors in named Japanese steel", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }

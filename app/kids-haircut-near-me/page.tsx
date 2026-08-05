@@ -40,7 +40,7 @@ export default function Page() {
         { q: "What age is best for a first haircut?", a: "There's no perfect age — most parents do a first cut between 12 and 24 months when hair starts getting in the eyes or becomes unmanageable. Some wait longer for sentimental reasons. Bring a snack, a favourite toy, and book the quietest time of day." },
         { q: "How do I find a kids haircut open near me?", a: "Use the search above with your suburb name. Most kids salons post live opening hours on Google. Saturday morning is the busiest, weekday mornings are quietest." },
       ],
-      scissorPlug: { text: "Kids stylists need scissors that stay sharp through hundreds of fast, short cuts. ShearGenius supplies", linkText: "professional Japanese-steel scissors with Australia-wide mail-in sharpening", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
+      scissorPlug: { text: "Kids stylists need scissors that stay sharp through hundreds of fast, short cuts. ShearGenius supplies", linkText: "professional scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />
   );
 }
