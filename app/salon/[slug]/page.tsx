@@ -336,12 +336,12 @@ export default async function BusinessProfilePage({
   // ShearGenius") and is true anywhere in these states — scissors ship Australia-wide.
   //
   // The VISIT DATES are different: they state that the van comes to this salon. ShearGenius's
-  // on-road territory is Victoria and Tasmania in full, but in South Australia it is only the
-  // Mount Gambier corner (Mount Gambier, Millicent, Port MacDonnell) — Matt's explicit ruling,
-  // because a statewide implication generates Adelaide enquiries he cannot service.
+  // on-road territory covers those first two states in full; in the third it is only the Mount
+  // Gambier corner (the three suburbs listed below) — Matt's explicit ruling, because a statewide
+  // implication generates enquiries from the capital that he cannot service.
   //
   // Gating the whole badge on that would delete the link from every Adelaide listing, so instead
-  // the badge stays and only the visit dates are suppressed outside the serviced SA towns.
+  // the badge stays and only the visit dates are suppressed outside those serviced towns.
   const SG_TERRITORIES = new Set<AuState>(['VIC', 'SA', 'TAS']);
   const SG_SA_SERVICED_SUBURBS = new Set(['mount gambier', 'millicent', 'port macdonnell']);
   const showSgBadge = SG_TERRITORIES.has(business.state);
@@ -1062,7 +1062,7 @@ export default async function BusinessProfilePage({
         </div>
       </div>
 
-      {/* ─── ShearGenius supplier badge — VIC, TAS and SA; visit dates only where the van goes ── */}
+      {/* ─── ShearGenius supplier badge; visit dates only where the van actually goes ── */}
       {showSgBadge && (
         <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} />
       )}
