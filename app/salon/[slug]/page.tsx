@@ -332,12 +332,26 @@ export default async function BusinessProfilePage({
   }
   const factParagraph = factClauses.length >= 2 ? factClauses.join(' ') : null;
 
-  // ShearGenius badge: only show in active service territories
+  // ShearGenius badge. The badge itself is a product statement ("professional scissors by
+  // ShearGenius") and is true anywhere in these states — scissors ship Australia-wide.
+  //
+  // The VISIT DATES are different: they state that the van comes to this salon. ShearGenius's
+  // on-road territory is Victoria and Tasmania in full, but in South Australia it is only the
+  // Mount Gambier corner (Mount Gambier, Millicent, Port MacDonnell) — Matt's explicit ruling,
+  // because a statewide implication generates Adelaide enquiries he cannot service.
+  //
+  // Gating the whole badge on that would delete the link from every Adelaide listing, so instead
+  // the badge stays and only the visit dates are suppressed outside the serviced SA towns.
   const SG_TERRITORIES = new Set<AuState>(['VIC', 'SA', 'TAS']);
+  const SG_SA_SERVICED_SUBURBS = new Set(['mount gambier', 'millicent', 'port macdonnell']);
   const showSgBadge = SG_TERRITORIES.has(business.state);
+  const sgVisitsThisSalon =
+    showSgBadge &&
+    (business.state !== 'SA' ||
+      SG_SA_SERVICED_SUBURBS.has((business.suburb ?? '').trim().toLowerCase()));
   let sgLastVisit: string | null = null;
   let sgNextVisit: string | null = null;
-  if (showSgBadge) {
+  if (sgVisitsThisSalon) {
     const today = new Date().toISOString().slice(0, 10);
     const db = supabaseServerInternal();
     const [lastRes, nextRes] = await Promise.all([
@@ -1048,7 +1062,7 @@ export default async function BusinessProfilePage({
         </div>
       </div>
 
-      {/* ─── ShearGenius supplier badge (VIC/SA/TAS only) ── */}
+      {/* ─── ShearGenius supplier badge — VIC, TAS and SA; visit dates only where the van goes ── */}
       {showSgBadge && (
         <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} />
       )}

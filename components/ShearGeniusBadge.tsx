@@ -1,6 +1,7 @@
 /**
  * ShearGeniusBadge — appears at the bottom of salon listing pages in SG service
- * territories (VIC, SA, TAS). Provides a dofollow backlink to sheargenius.com.au.
+ * territories. Visit dates are passed only where the van actually goes — Victoria and Tasmania
+ * in full, and in SA only the Mount Gambier corner. Provides a dofollow backlink to sheargenius.com.au.
  *
  * UTM: ?utm_source=findme.hair&utm_medium=listing&utm_campaign=supplier-badge
  */
