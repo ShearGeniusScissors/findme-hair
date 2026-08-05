@@ -22,11 +22,18 @@ export const metadata: Metadata = {
 export default async function StatsPage() {
   const supabase = supabaseServerInternal();
 
-  const byState = await supabase.from('businesses').select('state').eq('status', 'active');
+  // Per-state counts + review sums come from a DB-side aggregate (fmh_directory_stats).
+  // FIXED 2026-08-05: this used to be `.select('state')` over every active row and count in JS —
+  // but PostgREST caps a plain select at 1,000 rows, so the state breakdown summed to 1,000
+  // instead of ~13,979, and the review total was the sum of only 1,000 salons. This page is
+  // published under CC BY 4.0 with a suggested-citation block, so those truncated numbers were
+  // being cited externally. Aggregating in Postgres removes the cap entirely.
+  const statsRes = await supabase.rpc('fmh_directory_stats');
+  const stateRows = (statsRes.data ?? []) as { state: string; salons: number; reviews: number }[];
 
   // Run individual count queries
   const [
-    totalRes, hsRes, bRes, uRes, walkRes, mobRes, brRes, kidsRes, balRes, extRes, regionsRes, sumRes,
+    totalRes, hsRes, bRes, uRes, walkRes, mobRes, brRes, kidsRes, balRes, extRes, regionsRes,
   ] = await Promise.all([
     supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('status', 'active').eq('business_type', 'hair_salon'),
@@ -39,7 +46,6 @@ export default async function StatsPage() {
     supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('status', 'active').contains('specialties', ['balayage']),
     supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('status', 'active').contains('specialties', ['extensions']),
     supabase.from('regions').select('*', { count: 'exact', head: true }),
-    supabase.from('businesses').select('google_review_count').eq('status', 'active'),
   ]);
 
   const total = totalRes.count ?? 0;
@@ -53,12 +59,12 @@ export default async function StatsPage() {
   const balayage = balRes.count ?? 0;
   const extensions = extRes.count ?? 0;
   const regions = regionsRes.count ?? 0;
-  const totalReviews = (sumRes.data ?? []).reduce((acc, r: { google_review_count: number | null }) => acc + (r.google_review_count ?? 0), 0);
+  // Was also 1,000-capped (a plain select over every active row). Now summed in Postgres.
+  const totalReviews = stateRows.reduce((acc, r) => acc + Number(r.reviews ?? 0), 0);
 
-  const stateCounts = Object.entries(((byState.data ?? []) as { state: string }[]).reduce<Record<string, number>>((acc, r) => {
-    acc[r.state] = (acc[r.state] ?? 0) + 1;
-    return acc;
-  }, {})).sort((a, b) => b[1] - a[1]);
+  const stateCounts: [string, number][] = stateRows
+    .map((r) => [r.state, Number(r.salons ?? 0)] as [string, number])
+    .sort((a, b) => b[1] - a[1]);
 
   const STATE_NAMES: Record<string, string> = {
     NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland', WA: 'Western Australia',

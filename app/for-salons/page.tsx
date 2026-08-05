@@ -1,10 +1,23 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+const path = 'https://www.findme.hair/for-salons';
+const title = 'For Salon Owners | findme.hair';
+const description =
+  'Claim your free listing on Australia\'s dedicated hair salon and barber directory. Add photos, connect booking, and get found by local clients.';
+
 export const metadata: Metadata = {
-  title: 'For Salon Owners | findme.hair',
-  description:
-    'Claim your free listing on Australia\'s dedicated hair salon and barber directory. Add photos, connect booking, and get found by local clients.',
+  title,
+  description,
+  // Without an explicit canonical this page inherited the site-wide default and
+  // canonicalised to the homepage, telling Google it was a duplicate of "/" —
+  // which de-indexes the salon-acquisition page. Self-canonical restored.
+  alternates: { canonical: path, languages: { 'en-AU': path, 'x-default': path } },
+  openGraph: {
+    title, description, url: path, siteName: 'findme.hair', locale: 'en_AU', type: 'website',
+    images: [{ url: 'https://www.findme.hair/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: { card: 'summary_large_image', title, description },
 };
 
 export default function ForSalonsPage() {

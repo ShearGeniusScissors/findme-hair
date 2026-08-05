@@ -88,6 +88,13 @@ export default async function RegionDirectoryPage({
   const featured = await searchBusinesses({ region: regionSlug, limit: 100 });
   const totalCount = regionRow ? await countBusinessesByRegion(regionRow.id) : 0;
 
+  // Soft-404 guard (2026-08-05). The tolerant fallback above deliberately avoids 404ing
+  // while region rows are being backfilled — but with no floor it meant ANY invented slug
+  // (/vic/notarealsuburb) returned HTTP 200 with a self-canonical and an empty page, i.e.
+  // an unbounded crawlable URL space of soft-404s. Tolerance is kept where the slug has
+  // real content; a slug with neither a region row nor a single salon is genuinely not a page.
+  if (!regionRow && featured.length === 0) notFound();
+
   return (
     <main className="min-h-screen bg-[var(--color-surface)]">
       <JsonLd data={{
