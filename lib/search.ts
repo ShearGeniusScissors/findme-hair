@@ -120,7 +120,16 @@ export async function resolveQuery(q: string): Promise<QueryResolution> {
 async function applyGeoAndQuery(query: any, filters: SearchFilters): Promise<{ query: any }> {
   if (filters.region) {
     const region = await getRegionBySlug(filters.region);
-    if (region) query = query.eq('region_id', region.id);
+    if (region) {
+      query = query.eq('region_id', region.id);
+    } else {
+      // FAIL CLOSED (2026-08-05). Previously an unresolvable region slug silently dropped the
+      // filter, so the query returned UNFILTERED salons. Two consequences: (a) /vic/<invented-slug>
+      // rendered HTTP 200 with real salons presented as that region's — wrong data, not just a
+      // soft-404; (b) any notFound() guard keyed on "no results" could never fire. A region filter
+      // that cannot be resolved must match nothing, not everything.
+      query = query.eq('region_id', '00000000-0000-0000-0000-000000000000');
+    }
   } else if (filters.q) {
     const resolved = await resolveQuery(filters.q);
     switch (resolved.kind) {
