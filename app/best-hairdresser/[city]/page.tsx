@@ -389,7 +389,7 @@ export default async function CityGuidePage({
                 hairdressing scissors
               </a>{' '}
               made from Japanese steel, and keep them{' '}
-              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 professionally sharpened
               </a>.
               Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.

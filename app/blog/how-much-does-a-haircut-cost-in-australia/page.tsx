@@ -104,7 +104,7 @@ export default function HaircutCostArticle() {
             A standard men&rsquo;s haircut at a barber shop typically costs between <strong>$25 and $45</strong>.
             This usually includes a clipper cut or scissors cut, a style, and sometimes a neck shave.
             Barbers who invest in quality tools &mdash; like precision{' '}
-            <a href="https://www.sheargenius.com.au/pages/barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
               barber scissors
             </a>
             {' '}&mdash; tend to deliver cleaner, longer-lasting cuts.

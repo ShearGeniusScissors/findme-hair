@@ -323,11 +323,11 @@ export default async function MobileHairdresserCityPage({
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools they bring with them</h3>
             <p>
               Top mobile hairdressers in {config.name} use professional-grade{' '}
-              <a href="https://www.sheargenius.com.au/collections/hairdressing-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href="https://www.sheargenius.com.au/collections/hairdressing-scissors?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 Japanese-steel scissors
               </a>
               {' '}and a sharpening service to keep them at salon quality between visits. ShearGenius offers{' '}
-              <a href="https://www.sheargenius.com.au/pages/scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href="https://www.sheargenius.com.au/pages/scissor-sharpening?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 Australia-wide mail-in sharpening
               </a>
               {' '}— a tool tip for any mobile stylist.

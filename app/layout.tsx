@@ -361,12 +361,12 @@ function SiteFooter() {
                 </a>
               </li>
               <li>
-                <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
                   Scissor Sharpening Service
                 </a>
               </li>
               <li>
-                <a href="https://www.sheargenius.com.au/pages/barber-scissors" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
+                <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
                   Barber Scissors Australia
                 </a>
               </li>
