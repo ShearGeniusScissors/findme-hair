@@ -150,7 +150,7 @@ export default function QuestionsArticle() {
               hairdressing scissors
             </a>{' '}
             and keep them{' '}
-            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_questions_to_ask_your_hairdresser&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
               professionally sharpened
             </a>{' '}
             tend to take their craft seriously.

@@ -231,7 +231,7 @@ export default async function AboutPage() {
                 ShearGenius professional hairdressing scissors
               </a>{' '}
               — Japanese steel, Australia-wide{' '}
-              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=about&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 sharpening service
               </a>, and interest-free payment plans.
             </p>

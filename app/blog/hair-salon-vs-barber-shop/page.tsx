@@ -136,7 +136,7 @@ export default function SalonVsBarberArticle() {
               hairdressing scissors
             </a>{' '}
             — the difference is in blade length and handle style. Barbers typically use longer 6.5&ndash;7&quot;{' '}
-            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_hair_salon_vs_barber_shop&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
               barber scissors
             </a>{' '}
             for scissor-over-comb work.

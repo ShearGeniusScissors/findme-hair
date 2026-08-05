@@ -133,12 +133,12 @@ export default function HowToFindAGoodBarberArticle() {
           <p>
             A barber&rsquo;s tools tell you a lot about how seriously they take their craft. Look
             for clean clippers with sharp blades, sterilised combs, and quality{' '}
-            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_how_to_find_a_good_barber&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
               barber scissors
             </a>
             . Cheap, dull tools pull hair and leave uneven lines. Professionals who invest in
             good equipment and keep their scissors{' '}
-            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme.hair&utm_medium=referral&utm_campaign=cross-domain&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_how_to_find_a_good_barber&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
               professionally sharpened
             </a>{' '}
             care about delivering a clean result. If the station is messy and the tools look
