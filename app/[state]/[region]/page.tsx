@@ -10,6 +10,7 @@ import {
   searchBusinesses,
 } from '@/lib/search';
 import type { AuState } from '@/types/database';
+import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
@@ -91,6 +92,9 @@ export default async function RegionDirectoryPage({
   // Kills most of the "only one dofollow incoming link" Ahrefs warnings.
   const featured = await searchBusinesses({ region: regionSlug, limit: 100 });
   const totalCount = regionRow ? await countBusinessesByRegion(regionRow.id) : 0;
+  const moneyPageSuburbs = TOP_SUBURBS.filter(
+    (suburb) => suburb.state === stateCode && suburb.regionSlug === regionSlug,
+  );
 
   // Soft-404 guard (2026-08-05). The tolerant fallback above deliberately avoids 404ing
   // while region rows are being backfilled — but with no floor it meant ANY invented slug
@@ -189,6 +193,27 @@ export default async function RegionDirectoryPage({
             </div>
           )}
         </section>
+
+        {moneyPageSuburbs.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
+              Browse local hair services
+            </h2>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {moneyPageSuburbs.map((suburb) => (
+                <div key={suburb.slug} className="card p-5">
+                  <h3 className="font-semibold text-[var(--color-ink)]">{suburb.name}</h3>
+                  <ul className="mt-3 space-y-1 text-sm">
+                    <li><Link href={`/hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hairdressers in {suburb.name}</Link></li>
+                    <li><Link href={`/hair-salon/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hair salons in {suburb.name}</Link></li>
+                    <li><Link href={`/barber/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Barbers in {suburb.name}</Link></li>
+                    <li><Link href={`/at-home-hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">At-home hairdressers in {suburb.name}</Link></li>
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Top 6 featured (cards) + dense list of all salons in region */}
         {featured.length > 0 && (

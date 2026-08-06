@@ -10,6 +10,7 @@ import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
+const PUBLISHED = '2026-04-13';
 const suburbToSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -199,6 +200,7 @@ export default async function CityGuidePage({
   const businesses = await getTopBusinesses(config);
   const fullState = stateName(config.state);
   const year = new Date().getFullYear();
+  const path = `https://www.findme.hair/best-hairdresser/${config.slug}`;
 
   // Count by type
   const salons = businesses.filter((b) => b.business_type === 'hair_salon');
@@ -220,13 +222,13 @@ export default async function CityGuidePage({
         '@type': 'Article',
         headline: `Best Hairdressers in ${config.name} (${year})`,
         description: `Top-rated hair salons and barbers in ${config.name}, ${fullState}.`,
-        datePublished: new Date().toISOString(),
-        dateModified: new Date().toISOString(),
-        publisher: {
-          '@type': 'Organization',
-          name: 'findme.hair',
-          url: 'https://www.findme.hair',
-        },
+        image: 'https://www.findme.hair/og-image.jpg',
+        datePublished: PUBLISHED,
+        dateModified: PUBLISHED,
+        author: { '@id': 'https://www.findme.hair/#organization' },
+        publisher: { '@id': 'https://www.findme.hair/#organization' },
+        mainEntityOfPage: path,
+        inLanguage: 'en-AU',
       }} />
       <JsonLd data={{
         '@context': 'https://schema.org',
