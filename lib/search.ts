@@ -291,13 +291,26 @@ export async function countBusinessesByRegionBatch(regionIds: string[]): Promise
   const map = new Map<string, number>();
   if (regionIds.length === 0) return map;
   const supabase = supabaseServerInternal();
-  const { data, error } = await supabase
-    .from('businesses')
-    .select('region_id')
-    .eq('status', 'active')
-    .in('region_id', regionIds);
-  if (error) throw error;
-  for (const row of (data ?? []) as Array<{ region_id: string | null }>) {
+  // PAGINATED (2026-08-06). A plain select is silently capped at 1,000 rows by
+  // PostgREST, so a state hub with more than 1,000 active salons reported
+  // truncated per-region counts. Same defect class as the /stats fix (2026-08-05).
+  const rows: Array<{ region_id: string | null }> = [];
+  let rOffset = 0;
+  const rBatch = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('region_id')
+      .eq('status', 'active')
+      .in('region_id', regionIds)
+      .range(rOffset, rOffset + rBatch - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    rows.push(...(data as Array<{ region_id: string | null }>));
+    if (data.length < rBatch) break;
+    rOffset += rBatch;
+  }
+  for (const row of rows) {
     if (row.region_id) map.set(row.region_id, (map.get(row.region_id) ?? 0) + 1);
   }
   for (const id of regionIds) if (!map.has(id)) map.set(id, 0);

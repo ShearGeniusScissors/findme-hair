@@ -34,6 +34,10 @@ export async function generateMetadata({
   const { state, region, suburb } = await params;
   const stateCode = state.toUpperCase() as AuState;
   const regionRow = await getRegionBySlug(region);
+  // The state segment and the region slug were validated independently but never
+  // against each other, so /nsw/<a-victorian-region> rendered HTTP 200 under the
+  // wrong state. A region that exists but belongs to a different state is not a page.
+  if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
   const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
   const suburbName = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
   const postcode = suburbRow?.postcode ?? '';

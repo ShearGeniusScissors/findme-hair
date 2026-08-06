@@ -88,12 +88,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // pollute the sitemap with suburb pages that render noindex (the per-page
   // template noindexes empty suburb pages). Ahrefs Site Audit flagged 1,384
   // "Noindex page in sitemap" errors traced primarily to this.
-  const { data: suburbCounts } = await supabase
-    .from('businesses')
-    .select('suburb, state')
-    .eq('status', 'active');
+  // PAGINATED (2026-08-06). A plain select is silently capped at 1,000 rows by
+  // PostgREST — the same defect fixed on /stats on 2026-08-05. Unpaginated, this
+  // saw ~1,000 of ~14,000 active businesses, so populatedSuburbs was massively
+  // under-filled and real suburb pages were being DROPPED from the sitemap.
+  const suburbCounts: Array<{ suburb: string | null; state: string | null }> = [];
+  {
+    let sOffset = 0;
+    const sBatch = 1000;
+    while (true) {
+      const { data } = await supabase
+        .from('businesses')
+        .select('suburb, state')
+        .eq('status', 'active')
+        .range(sOffset, sOffset + sBatch - 1);
+      if (!data || data.length === 0) break;
+      suburbCounts.push(...(data as Array<{ suburb: string | null; state: string | null }>));
+      if (data.length < sBatch) break;
+      sOffset += sBatch;
+    }
+  }
   const populatedSuburbs = new Set<string>();
-  for (const row of (suburbCounts ?? []) as Array<{ suburb: string | null; state: string | null }>) {
+  for (const row of suburbCounts) {
     if (row.suburb && row.state) {
       populatedSuburbs.add(`${row.state.toUpperCase()}|${row.suburb.toLowerCase().trim()}`);
     }
