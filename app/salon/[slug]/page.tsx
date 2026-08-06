@@ -343,7 +343,12 @@ export default async function BusinessProfilePage({
   // Gating the whole badge on that would delete the link from every Adelaide listing, so instead
   // the badge stays and only the visit dates are suppressed outside those serviced towns.
   const SG_TERRITORIES = new Set<AuState>(['VIC', 'SA', 'TAS']);
-  const SG_SA_SERVICED_SUBURBS = new Set(['mount gambier', 'millicent', 'port macdonnell']);
+  // Only towns with current, primary paid-service evidence may publish a visit date.
+  // Mount Gambier qualifies (paid visits on record, most recent 2026-07-31). Millicent has
+  // route stops but zero paid visits, and Port MacDonnell stays unnamed publicly by ruling —
+  // neither may be represented as serviced. This never affects the salon's own address or
+  // directory geography, only whether ShearGenius claims to visit it.
+  const SG_SA_SERVICED_SUBURBS = new Set(['mount gambier']);
   const showSgBadge = SG_TERRITORIES.has(business.state);
   const sgVisitsThisSalon =
     showSgBadge &&
