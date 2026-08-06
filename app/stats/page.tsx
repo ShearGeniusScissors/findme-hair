@@ -154,7 +154,7 @@ export default async function StatsPage() {
               {stateCounts.map(([code, count]) => (
                 <tr key={code} className="border-b border-[var(--color-border-light)]">
                   <td className="py-2">
-                    <Link href={`/${code.toLowerCase()}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                    <Link href={`/stats/${code.toLowerCase()}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                       {STATE_NAMES[code] || code}
                     </Link>
                   </td>

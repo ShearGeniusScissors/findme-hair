@@ -41,6 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
     priority: 0.9,
   }));
+  const stateStatsPages: MetadataRoute.Sitemap = states.map((s) => ({
+    url: `${base}/stats/${s}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.72,
+  }));
 
   type RegionRow = { slug: string | null; state: string | null };
   type SuburbRow = {
@@ -265,5 +271,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticPages, ...statePages, ...regionPages, ...suburbPages, ...businessPages, ...salonDirectoryPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
+  return [...staticPages, ...statePages, ...stateStatsPages, ...regionPages, ...suburbPages, ...businessPages, ...salonDirectoryPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
 }
