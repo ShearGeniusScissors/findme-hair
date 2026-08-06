@@ -114,7 +114,7 @@ export default async function StatsPage() {
             Australian Hair Industry Stats
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            Live counts of verified hair salons and barber shops across Australia — by state, business type, walk-in availability, and specialty. Refreshed every hour from the findme.hair directory. Free to cite under CC BY 4.0; please link back.
+            Counts of verified hair salons and barber shops across Australia — by state, business type, walk-in availability, and specialty. Counts recompute continuously from the findme.hair directory. Free to cite under CC BY 4.0; please link back.
           </p>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default async function StatsPage() {
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Citation</h2>
-          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">All figures on this page are pulled live from the findme.hair directory and refreshed hourly. Free to cite under CC BY 4.0 (attribution + link back). Suggested citation: <em>findme.hair, &ldquo;Australian Hair Industry Stats {year}&rdquo;, https://www.findme.hair/stats</em>. For deeper data slices or custom queries, contact the editorial team via the footer.</p>
+          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">All figures are counts computed from the findme.hair directory and updated continuously. Free to cite under CC BY 4.0 (attribution + link back). Suggested citation: <em>findme.hair, &ldquo;Australian Hair Industry Stats {year}&rdquo;, https://www.findme.hair/stats</em>. For deeper data slices or custom queries, contact the editorial team via the footer.</p>
         </section>
 
       </div>

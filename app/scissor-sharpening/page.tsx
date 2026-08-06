@@ -46,11 +46,11 @@ export default function ScissorSharpeningPage() {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: 'How often should hairdressing scissors be sharpened?', acceptedAnswer: { '@type': 'Answer', text: 'For a working hairdresser cutting 20+ heads of hair a week, every 6-9 months. For a busy barber doing 40+ cuts, every 4-6 months. For occasional home use, every 2-3 years. Sharpening a Japanese-steel scissor restores it to factory edge.' } },
-          { '@type': 'Question', name: 'How much does scissor sharpening cost in Australia?', acceptedAnswer: { '@type': 'Answer', text: 'Professional scissorsmith sharpening in Australia typically runs $70-$80 per scissor for hairdressing and thinning scissors, hand-finished to preserve the convex edge. Budget grinders advertise $20-$40, but a flat machine wheel destroys a convex edge — recovering a ruined edge costs more than sharpening it properly the first time.' } },
+          { '@type': 'Question', name: 'How often should hairdressing scissors be sharpened?', acceptedAnswer: { '@type': 'Answer', text: 'Full-time hairdressers typically sharpen every 6–12 months; part-time hairdressers every 12–18 months. Cutting volume, steel, tension and edge condition matter more than a fixed calendar date.' } },
+          { '@type': 'Question', name: 'How much does scissor sharpening cost in Australia?', acceptedAnswer: { '@type': 'Answer', text: 'ShearGenius charges $70 per pair for its own scissors and $80 per pair for all other brands. The on-road service hand-finishes the edge and resets the tension at the salon.' } },
           { '@type': 'Question', name: 'What is the difference between sharpening and re-edging?', acceptedAnswer: { '@type': 'Answer', text: 'Sharpening restores an existing edge that has dulled. Re-edging creates a new edge, often after the previous one has rolled or chipped beyond simple sharpening. Re-edging takes longer and costs more, but extends the scissor lifespan.' } },
           { '@type': 'Question', name: 'Is a mobile scissor sharpening service better than sending scissors away?', acceptedAnswer: { '@type': 'Answer', text: 'A mobile scissorsmith who visits your salon is generally better: you get the scissors back the same day, you can watch the work, and you can ask what the edge condition actually tells you about your cutting. The trade-off is that mobile services run fixed territories, so availability depends on where you are. If you send scissors away instead, ask who physically does the work, whether the convex edge is restored by hand on stones, and what the turnaround is before you post anything.' } },
-          { '@type': 'Question', name: 'Can I sharpen my own scissors?', acceptedAnswer: { '@type': 'Answer', text: 'For everyday stainless household scissors, yes. For professional Japanese-steel hairdressing scissors with a convex edge, no. The angle and finish on a convex edge requires a specialised stone setup and significant practice. A poorly self-sharpened pair often costs more to recover than to send out.' } },
+          { '@type': 'Question', name: 'Can I sharpen my own scissors?', acceptedAnswer: { '@type': 'Answer', text: 'Everyday household scissors are different from professional convex-edge hairdressing scissors. Restoring a convex edge requires specialised stones, accurate geometry and bench experience; an incorrect grind can turn the convex edge into a flat bevel.' } },
         ],
       }} />
 
@@ -80,18 +80,16 @@ export default function ScissorSharpeningPage() {
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Why scissor sharpening matters</h2>
-          <p>A dull scissor doesn&rsquo;t just cut slower. It pushes hair instead of slicing it, which leaves split ends, ragged tips, and subtle damage that shows up in the next 4-6 weeks of grow-out. It also triggers wrist strain because the hand compensates for the resistance — a working hairdresser who skips sharpening for too long usually feels it in the carpal tunnel before the clients see it in their hair.</p>
-          <p className="mt-3">A well-sharpened scissor cuts hair like the cuticle isn&rsquo;t there. The edge slides through, the ends seal, the result is what the salon photographs.</p>
+          <p>A dull scissor pushes or folds hair instead of slicing it cleanly. That changes the cutting feel, slows detailed work and makes the blades harder to control consistently.</p>
+          <p className="mt-3">A correctly restored edge should slice cleanly along the blade, with the tension reset so the blade pair meets as intended.</p>
         </section>
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>How often to sharpen</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Working hairdresser, 20+ heads a week</strong> — every 6-9 months. Senior stylists with high client volume push closer to 6 months.</li>
-            <li><strong>Busy barber, 40+ cuts a week</strong> — every 4-6 months. Clipper-blending creates more friction on the scissor edge than salon work.</li>
-            <li><strong>Mobile or part-time stylist</strong> — every 9-12 months.</li>
-            <li><strong>Apprentice or quiet salon</strong> — yearly, or sooner if the scissor feels different in the hand.</li>
-            <li><strong>Home / occasional use</strong> — every 2-3 years.</li>
+            <li><strong>Full-time hairdresser or barber</strong> — typically every 6&ndash;12 months.</li>
+            <li><strong>Part-time stylist</strong> — typically every 12&ndash;18 months.</li>
+            <li><strong>Cut-led timing</strong> — book sooner when the scissor starts pushing, folding or losing its clean cutting feel.</li>
           </ul>
           <p className="mt-3">If you can feel the scissor pushing rather than slicing, it&rsquo;s overdue. If the ends are splitting on cut, it&rsquo;s overdue. Don&rsquo;t wait for a visible problem.</p>
         </section>
@@ -102,7 +100,7 @@ export default function ScissorSharpeningPage() {
             <li><strong>Convex edge capability.</strong> Professional Japanese-steel scissors have a convex edge, not a bevelled one. Many cheap sharpening services run a generic V-edge that ruins a convex finish. Confirm convex before sending.</li>
             <li><strong>By-hand finishing.</strong> Machine-finished edges look right under inspection but feel different under hair. The best sharpeners hand-finish the final edge.</li>
             <li><strong>Tension adjustment.</strong> Sharpening a scissor without re-tensioning the pivot screw is half a job. The screw should be checked, cleaned, and adjusted to your hand.</li>
-            <li><strong>Pre and post inspection.</strong> A photo of the blade on receipt and a written note about edge condition is normal practice for a real Scissorsmith.</li>
+            <li><strong>Pre and post inspection.</strong> The scissorsmith should inspect the blade, ride line, set and tension before deciding what work the pair needs.</li>
             <li><strong>Australian-based service.</strong> Sending scissors overseas adds 4-6 weeks of postage and customs risk. Stick with Australian-based sharpeners.</li>
           </ul>
         </section>
@@ -114,8 +112,9 @@ export default function ScissorSharpeningPage() {
         </section>
 
         <section className="card p-8 text-sm text-[var(--color-ink-light)] leading-relaxed">
-          <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Where Australian hairdressers send their scissors</h2>
+          <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Where serviced-area hairdressers book sharpening</h2>
           <p>findme.hair&rsquo;s sister brand ShearGenius <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=scissor_sharpening&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] font-medium">runs a mobile scissor-sharpening service</a> across Victoria and Tasmania, plus Mount Gambier and Millicent, visiting salons on a repeating territory run. Founded in 2007 by scissorsmith Matt Grumley, it has sharpened over 100,000 scissors — every convex edge restored by hand on Japanese water stones rather than a machine wheel.</p>
+          <p className="mt-3">The current price is <strong>$70 per pair for ShearGenius scissors</strong> and <strong>$80 per pair for all other brands</strong>.</p>
           <p className="mt-3"><strong>City-specific guides:</strong></p>
           <ul className="grid gap-1 mt-2 sm:grid-cols-2">
             <li>· <a href="https://www.sheargenius.com.au/pages/scissor-sharpening-launceston?utm_source=findme_hair&utm_medium=referral&utm_campaign=scissor_sharpening&utm_content=scissor-sharpening-launceston" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Scissor sharpening Launceston</a></li>

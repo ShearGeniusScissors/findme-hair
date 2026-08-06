@@ -129,6 +129,50 @@ function PhotoUrl(p: { url?: string; name?: string }, maxHeight = 600): string |
   return null;
 }
 
+type ProfileBusiness = NonNullable<Awaited<ReturnType<typeof getBusinessBySlug>>>;
+type ProfileFaq = { q: string; a: string };
+
+function buildProfileFaqs(business: ProfileBusiness): ProfileFaq[] {
+  const faqs: ProfileFaq[] = [];
+  const addr = [business.address_line1, business.suburb, business.state, business.postcode]
+    .filter(Boolean)
+    .join(', ');
+  if (business.address_line1) {
+    faqs.push({ q: `Where is ${business.name}?`, a: `${business.name} is at ${addr}.` });
+  }
+  if (business.walk_ins_welcome === true) {
+    faqs.push({ q: `Does ${business.name} take walk-ins?`, a: `Yes — walk-ins are welcome at ${business.name}.` });
+  } else if (business.walk_ins_welcome === false) {
+    faqs.push({ q: `Does ${business.name} take walk-ins?`, a: `Appointments are recommended at ${business.name}.` });
+  }
+  if (business.google_hours?.periods?.length) {
+    const sat = isOpenOnDay(business.google_hours, 6);
+    const sun = isOpenOnDay(business.google_hours, 0);
+    faqs.push({
+      q: `Is ${business.name} open on weekends?`,
+      a: sat && sun
+        ? `Yes — ${business.name} is open on both Saturday and Sunday. See the full opening hours above.`
+        : sat
+          ? `${business.name} is open on Saturdays and closed on Sundays.`
+          : sun
+            ? `${business.name} is open on Sundays and closed on Saturdays.`
+            : `No — ${business.name} is closed on weekends.`,
+    });
+  }
+  if (business.booking_url) {
+    faqs.push({ q: `How do I book at ${business.name}?`, a: 'You can book online using the Book Now button on this page.' });
+  } else if (business.phone) {
+    faqs.push({ q: `How do I book at ${business.name}?`, a: `Call ${business.phone} to make an appointment.` });
+  }
+  if (business.google_rating != null && (business.google_review_count ?? 0) >= 5) {
+    faqs.push({
+      q: `How is ${business.name} rated?`,
+      a: `${business.name} has a ${business.google_rating.toFixed(1)}-star average from ${business.google_review_count} Google reviews.`,
+    });
+  }
+  return faqs;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -201,6 +245,7 @@ export default async function BusinessProfilePage({
   const { slug } = await params;
   const business = await getBusinessBySlug(slug);
   if (!business) notFound();
+  const profileFaqs = buildProfileFaqs(business);
 
   // Real-geography "Other salons near {suburb}" — haversine within 25km, never
   // a state-wide fallback (that previously surfaced Melbourne salons on
@@ -451,6 +496,17 @@ export default async function BusinessProfilePage({
         // BarberShop/HairSalon (only on Store/AutomotiveBusiness/FoodEstablishment).
         paymentAccepted: 'Cash, Credit Card',
       }} />
+      {profileFaqs.length > 0 && (
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: profileFaqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.q,
+            acceptedAnswer: { '@type': 'Answer', text: faq.a },
+          })),
+        }} />
+      )}
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
@@ -788,82 +844,25 @@ export default async function BusinessProfilePage({
               </section>
             )}
 
-            {/* FAQ-shaped block (playbook Part 2) — assembled ONLY from real
-                data, plain HTML, deliberately NO FAQPage schema (SEO frozen).
-                Gives the scannable Q&A shape AI engines cite without UGC. */}
-            {(() => {
-              const faqs: Array<{ q: string; a: string }> = [];
-              const addr = [business.address_line1, business.suburb, business.state, business.postcode]
-                .filter(Boolean)
-                .join(', ');
-              if (business.address_line1) {
-                faqs.push({
-                  q: `Where is ${business.name}?`,
-                  a: `${business.name} is at ${addr}.`,
-                });
-              }
-              if (business.walk_ins_welcome === true) {
-                faqs.push({
-                  q: `Does ${business.name} take walk-ins?`,
-                  a: `Yes — walk-ins are welcome at ${business.name}.`,
-                });
-              } else if (business.walk_ins_welcome === false) {
-                faqs.push({
-                  q: `Does ${business.name} take walk-ins?`,
-                  a: `Appointments are recommended at ${business.name}.`,
-                });
-              }
-              if (business.google_hours?.periods?.length) {
-                const sat = isOpenOnDay(business.google_hours, 6);
-                const sun = isOpenOnDay(business.google_hours, 0);
-                faqs.push({
-                  q: `Is ${business.name} open on weekends?`,
-                  a: sat && sun
-                    ? `Yes — ${business.name} is open on both Saturday and Sunday. See the full opening hours above.`
-                    : sat
-                      ? `${business.name} is open on Saturdays and closed on Sundays.`
-                      : sun
-                        ? `${business.name} is open on Sundays and closed on Saturdays.`
-                        : `No — ${business.name} is closed on weekends.`,
-                });
-              }
-              if (business.booking_url) {
-                faqs.push({
-                  q: `How do I book at ${business.name}?`,
-                  a: `You can book online using the Book Now button on this page.`,
-                });
-              } else if (business.phone) {
-                faqs.push({
-                  q: `How do I book at ${business.name}?`,
-                  a: `Call ${business.phone} to make an appointment.`,
-                });
-              }
-              if (business.google_rating != null && (business.google_review_count ?? 0) >= 5) {
-                faqs.push({
-                  q: `How is ${business.name} rated?`,
-                  a: `${business.name} has a ${business.google_rating.toFixed(1)}-star average from ${business.google_review_count} Google reviews.`,
-                });
-              }
-              if (faqs.length < 3) return null;
-              return (
-                <section className="mt-10">
-                  <h2
-                    className="text-xl text-[var(--color-ink)]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    Frequently asked questions
-                  </h2>
-                  <div className="mt-4 card p-0 divide-y divide-[var(--color-border-light)]">
-                    {faqs.map((f) => (
-                      <div key={f.q} className="px-5 py-4">
-                        <h3 className="text-sm font-semibold text-[var(--color-ink)]">{f.q}</h3>
-                        <p className="mt-1 text-sm text-[var(--color-ink-light)]">{f.a}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              );
-            })()}
+            {/* Conditional FAQ copy and JSON-LD share the same fact-derived array. */}
+            {profileFaqs.length > 0 && (
+              <section className="mt-10">
+                <h2
+                  className="text-xl text-[var(--color-ink)]"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  Frequently asked questions
+                </h2>
+                <div className="mt-4 card p-0 divide-y divide-[var(--color-border-light)]">
+                  {profileFaqs.map((f) => (
+                    <div key={f.q} className="px-5 py-4">
+                      <h3 className="text-sm font-semibold text-[var(--color-ink)]">{f.q}</h3>
+                      <p className="mt-1 text-sm text-[var(--color-ink-light)]">{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Browse the area — internal linking to suburb + city pivot pages */}
             {(() => {

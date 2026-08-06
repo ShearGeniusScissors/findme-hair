@@ -43,7 +43,7 @@ export default function TrustPage() {
           { '@type': 'Question', name: 'How does findme.hair verify salons?', acceptedAnswer: { '@type': 'Answer', text: 'Every business listing is cross-referenced against three third-party sources — Google Business Profile, TrueLocal, and Yellow Pages. We verify the business exists, is currently trading, and is genuinely a hair salon or barber shop. Beauty salons, nail bars, lash studios, and day spas are excluded at the verification stage.' } },
           { '@type': 'Question', name: 'How are listings ranked?', acceptedAnswer: { '@type': 'Answer', text: 'Listings are ranked first by Google star rating, then by review count. Featured listings (paid placement) are clearly marked at the top of category pages. The default ranking is editorial — Google rating × review count — not paid.' } },
           { '@type': 'Question', name: 'Does findme.hair accept paid listings?', acceptedAnswer: { '@type': 'Answer', text: 'Salon owners can claim their listing for free to update photos, hours, services, and booking links. Featured (paid) placement is available and clearly marked. The base directory ranking is independent of paid placement.' } },
-          { '@type': 'Question', name: 'How often is data refreshed?', acceptedAnswer: { '@type': 'Answer', text: 'Google rating, review count, and opening hours are refreshed automatically on a weekly cycle. Salon-claimed details (photos, custom descriptions, booking links) update in real time.' } },
+          { '@type': 'Question', name: 'How often is data refreshed?', acceptedAnswer: { '@type': 'Answer', text: 'Google rating, review count, and opening hours are sourced from Google Business Profile and re-checked on a rolling basis, not live. Salon-claimed details (photos, custom descriptions, booking links) update in real time.' } },
           { '@type': 'Question', name: 'How do you handle errors or fake reviews?', acceptedAnswer: { '@type': 'Answer', text: 'Each verified salon has a contact channel for corrections. Suspected fake-review patterns are reviewed manually. We exclude listings with confirmed review-fraud signals.' } },
         ],
       }} />
@@ -88,8 +88,8 @@ export default function TrustPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Data refresh cadence</h2>
           <ul className="text-sm text-[var(--color-ink-light)] leading-relaxed list-disc pl-5 space-y-1">
-            <li>Google rating + review count: weekly automated refresh</li>
-            <li>Opening hours: weekly automated refresh from Google Business Profile</li>
+            <li>Google rating + review count: sourced from Google Business Profile and re-checked on a rolling basis, not live</li>
+            <li>Opening hours: sourced from Google Business Profile and re-checked on a rolling basis, not live</li>
             <li>Salon-claimed details (photos, custom descriptions, booking links): real-time</li>
             <li>Verification flags (status, walk-ins, mobile, specialties): updated when salon owners claim listings or when verification drift is detected</li>
           </ul>

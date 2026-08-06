@@ -8,7 +8,7 @@ export const revalidate = 3600;
 
 const path = "https://www.findme.hair/reviews";
 const title = `Top-Rated Hair Salons & Barbers AU ${new Date().getFullYear()} | findme.hair`;
-const description = "Top-rated hair salons and barbers across Australia, ranked by verified Google reviews. Highest-rated businesses on findme.hair, refreshed hourly.";
+const description = "Top-rated hair salons and barbers across Australia, ranked by Google reviews stored in the findme.hair directory.";
 
 export const metadata: Metadata = {
   title,
@@ -98,7 +98,7 @@ export default async function ReviewsPage() {
             Top-Rated Hair Salons &amp; Barbers in Australia
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            The most-reviewed and highest-rated salons and barber shops on findme.hair. Ranked by verified Google reviews — every listing hand-verified against Google Business Profile, TrueLocal and Yellow Pages. Refreshed hourly.
+            The most-reviewed and highest-rated salons and barber shops on findme.hair. Ranked by Google reviews stored in the directory — every listing hand-verified against Google Business Profile, TrueLocal and Yellow Pages.
           </p>
         </div>
       </div>
@@ -155,7 +155,7 @@ export default async function ReviewsPage() {
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Methodology</h2>
-          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">All review data comes from Google Business Profile and is refreshed hourly on findme.hair. Listings included require an active findme.hair verification, a 4.5+ star rating, and 50+ verified Google reviews. The 5-star section requires a perfect 5.0 average across 100+ verified reviews. Sorting is by review count (most-reviewed first), not paid placement.</p>
+          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">Review data is sourced from Google Business Profile and re-checked on a rolling basis, not live. Listings included require an active findme.hair verification, a 4.5+ star rating, and 50+ Google reviews in the directory. The 5-star section requires a perfect 5.0 average across 100+ reviews. Sorting is by review count (most-reviewed first), not paid placement.</p>
         </section>
 
       </div>
