@@ -78,6 +78,11 @@ export default async function RegionDirectoryPage({
   // display name and fetch by slug instead of region_id. Avoids spurious 404s
   // when name/slug data is being backfilled.
   const regionRow = await getRegionBySlug(region);
+  // The state segment and the region slug are validated independently; without this
+  // cross-check /nsw/<a-victorian-region> rendered HTTP 200 under the wrong state,
+  // listing Victorian salons as New South Wales. Must live in the PAGE component —
+  // notFound() inside generateMetadata does not 404 the render.
+  if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
   const fullState = stateName(stateCode);
   const regionName = titleCase(regionRow?.name ?? region.replace(/-/g, ' '));
   const regionSlug = regionRow?.slug ?? region;

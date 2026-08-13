@@ -87,6 +87,11 @@ export default async function SuburbDirectoryPage({
   if (!AU_STATES.some((s) => s.code === stateCode)) notFound();
 
   const regionRow = await getRegionBySlug(region);
+  // The state segment and the region slug are validated independently; without this
+  // cross-check /nsw/<a-victorian-region> rendered HTTP 200 under the wrong state,
+  // listing Victorian salons as New South Wales. Must live in the PAGE component —
+  // notFound() inside generateMetadata does not 404 the render.
+  if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
   const readable = titleCase(
     (await getSuburbByRegionAndSlug(regionRow?.id ?? '', suburb))?.name ??
     suburb.replace(/-/g, ' ')
