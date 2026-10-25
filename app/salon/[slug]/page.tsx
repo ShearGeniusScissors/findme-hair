@@ -1016,7 +1016,13 @@ export default async function BusinessProfilePage({
 
             {/* Map */}
             <div className="card p-0 overflow-hidden">
-              <MapView pins={[business]} height={280} />
+              {/* Pass only what the map draws. Passing the full row serialised every column
+                (internal notes, ShearGenius client flags, owner contact fields, claim
+                token) into the public page payload. Fixed 2026-10-26. */}
+              <MapView
+                pins={[{ lat: business.lat, lng: business.lng, name: business.name, suburb: business.suburb, state: business.state }]}
+                height={280}
+              />
             </div>
 
             {/* Preferred scissor supplier badge */}
