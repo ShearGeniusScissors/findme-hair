@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
         destination: "https://www.findme.hair/:path*",
         permanent: true,
       },
+      // /hair-salon/[suburb] listed the same salons as /hairdresser/[suburb] with
+      // ~76% identical copy (indexing audit 2026-11-02) — one URL per intent.
+      {
+        source: "/hair-salon/:suburb",
+        destination: "/hairdresser/:suburb",
+        permanent: true,
+      },
     ];
   },
 };

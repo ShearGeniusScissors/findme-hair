@@ -14,6 +14,15 @@ import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
+// Without generateStaticParams this dynamic route was rendered on every request
+// (cache-control: no-store, x-vercel-cache MISS, 2.3–2.6s TTFB — indexing audit
+// 2026-11-02) and `revalidate` was ignored. Next 16 needs generateStaticParams —
+// an empty list is enough — to cache paths at runtime: each page now renders on
+// first visit and is then served from cache, regenerating hourly.
+export async function generateStaticParams() {
+  return [];
+}
+
 interface Params {
   state: string;
   region: string;
@@ -210,7 +219,6 @@ export default async function RegionDirectoryPage({
                   <h3 className="font-semibold text-[var(--color-ink)]">{suburb.name}</h3>
                   <ul className="mt-3 space-y-1 text-sm">
                     <li><Link href={`/hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hairdressers in {suburb.name}</Link></li>
-                    <li><Link href={`/hair-salon/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hair salons in {suburb.name}</Link></li>
                     <li><Link href={`/barber/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Barbers in {suburb.name}</Link></li>
                     <li><Link href={`/at-home-hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">At-home hairdressers in {suburb.name}</Link></li>
                   </ul>

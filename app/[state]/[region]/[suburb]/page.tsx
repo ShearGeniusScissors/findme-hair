@@ -20,6 +20,15 @@ import type { AuState } from '@/types/database';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
+// Without generateStaticParams this dynamic route was rendered on every request
+// (cache-control: no-store, x-vercel-cache MISS, 2.3–2.6s TTFB — indexing audit
+// 2026-11-02) and `revalidate` was ignored. Next 16 needs generateStaticParams —
+// an empty list is enough — to cache paths at runtime: each page now renders on
+// first visit and is then served from cache, regenerating hourly.
+export async function generateStaticParams() {
+  return [];
+}
+
 interface Params {
   state: string;
   region: string;

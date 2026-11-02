@@ -261,7 +261,6 @@ export default async function StatePage({
                   <h3 className="font-semibold text-[var(--color-ink)]">{suburb.name}</h3>
                   <ul className="mt-3 space-y-1 text-sm">
                     <li><Link href={`/hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hairdressers</Link></li>
-                    <li><Link href={`/hair-salon/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Hair salons</Link></li>
                     <li><Link href={`/barber/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">Barbers</Link></li>
                     <li><Link href={`/at-home-hairdresser/${suburb.slug}`} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">At-home hairdressers</Link></li>
                   </ul>

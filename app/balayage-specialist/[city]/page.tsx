@@ -4,6 +4,7 @@ import CityPivotPage from "@/components/CityPivotPage";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { stateName } from "@/lib/geo";
 import { supabaseServerInternal } from "@/lib/supabase";
+import { PIVOT_NOINDEX, isCityPivotIndexable } from "@/lib/pivotCoverage";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -29,9 +30,12 @@ export async function generateMetadata({
   const title = `Balayage Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified balayage specialists in ${config.name}, ${stateName(config.state)}. Hand-painted highlights, lived-in colour, foilage and money-piece work with real Google reviews.`;
 
+  const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
+
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: { "en-AU": path, "x-default": path },

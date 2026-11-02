@@ -4,6 +4,7 @@ import CityPivotPage from "@/components/CityPivotPage";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { stateName } from "@/lib/geo";
 import { supabaseServerInternal } from "@/lib/supabase";
+import { PIVOT_NOINDEX, isCityPivotIndexable } from "@/lib/pivotCoverage";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -29,9 +30,12 @@ export async function generateMetadata({
   const title = `Hair Extension Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified hair extension specialists in ${config.name}, ${stateName(config.state)}. Tape extensions, bonds, hand-tied wefts, micro-bead and Russian Remy human hair with real Google reviews.`;
 
+  const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
+
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: { "en-AU": path, "x-default": path },

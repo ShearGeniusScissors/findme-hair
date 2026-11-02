@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
   if (suburb) {
     const s = slugify(suburb);
     paths.add(`/hairdresser/${s}`);
-    paths.add(`/hair-salon/${s}`);
+    paths.add(`/at-home-hairdresser/${s}`);
     paths.add(`/barber/${s}`);
   }
 

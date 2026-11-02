@@ -20,7 +20,6 @@ const CITY_SLUGS = new Set(PIVOT_CITIES.map((c) => c.slug));
 
 const SUBURB_PIVOTS: Record<string, 'hair_salon' | 'barber' | undefined> = {
   hairdresser: 'hair_salon',
-  'hair-salon': 'hair_salon',
   'at-home-hairdresser': 'hair_salon',
   barber: 'barber',
 };
@@ -87,7 +86,6 @@ export const config = {
     '/claim',
     '/search',
     '/hairdresser/:slug',
-    '/hair-salon/:slug',
     '/at-home-hairdresser/:slug',
     '/barber/:slug',
     '/best-hairdresser/:slug',

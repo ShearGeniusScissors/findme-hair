@@ -227,18 +227,6 @@ export default async function DirectoryPage() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[var(--color-ink)] mb-2">/hair-salon/[suburb]</h3>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                {TOP_SUBURBS.map((s) => (
-                  <li key={s.slug}>
-                    <Link href={`/hair-salon/${s.slug}`} className="text-xs text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                      {s.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
               <h3 className="text-sm font-semibold text-[var(--color-ink)] mb-2">/at-home-hairdresser/[suburb]</h3>
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 {TOP_SUBURBS.map((s) => (

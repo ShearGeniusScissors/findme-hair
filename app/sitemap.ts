@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
+import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
+import { cityPivotIndexable, suburbPivotIndexable, type CoverageRow, type SuburbPivotRoute } from '@/lib/pivotCoverage';
 
 // Drop force-dynamic so Next.js can serve the cached sitemap across requests
 // within the revalidate window. Audit row 8415761b.
@@ -9,46 +11,90 @@ export const revalidate = 86400;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = supabaseServerInternal();
   const base = 'https://www.findme.hair';
-  // Use the deploy-time date as the stable lastmod for static + pivot pages.
-  // For business + region + suburb pages we pass the row's own updated_at
-  // so Google's lastmod signal is truthful rather than "every URL changed
-  // today" (which Google explicitly devalues — audit row 8415761b).
-  const deployDate = new Date(process.env.VERCEL_GIT_COMMIT_SHA ? Date.now() : Date.now());
+  // lastmod must be truthful or Google ignores it for the whole sitemap. Until
+  // 2026-11-02 every hub/static URL said "modified today" on each daily regen.
+  // Now: salon pages use their row's updated_at; state/region/suburb hubs use
+  // the newest updated_at of the listings they show; data-driven static pages
+  // use the newest listing change; copy-only pages use CONTENT_UPDATED (bump it
+  // when their copy changes).
+  const CONTENT_UPDATED = new Date('2026-11-02');
+
+  // ONE paginated pass over active businesses feeds every business-derived part
+  // of the sitemap. PostgREST silently caps a plain select at 1,000 rows — keep
+  // the .range() pagination (see the 2026-08-05/06 fixes).
+  type BusinessRow = CoverageRow & {
+    slug: string;
+    updated_at: string | null;
+    confidence_score: number | null;
+    region_id: string | null;
+  };
+  const allBusinessRows: BusinessRow[] = [];
+  for (let offset = 0; ; offset += 1000) {
+    const { data } = await supabase
+      .from('businesses')
+      .select('slug, updated_at, confidence_score, region_id, state, suburb, specialties, is_mobile, name, business_type')
+      .eq('status', 'active')
+      .range(offset, offset + 999);
+    if (!data || data.length === 0) break;
+    allBusinessRows.push(...(data as BusinessRow[]));
+    if (data.length < 1000) break;
+  }
+  const newer = (a: Date | undefined, b: string | null) => {
+    if (!b) return a;
+    const d = new Date(b);
+    return !a || d > a ? d : a;
+  };
+  let latestListingChange: Date | undefined;
+  const stateLastMod = new Map<string, Date>();
+  const regionLastMod = new Map<string, Date>();
+  const suburbLastMod = new Map<string, Date>();
+  for (const b of allBusinessRows) {
+    latestListingChange = newer(latestListingChange, b.updated_at);
+    if (b.state) stateLastMod.set(b.state.toUpperCase(), newer(stateLastMod.get(b.state.toUpperCase()), b.updated_at)!);
+    if (b.region_id) regionLastMod.set(b.region_id, newer(regionLastMod.get(b.region_id), b.updated_at)!);
+    if (b.state && b.suburb) {
+      const key = `${b.state.toUpperCase()}|${b.suburb.toLowerCase().trim()}`;
+      suburbLastMod.set(key, newer(suburbLastMod.get(key), b.updated_at)!);
+    }
+  }
+  // Templates changed on CONTENT_UPDATED, so no listing-driven page is older than that.
+  const atLeastContent = (d?: Date) => (d && d > CONTENT_UPDATED ? d : CONTENT_UPDATED);
+  const dataUpdated = atLeastContent(latestListingChange);
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
-    { url: base, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
-    { url: `${base}/for-salons`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: base, lastModified: dataUpdated, changeFrequency: 'daily', priority: 1.0 },
+    { url: `${base}/for-salons`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.5 },
     // NOTE: /search is intentionally NOT in the sitemap — it's Disallow'd in robots.ts
     // (thin, infinite query-combo bot-bait). Listing a robots-blocked URL in the
     // sitemap is a "blocked URL in sitemap" coverage error. Removed 2026-06-20.
-    { url: `${base}/directory`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
-    { url: `${base}/press`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/directory`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.85 },
+    { url: `${base}/press`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-05-22'), changeFrequency: 'yearly', priority: 0.85 },
     { url: `${base}/for-salons/badge`, lastModified: new Date('2026-05-22'), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${base}/trust`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${base}/best-haircut-australia`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/stats`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
-    { url: `${base}/reviews`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
-    { url: `${base}/scissor-sharpening`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/trust`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/best-haircut-australia`, lastModified: dataUpdated, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${base}/stats`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.7 },
+    { url: `${base}/reviews`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.85 },
+    { url: `${base}/scissor-sharpening`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.7 },
   ];
 
   // State pages
   const states = ['vic', 'nsw', 'qld', 'wa', 'sa', 'tas', 'nt', 'act'];
   const statePages: MetadataRoute.Sitemap = states.map((s) => ({
     url: `${base}/${s}`,
-    lastModified: new Date(),
+    lastModified: atLeastContent(stateLastMod.get(s.toUpperCase())),
     changeFrequency: 'weekly' as const,
     priority: 0.9,
   }));
   const stateStatsPages: MetadataRoute.Sitemap = states.map((s) => ({
     url: `${base}/stats/${s}`,
-    lastModified: new Date(),
+    lastModified: atLeastContent(stateLastMod.get(s.toUpperCase())),
     changeFrequency: 'daily' as const,
     priority: 0.72,
   }));
 
-  type RegionRow = { slug: string | null; state: string | null };
+  type RegionRow = { id: string; slug: string | null; state: string | null };
   type SuburbRow = {
     slug: string;
     state: string;
@@ -60,17 +106,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const allRegions: RegionRow[] = [];
   let regionOffset = 0;
   while (true) {
-    const { data } = await supabase.from('regions').select('slug, state').range(regionOffset, regionOffset + 999);
+    const { data } = await supabase.from('regions').select('id, slug, state').range(regionOffset, regionOffset + 999);
     if (!data || data.length === 0) break;
     allRegions.push(...(data as RegionRow[]));
     if (data.length < 1000) break;
     regionOffset += 1000;
   }
   const regionPages: MetadataRoute.Sitemap = allRegions
-    .filter((r): r is { slug: string; state: string } => !!r.state && !!r.slug)
+    .filter((r): r is { id: string; slug: string; state: string } => !!r.state && !!r.slug)
     .map((r) => ({
       url: `${base}/${r.state.toLowerCase()}/${r.slug}`,
-      lastModified: new Date(),
+      lastModified: atLeastContent(regionLastMod.get(r.id)),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
@@ -94,28 +140,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // pollute the sitemap with suburb pages that render noindex (the per-page
   // template noindexes empty suburb pages). Ahrefs Site Audit flagged 1,384
   // "Noindex page in sitemap" errors traced primarily to this.
-  // PAGINATED (2026-08-06). A plain select is silently capped at 1,000 rows by
-  // PostgREST — the same defect fixed on /stats on 2026-08-05. Unpaginated, this
-  // saw ~1,000 of ~14,000 active businesses, so populatedSuburbs was massively
-  // under-filled and real suburb pages were being DROPPED from the sitemap.
-  const suburbCounts: Array<{ suburb: string | null; state: string | null }> = [];
-  {
-    let sOffset = 0;
-    const sBatch = 1000;
-    while (true) {
-      const { data } = await supabase
-        .from('businesses')
-        .select('suburb, state')
-        .eq('status', 'active')
-        .range(sOffset, sOffset + sBatch - 1);
-      if (!data || data.length === 0) break;
-      suburbCounts.push(...(data as Array<{ suburb: string | null; state: string | null }>));
-      if (data.length < sBatch) break;
-      sOffset += sBatch;
-    }
-  }
+  // Uses the single paginated business pass above (the 2026-08-06 1,000-row cap fix).
   const populatedSuburbs = new Set<string>();
-  for (const row of suburbCounts) {
+  for (const row of allBusinessRows) {
     if (row.suburb && row.state) {
       populatedSuburbs.add(`${row.state.toUpperCase()}|${row.suburb.toLowerCase().trim()}`);
     }
@@ -127,36 +154,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const regionSlug = Array.isArray(s.regions) ? s.regions[0]?.slug : s.regions?.slug;
       return {
         url: `${base}/${s.state.toLowerCase()}/${regionSlug}/${s.slug}`,
-        lastModified: new Date(),
+        lastModified: atLeastContent(suburbLastMod.get(`${s.state.toUpperCase()}|${(s.slug || '').replace(/-/g, ' ').toLowerCase().trim()}`)),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
       };
     });
 
-  // Business profile pages — paginate to get all slugs + their updated_at so
-  // each URL's lastmod reflects the row's own last edit, not the sitemap regen
-  // time. Also pull confidence_score so we can omit low-confidence pages from
-  // the sitemap (separately noindexed in generateMetadata — audit row 3b164977).
-  const allBusinessRows: { slug: string; updated_at: string | null; confidence_score: number | null }[] = [];
-  let offset = 0;
-  const batchSize = 1000;
-  while (true) {
-    const { data } = await supabase
-      .from('businesses')
-      .select('slug, updated_at, confidence_score')
-      .eq('status', 'active')
-      .range(offset, offset + batchSize - 1);
-    if (!data || data.length === 0) break;
-    allBusinessRows.push(...(data as { slug: string; updated_at: string | null; confidence_score: number | null }[]));
-    if (data.length < batchSize) break;
-    offset += batchSize;
-  }
-
+  // Business profile pages — each URL's lastmod is the row's own updated_at.
+  // Low-confidence pages are noindexed in generateMetadata (audit row 3b164977),
+  // so they are left out here too.
   const businessPages: MetadataRoute.Sitemap = allBusinessRows
     .filter((b) => (b.confidence_score ?? 0) >= 30) // low-confidence pages are noindex'd; drop from sitemap too
     .map((b) => ({
       url: `${base}/salon/${b.slug}`,
-      lastModified: b.updated_at ? new Date(b.updated_at) : deployDate,
+      lastModified: b.updated_at ? new Date(b.updated_at) : CONTENT_UPDATED,
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }));
@@ -168,16 +179,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const totalSalonPages = Math.ceil(allBusinessSlugs.length / 100);
   const salonDirectoryPages: MetadataRoute.Sitemap = Array.from({ length: totalSalonPages }, (_, i) => ({
     url: `${base}/directory/salons/${i + 1}`,
-    lastModified: new Date(),
+    lastModified: dataUpdated,
     changeFrequency: 'weekly' as const,
     priority: 0.5,
   }));
 
-  // City guide pages (8 capitals + 8 regional)
-  const cities = [
-    'melbourne', 'sydney', 'brisbane', 'perth', 'adelaide', 'hobart', 'darwin', 'canberra',
-    'ballarat', 'geelong', 'newcastle', 'wollongong', 'gold-coast', 'sunshine-coast', 'townsville', 'cairns',
-  ];
+  // City guide pages (8 capitals + 8 regional) — PIVOT_CITIES is the same
+  // 16-city set every city-pivot route renders.
   // 12 city-pivot service routes × 16 cities = 192 URLs
   const cityServiceRoutes = [
     'best-hairdresser', 'best-barber', 'mobile-hairdresser',
@@ -186,13 +194,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'hair-extensions', 'mens-haircut', 'curly-hair-specialist',
     'best-haircut',
   ];
-  const cityGuidePages: MetadataRoute.Sitemap = cities.flatMap((c) =>
-    cityServiceRoutes.map((route) => ({
-      url: `${base}/${route}/${c}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: route.startsWith('best-') ? 0.85 : 0.78,
-    }))
+  // Specialty pivots (Korean, curly, …) are only listed where enough listings
+  // actually carry that specialty; thinner ones are noindexed by the page itself.
+  const cityGuidePages: MetadataRoute.Sitemap = PIVOT_CITIES.flatMap((c) =>
+    cityServiceRoutes
+      .filter((route) => cityPivotIndexable(allBusinessRows, route, c.state, c.suburbs))
+      .map((route) => ({
+        url: `${base}/${route}/${c.slug}`,
+        lastModified: dataUpdated,
+        changeFrequency: 'monthly' as const,
+        priority: route.startsWith('best-') ? 0.85 : 0.78,
+      }))
   );
 
   // Blog pages
@@ -209,10 +221,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'how-to-prepare-for-a-hair-appointment',
   ];
   const blogPages: MetadataRoute.Sitemap = [
-    { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${base}/blog`, lastModified: CONTENT_UPDATED, changeFrequency: 'weekly' as const, priority: 0.7 },
     ...blogSlugs.map((slug) => ({
       url: `${base}/blog/${slug}`,
-      lastModified: new Date(),
+      lastModified: CONTENT_UPDATED,
       changeFrequency: 'monthly' as const,
       priority: 0.65,
     })),
@@ -226,49 +238,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${base}/services/${s}`,
-    lastModified: new Date(),
+    lastModified: dataUpdated,
     changeFrequency: 'weekly' as const,
     priority: 0.75,
   }));
 
   // About page
   const aboutPage: MetadataRoute.Sitemap = [
-    { url: `${base}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${base}/about`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
 
   // High-volume "near me" landing pages
   const nearMePages: MetadataRoute.Sitemap = [
-    { url: `${base}/barber-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/mobile-hairdresser-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/cheap-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/hair-extensions-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/blow-dry-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/hair-colourist-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/kids-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/best-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/balayage-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/korean-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    { url: `${base}/curly-hair-salon-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    { url: `${base}/mens-haircuts-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/womens-haircut-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/hair-stylist-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/hair-salon-open-now`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/hair-color-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${base}/hairdresser-open-sunday`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.85 },
-    { url: `${base}/hair-spa-near-me`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${base}/barber-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hairdresser-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/haircut-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/mobile-hairdresser-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/cheap-haircut-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-extensions-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/blow-dry-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-colourist-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/kids-haircut-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/best-hair-salon-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/balayage-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/korean-hair-salon-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${base}/curly-hair-salon-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${base}/mens-haircuts-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/womens-haircut-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hair-stylist-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hair-salon-open-now`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-color-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/hairdresser-open-sunday`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.85 },
+    { url: `${base}/hair-spa-near-me`, lastModified: dataUpdated, changeFrequency: 'weekly' as const, priority: 0.8 },
   ];
 
-  // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /hair-salon/[suburb] + /at-home-hairdresser/[suburb]
-  const suburbPivotRoutes = ['hairdresser', 'barber', 'hair-salon', 'at-home-hairdresser'];
+  // Suburb-pivot routes — /hairdresser/[suburb] + /barber/[suburb] + /at-home-hairdresser/[suburb].
+  // /hair-salon/[suburb] now 308s to /hairdresser/[suburb] (near-duplicate, 2026-11-02).
+  // A pivot is listed only when the suburb has enough matching listings; the
+  // page noindexes itself otherwise (lib/pivotCoverage).
+  const suburbPivotRoutes: SuburbPivotRoute[] = ['hairdresser', 'barber', 'at-home-hairdresser'];
   const suburbPivotPages: MetadataRoute.Sitemap = TOP_SUBURBS.flatMap((s) =>
-    suburbPivotRoutes.map((route) => ({
-      url: `${base}/${route}/${s.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.82,
-    }))
+    suburbPivotRoutes
+      .filter((route) => suburbPivotIndexable(allBusinessRows, route, s.state, s.name))
+      .map((route) => ({
+        url: `${base}/${route}/${s.slug}`,
+        lastModified: dataUpdated,
+        changeFrequency: 'weekly' as const,
+        priority: 0.82,
+      }))
   );
 
   return [...staticPages, ...statePages, ...stateStatsPages, ...regionPages, ...suburbPages, ...businessPages, ...salonDirectoryPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];

@@ -4,6 +4,7 @@ import SuburbPivotPage from "@/components/SuburbPivotPage";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
 import { stateName } from "@/lib/geo";
 import { supabaseServerInternal } from "@/lib/supabase";
+import { PIVOT_NOINDEX, isSuburbPivotIndexable } from "@/lib/pivotCoverage";
 import type { Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -29,9 +30,12 @@ export async function generateMetadata({
   const title = `Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find the best hairdressers in ${config.name}, ${stateName(config.state)}. Verified salons with real Google reviews — cuts, colour, balayage, blow-dries and more.`;
 
+  const indexable = await isSuburbPivotIndexable(ROUTE, config.state, config.name);
+
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: { "en-AU": path, "x-default": path },

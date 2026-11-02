@@ -4,6 +4,7 @@ import SuburbPivotPage from "@/components/SuburbPivotPage";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
 import { stateName } from "@/lib/geo";
 import { supabaseServerInternal } from "@/lib/supabase";
+import { PIVOT_NOINDEX, isSuburbPivotIndexable } from "@/lib/pivotCoverage";
 import type { Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -29,9 +30,12 @@ export async function generateMetadata({
   const title = `At-Home Hairdressers ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find at-home hairdressers in ${config.name}, ${stateName(config.state)}. Stylists who come to your home or workplace — cuts, colour, blow-dries with real Google reviews.`;
 
+  const indexable = await isSuburbPivotIndexable(ROUTE, config.state, config.name);
+
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: { "en-AU": path, "x-default": path },
@@ -48,23 +52,26 @@ export async function generateMetadata({
   };
 }
 
-async function getBusinesses(suburbName: string, state: string): Promise<Business[]> {
+// mobileMatched=false means no mobile stylist is listed in the suburb and the
+// list is the top-rated local salons instead — the copy must say so.
+async function getBusinesses(suburbName: string, state: string): Promise<{ businesses: Business[]; mobileMatched: boolean }> {
   const supabase = supabaseServerInternal();
 
-  // Mobile/at-home: prefer specialty:'mobile' or description match.
+  // Mobile/at-home: is_mobile flag (the canonical signal, as on /mobile-hairdresser)
+  // or specialty:'mobile', then a name/description match.
   const { data: bySpecialty } = await supabase
     .from("businesses")
     .select("*")
     .eq("status", "active")
     .eq("state", state)
     .ilike("suburb", suburbName)
-    .contains("specialties", ["mobile"])
+    .or("is_mobile.eq.true,specialties.cs.{mobile}")
     .order("featured_until", { ascending: false, nullsFirst: false })
     .order("google_rating", { ascending: false, nullsFirst: false })
     .order("google_review_count", { ascending: false, nullsFirst: false })
     .limit(20);
 
-  if (bySpecialty && bySpecialty.length >= 6) return bySpecialty as Business[];
+  if (bySpecialty && bySpecialty.length >= 6) return { businesses: bySpecialty as Business[], mobileMatched: true };
 
   // Fallback: name or description match for "mobile" / "home" / "at home" / "we come to you"
   const { data: byMatch } = await supabase
@@ -90,7 +97,7 @@ async function getBusinesses(suburbName: string, state: string): Promise<Busines
       .order("google_rating", { ascending: false, nullsFirst: false })
       .order("google_review_count", { ascending: false, nullsFirst: false })
       .limit(20);
-    return (topRated ?? []) as Business[];
+    return { businesses: (topRated ?? []) as Business[], mobileMatched: false };
   }
 
   const combined: Business[] = [];
@@ -103,7 +110,7 @@ async function getBusinesses(suburbName: string, state: string): Promise<Busines
       }
     }
   }
-  return combined.slice(0, 20);
+  return { businesses: combined.slice(0, 20), mobileMatched: true };
 }
 
 export default async function Page({ params }: { params: Promise<{ suburb: string }> }) {
@@ -111,7 +118,7 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
   const config = TOP_SUBURBS.find((s) => s.slug === suburb);
   if (!config) notFound();
 
-  const businesses = await getBusinesses(config.name, config.state);
+  const { businesses, mobileMatched } = await getBusinesses(config.name, config.state);
   const siblingSuburbs = TOP_SUBURBS.filter((s) => s.regionSlug === config.regionSlug && s.slug !== config.slug).slice(0, 12);
 
   return (
@@ -124,7 +131,9 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "At-home and mobile hairdressers — stylists who come to your home or workplace",
-        hero: "At-home hairdressers in {suburb} bring the salon to your front door — ideal for busy parents, professionals on tight schedules, anyone with mobility limits, or event hair (weddings, formals, race-day). Below are the verified mobile and at-home stylists serving {suburb}.",
+        hero: mobileMatched
+          ? "At-home hairdressers in {suburb} bring the salon to your front door — ideal for busy parents, professionals on tight schedules, anyone with mobility limits, or event hair (weddings, formals, race-day). Below are the verified mobile and at-home stylists serving {suburb}."
+          : "We don't have a mobile or at-home hairdresser listed in {suburb} yet. Below are the top-rated salons in {suburb} instead — these are salons you visit, not mobile services.",
         guideTitle: "How to choose an at-home hairdresser in {suburb}",
         guideIntro: "An at-home hairdresser in {suburb} should arrive with a complete portable kit — basin, chair, dryer, drop sheet — and treat your home with the same hygiene standards as a salon. The best at-home stylists are experienced salon hairdressers who chose mobile work; the worst are unqualified sole traders cutting corners. Read recent reviews carefully and confirm equipment up front.",
         whatToLook: [
@@ -138,7 +147,9 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
           { q: "How much does an at-home hairdresser in {suburb} cost?", a: "An at-home cut and blow-dry in {suburb} typically runs $80-$150, $150-$300+ for colour, plus a small travel fee beyond 10-15km. Pricing reflects portable equipment and travel time, but works out similar to in-salon for many clients." },
           { q: "Do at-home hairdressers in {suburb} bring their own basin?", a: "The best ones do. A portable basin is essential for colour rinses and proper conditioning. Confirm equipment when booking, especially for colour services. If a stylist won't bring a basin, save colour work for a salon visit." },
           { q: "Can I get colour done by an at-home hairdresser in {suburb}?", a: "Yes — established at-home hairdressers in {suburb} carry professional colour, a portable basin, and bond-builders. Discuss colour history during booking. Major colour corrections often still need a salon environment for safety." },
-          { q: "Best at-home hairdressers in {suburb}?", a: "{suburb} at-home hairdressers are listed above, ranked by Google rating and review count. Read recent reviews, confirm equipment and travel coverage, and book early — the best mobile stylists fill up weeks ahead." },
+          mobileMatched
+            ? { q: "Best at-home hairdressers in {suburb}?", a: "{suburb} at-home hairdressers are listed above, ranked by Google rating and review count. Read recent reviews, confirm equipment and travel coverage, and book early — the best mobile stylists fill up weeks ahead." }
+            : { q: "Are there at-home hairdressers in {suburb}?", a: "None are listed in {suburb} yet. The businesses above are top-rated local salons, not mobile services. Check nearby suburbs below for mobile stylists who may travel to {suburb}." },
         ],
         scissorPlug: {
           text: "At-home hairdressers in {suburb} need scissors that hold a sharp edge between salon visits. ShearGenius supplies",

@@ -55,10 +55,9 @@ const TEXT = `# findme.hair
 For 178 high-density Australian suburbs, dedicated pages exist at:
 - /hairdresser/{suburb-slug}
 - /barber/{suburb-slug}
-- /hair-salon/{suburb-slug}
 - /at-home-hairdresser/{suburb-slug}
 
-Examples: /hairdresser/south-yarra, /barber/surry-hills, /hair-salon/parramatta, /at-home-hairdresser/bondi-junction.
+Examples: /hairdresser/south-yarra, /barber/surry-hills, /at-home-hairdresser/bondi-junction.
 
 ## Editorial guides
 

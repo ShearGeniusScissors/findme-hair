@@ -6,6 +6,7 @@ import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
+import { PIVOT_NOINDEX, isCityPivotIndexable } from '@/lib/pivotCoverage';
 import type { AuState, Business } from '@/types/database';
 
 export const revalidate = 3600;
@@ -57,9 +58,12 @@ export async function generateMetadata({
   const title = `Mobile Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
   const description = `Find verified mobile hairdressers who come to you in ${config.name}, ${stateName(config.state)}. At-home cuts, colour, and styling with real Google reviews.`;
 
+  const indexable = await isCityPivotIndexable('mobile-hairdresser', config.state, config.suburbs);
+
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: {

@@ -23,7 +23,7 @@ export default function Page() {
       h1: "Best Hair Salon Near Me",
       hero: "Find the best hair salon near you in Australia. Verified top-rated salons in every major city and high-density suburb, ranked by Google rating and review count. The best salons earn their reputation visit by visit — the shortlist below filters for that.",
       cityRoute: "/best-hairdresser",
-      suburbRoute: "/hair-salon",
+      suburbRoute: "/hairdresser",
       guideTitle: "How to find the best hair salon near you",
       guideIntro: "&ldquo;Best&rdquo; is subjective for hair, but a few signals separate the top salons from the rest. The shortlists below filter by Google rating and review count first, then verify against multiple third-party sources. Read the latest 30 reviews — the best salons earn most of their reviews recently because they&rsquo;re consistently good.",
       whatToDo: [

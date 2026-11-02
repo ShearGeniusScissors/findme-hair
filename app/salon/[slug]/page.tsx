@@ -877,7 +877,6 @@ export default async function BusinessProfilePage({
               if (matchedSuburb) {
                 links.push({ href: `/${isBarber ? 'barber' : 'hairdresser'}/${matchedSuburb.slug}`, label: `${isBarber ? 'Barbers' : 'Hairdressers'} in ${matchedSuburb.name}` });
                 if (!isBarber) {
-                  links.push({ href: `/hair-salon/${matchedSuburb.slug}`, label: `Hair Salons in ${matchedSuburb.name}` });
                   links.push({ href: `/at-home-hairdresser/${matchedSuburb.slug}`, label: `At-Home Hairdressers in ${matchedSuburb.name}` });
                 }
               }
