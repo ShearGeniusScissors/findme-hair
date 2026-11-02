@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/mens-haircuts-near-me";
 const title = `Men's Haircuts Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find men's haircuts near you in Australia. Verified barbers and men's stylists for skin fades, scissor cuts, beard trims and gentleman's grooming with real Google reviews.";
+const description = "Find men's haircuts near you in Australia. Barbers and men's stylists for skin fades, scissor cuts, beard trims and gentleman's grooming with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Men's Haircuts Near Me",
       metaDescription: description,
       h1: "Men's Haircuts Near Me",
-      hero: "Find men's haircuts near you in Australia. Verified barbers and men's stylists for skin fades, taper fades, scissor cuts, beard trims, hot-towel shaves and gentleman's grooming — ranked by Google rating and review count.",
+      hero: "Find men's haircuts near you in Australia. Barbers and men's stylists for skin fades, taper fades, scissor cuts, beard trims, hot-towel shaves and gentleman's grooming — ranked by Google rating and review count.",
       cityRoute: "/mens-haircut",
       suburbRoute: "/barber",
       guideTitle: "How to find a great men's haircut near you",
       guideIntro: "Choosing the right barber comes down to two things — the cut you want and how busy your week is. For sharp fades, dedicated barber shops with strong recent Instagram fade work. For longer scissor cuts, a salon barber or unisex stylist often delivers a sharper result. Walk-ins suit refresh cuts; bookings make sense before weddings or interviews.",
       whatToDo: [
         "Type your suburb above to find men's haircut shops nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "For fades — pick a dedicated barber. For longer cuts and styling — pick a salon barber.",
         "Read recent reviews. Lifetime ratings hide stylist turnover.",
         "Check Instagram for fresh work in your style before committing for a high-stakes cut.",

@@ -157,7 +157,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/best-barber/${config.slug}`;
   const title = `Best Barbers in ${config.name} (${new Date().getFullYear()}) — findme.hair`;
-  const description = `Find the best barber shops in ${config.name}, ${stateName(config.state)}. Top-rated barbers with verified Google reviews, hours, fade specialists and traditional shops.`;
+  const description = `Find the best barber shops in ${config.name}, ${stateName(config.state)}. Top-rated barbers with Google reviews and opening hours.`;
 
   return {
     title,
@@ -261,7 +261,7 @@ export default async function BestBarberCityPage({
           {
             '@type': 'Question',
             name: `Who are the best barbers in ${config.name}?`,
-            acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists the top-rated barbers in ${config.name} based on verified Google reviews. ${businesses.length > 0 ? `Top rated include ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.` : `Browse our ${config.name} listings for the latest recommendations.`}` },
+            acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists the top-rated barbers in ${config.name} based on Google reviews. ${businesses.length > 0 ? `Top rated include ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.` : `Browse our ${config.name} listings for the latest recommendations.`}` },
           },
           {
             '@type': 'Question',
@@ -338,7 +338,7 @@ export default async function BestBarberCityPage({
               Who we&rsquo;d send a friend to in {config.name}
             </h2>
             <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
-              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of hand-verified barbers and barber shops on findme.hair. Ranked by Google rating and review depth, never paid placement.
+              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of barbers and barber shops on findme.hair. Ranked by Google rating and review depth, never paid placement.
             </p>
             <div className="mt-6 space-y-5">
               {businesses.slice(0, 5).map((b) => {
@@ -404,8 +404,8 @@ export default async function BestBarberCityPage({
             <p>
               We currently list {businesses.length} top-rated barbers and unisex shops across {config.name}.
               {pureBarbers.length > 0 && ` ${pureBarbers.length} dedicated barbershops`}
-              {unisex.length > 0 && ` and ${unisex.length} unisex shops`} made our curated list based on verified
-              reviews, consistency, and local reputation.
+              {unisex.length > 0 && ` and ${unisex.length} unisex shops`} made the list, ranked by Google rating
+              and review count.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Popular suburbs for barbers</h3>
             <p>

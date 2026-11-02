@@ -29,11 +29,13 @@ export const CITY_PIVOT_SPECIALTY: Record<string, string> = {
   'kids-hairdresser': 'kids',
   'korean-hair-salon': 'korean',
   'mobile-hairdresser': 'mobile',
+  // Not a specialty tag: walk_ins_welcome (website wording match) on barber/unisex rows.
+  'walk-in-barber': 'walk-in',
 };
 
 export type SuburbPivotRoute = 'hairdresser' | 'barber' | 'at-home-hairdresser';
 
-export const COVERAGE_COLUMNS = 'state, suburb, specialties, is_mobile, name, business_type';
+export const COVERAGE_COLUMNS = 'state, suburb, specialties, is_mobile, name, business_type, walk_ins_welcome';
 
 export interface CoverageRow {
   state: string | null;
@@ -42,6 +44,7 @@ export interface CoverageRow {
   is_mobile: boolean | null;
   name: string | null;
   business_type: string | null;
+  walk_ins_welcome?: boolean | null;
 }
 
 const norm = (s: string | null | undefined) => (s ?? '').toLowerCase().trim();
@@ -58,6 +61,7 @@ function matchesRoute(r: CoverageRow, route: string): boolean {
   const specialty = CITY_PIVOT_SPECIALTY[route];
   if (!specialty) return true;
   if (specialty === 'mobile') return isMobileRow(r);
+  if (specialty === 'walk-in') return r.walk_ins_welcome === true && (r.business_type === 'barber' || r.business_type === 'unisex');
   return (r.specialties ?? []).includes(specialty);
 }
 

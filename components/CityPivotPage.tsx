@@ -158,7 +158,7 @@ export default async function CityPivotPage({ city, businesses, content, allCiti
               Who we&rsquo;d send a friend to in {city.name}
             </h2>
             <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
-              Picks from the top of {city.name}&rsquo;s {businesses.length}-strong hand-verified list of {content.h1Prefix.toLowerCase()}. Listings are ranked by Google rating and review depth, never paid placement.
+              Picks from the top of {city.name}&rsquo;s {businesses.length}-strong list of {content.h1Prefix.toLowerCase()} on findme.hair. Listings are ranked by Google rating and review depth, never paid placement.
             </p>
             <div className="mt-6 space-y-5">
               {businesses.slice(0, 5).map((b) => {

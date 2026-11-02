@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/womens-haircut-near-me";
 const title = `Women's Haircuts Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find women's haircuts near you in Australia. Verified salons and stylists for cuts, blow-dries, layers, fringes, lob and pixie styles with real Google reviews.";
+const description = "Find women's haircuts near you in Australia. Salons and stylists for cuts, blow-dries, layers, fringes, lob and pixie styles with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Women's Haircuts Near Me",
       metaDescription: description,
       h1: "Women's Haircuts Near Me",
-      hero: "Find women's haircuts near you in Australia. Verified hairdressers and salons for cuts, blow-dries, layered styles, fringes, lobs, pixies and grow-out repair — ranked by Google rating and review count.",
+      hero: "Find women's haircuts near you in Australia. Hairdressers and salons for cuts, blow-dries, layered styles, fringes, lobs, pixies and grow-out repair — ranked by Google rating and review count.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a great women's haircut near you",
       guideIntro: "The right women's haircut starts with the right consultation. Top stylists spend 5-10 minutes before lifting scissors discussing face shape, lifestyle, styling time, and reference photos. Avoid salons that skip consultation — they're operating like a quick-cut shop, not a salon.",
       whatToDo: [
         "Type your suburb above to find hairdressers nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Bring at least 3 reference photos in different lighting",
         "For lob, pixie or major cut changes — book a senior stylist with photographic evidence in your style",
         "Discuss styling time honestly — the cut should suit your daily 5-minute routine, not the stylist's blow-dry",

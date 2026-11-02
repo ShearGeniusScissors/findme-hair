@@ -132,7 +132,7 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
         routePrefix: ROUTE,
         metaDescribeShort: "At-home and mobile hairdressers — stylists who come to your home or workplace",
         hero: mobileMatched
-          ? "At-home hairdressers in {suburb} bring the salon to your front door — ideal for busy parents, professionals on tight schedules, anyone with mobility limits, or event hair (weddings, formals, race-day). Below are the verified mobile and at-home stylists serving {suburb}."
+          ? "At-home hairdressers in {suburb} bring the salon to your front door — ideal for busy parents, professionals on tight schedules, anyone with mobility limits, or event hair (weddings, formals, race-day). Below are the mobile and at-home stylists listed for {suburb}, ranked by Google rating."
           : "We don't have a mobile or at-home hairdresser listed in {suburb} yet. Below are the top-rated salons in {suburb} instead — these are salons you visit, not mobile services.",
         guideTitle: "How to choose an at-home hairdresser in {suburb}",
         guideIntro: "An at-home hairdresser in {suburb} should arrive with a complete portable kit — basin, chair, dryer, drop sheet — and treat your home with the same hygiene standards as a salon. The best at-home stylists are experienced salon hairdressers who chose mobile work; the worst are unqualified sole traders cutting corners. Read recent reviews carefully and confirm equipment up front.",

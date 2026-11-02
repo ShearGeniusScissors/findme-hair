@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Hair Extension Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified hair extension specialists in ${config.name}, ${stateName(config.state)}. Tape extensions, bonds, hand-tied wefts, micro-bead and Russian Remy human hair with real Google reviews.`;
+  const description = `Find hair extension specialists in ${config.name}, ${stateName(config.state)}. Tape extensions, bonds, hand-tied wefts, micro-bead and Russian Remy human hair with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Tape extensions, hand-tied wefts, bonds, micro-beads and Russian Remy human hair specialists",
-        hero: "Hair extension specialists in {city} install tape extensions, hand-tied wefts, bonds and micro-beads using human-hair lengths matched to your colour and texture. Below are the verified extension stylists across {city} with the strongest Google reviews.",
+        hero: "Hair extension specialists in {city} install tape extensions, hand-tied wefts, bonds and micro-beads using human-hair lengths matched to your colour and texture. Below are {city} salons whose name or website mentions hair extensions, with the strongest Google reviews.",
         guideTitle: "How to choose a hair extension specialist in {city}",
         guideIntro: "The right method depends on your natural hair density and how much maintenance you can commit to. Tape extensions in {city} are the most popular choice — light, fast to install, and easy to remove. Hand-tied wefts last longer but cost more upfront. Bonds and micro-beads need an experienced installer because poor placement causes traction damage.",
         whatToLook: [
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much do hair extensions cost in {city}?", a: "Hair extensions in {city} typically run $700-$1500 for a full head of tape, $1500-$3000 for hand-tied wefts, and $1200-$2500 for keratin bonds. Pricing reflects the quality and quantity of human hair used. Always book a consultation first." },
           { q: "How long do tape extensions last in {city}?", a: "Tape extensions in {city} last 12-18 months with proper care, but the tape itself needs moving up every 6-8 weeks as your natural hair grows. Hand-tied wefts last 6-12 months and refit every 8-10 weeks." },
           { q: "Do extensions damage your natural hair?", a: "Properly fitted extensions in {city} should not damage your natural hair. Damage usually comes from extensions installed too tight, the wrong method for your hair type, or poor removal. Always work with an experienced installer and follow the aftercare." },
-          { q: "Best extension suburbs in {city}?", a: "{city} extension specialists cluster around {suburbs5}. Use the listings above to book the highest-rated extension stylists, all verified with real Google reviews." },
+          { q: "Best extension suburbs in {city}?", a: "{city} extension specialists cluster around {suburbs5}. Use the listings above to book the highest-rated extension stylists, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Extension stylists in {city} use specialised scissors to blend tape and weft into the natural hair. ShearGenius supplies",

@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Balayage Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified balayage specialists in ${config.name}, ${stateName(config.state)}. Hand-painted highlights, lived-in colour, foilage and money-piece work with real Google reviews.`;
+  const description = `Find balayage specialists in ${config.name}, ${stateName(config.state)}. Hand-painted highlights, lived-in colour, foilage and money-piece work with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Hand-painted balayage, lived-in colour, foilage and money-piece specialists",
-        hero: "Balayage specialists in {city} hand-paint colour into the hair instead of the saturated, all-over foil approach — the result is a softer, sun-kissed grow-out and far less salon time over the year. Below are the verified balayage colourists across {city} with the strongest Google reviews.",
+        hero: "Balayage specialists in {city} hand-paint colour into the hair instead of the saturated, all-over foil approach — the result is a softer, sun-kissed grow-out and far less salon time over the year. Below are {city} salons whose name or website mentions balayage, with the strongest Google reviews.",
         guideTitle: "How to choose a balayage specialist in {city}",
         guideIntro: "Balayage is a hand-painting technique, not a colour formula — the difference between a great balayage and an average one comes down to the colourist's eye, hand placement, and how they manage tone after lifting. The best balayage specialists in {city} have a consistent Instagram portfolio, charge by hours of work rather than a flat colour fee, and book strand tests for clients with previously coloured hair.",
         whatToLook: [
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much does balayage cost in {city}?", a: "Balayage in {city} typically runs $250-$650 depending on hair length and how much lift you need. Premium colourists charge $400+ and include a bond-builder treatment, gloss and blow-dry. Always book a consultation first if you have previously coloured hair." },
           { q: "How long does balayage last in {city}?", a: "Because balayage grows out softly, most clients in {city} return for a refresh every 4-6 months — far less often than the 6-8 week cycle full foils need. A toning gloss between sessions extends the result." },
           { q: "What is foilayage and how is it different to balayage?", a: "Foilayage in {city} salons combines hand-painted balayage with foil to drive more lift. It works well on darker or coarser hair where freehand balayage struggles to lift cleanly. Most balayage specialists offer both and pick based on your hair." },
-          { q: "Best balayage suburbs in {city}?", a: "Top balayage colourists in {city} cluster around {suburbs5}. Use the listings above to book the highest-rated balayage specialists, all verified with real Google reviews." },
+          { q: "Best balayage suburbs in {city}?", a: "Top balayage colourists in {city} cluster around {suburbs5}. Use the listings above to book the highest-rated balayage specialists, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Balayage specialists in {city} use weight-removal and chip-cutting scissors to expose the painted lengths. ShearGenius supplies",

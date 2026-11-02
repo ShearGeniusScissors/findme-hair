@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-colourist-near-me";
 const title = `Hair Colourist Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hair colourist near you in Australia. Verified specialists for balayage, foils, lived-in colour, blonde, brunette, copper and corrective colour with real Google reviews.";
+const description = "Find a hair colourist near you in Australia. Specialists for balayage, foils, lived-in colour, blonde, brunette, copper and corrective colour with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Hair Colourist Near Me",
       metaDescription: description,
       h1: "Hair Colourist Near Me",
-      hero: "Find a hair colourist near you in Australia. Verified specialists for balayage, foils, lived-in colour, blonde, brunette, copper, ash, and corrective colour — ranked by Google rating and review count.",
+      hero: "Find a hair colourist near you in Australia. Specialists for balayage, foils, lived-in colour, blonde, brunette, copper, ash, and corrective colour — ranked by Google rating and review count.",
       cityRoute: "/balayage-specialist",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find the right hair colourist near you",
       guideIntro: "Colour is a skill that varies hugely between stylists — far more than cutting. The right colourist for you depends on what you want: balayage specialists hand-paint for soft grow-out, foil specialists drive maximum lift, and corrective specialists fix what other salons couldn't. Always book a consultation before a major colour change.",
       whatToDo: [
         "Type your suburb above to find colourists nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Match the specialty to your goal — balayage, foils, blonde, copper, lived-in, corrective",
         "Bring at least 3 reference photos in different lighting",
         "Always book a consultation before a major colour change, especially over previous colour",

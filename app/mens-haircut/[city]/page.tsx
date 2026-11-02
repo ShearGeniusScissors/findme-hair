@@ -106,7 +106,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Men's haircut, skin fade, scissor cut, beard trim and gentleman's grooming specialists",
-        hero: "Men's haircuts in {city} cover everything from a sharp skin fade to a classic scissor cut, plus beard work, hot-towel shaves and gentleman's grooming. Below are the verified barbers and male grooming specialists across {city} with the strongest Google reviews.",
+        hero: "Men's haircuts in {city} cover everything from a sharp skin fade to a classic scissor cut, plus beard work, hot-towel shaves and gentleman's grooming. Below are the barber shops and unisex salons across {city} with the strongest Google reviews.",
         guideTitle: "How to find the best men's haircut in {city}",
         guideIntro: "Choosing a barber in {city} comes down to the type of cut you want. For modern fades, taper work and skin fades, look for a dedicated barber shop with strong recent fade work on Instagram. For longer scissor cuts, mod cuts and side parts, a salon barber or a unisex stylist will often deliver a sharper result. Read recent reviews — fade quality changes quickly when senior staff move shops.",
         whatToLook: [
@@ -120,7 +120,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much is a men's haircut in {city}?", a: "A standard men's cut in {city} typically runs $30-$55, a skin fade or detail fade $45-$70, and a hot-towel shave $40-$60. Senior barbers and gentleman's grooming shops charge $65-$90. Tipping is optional but appreciated for great work." },
           { q: "What's the difference between a barber and a men's stylist in {city}?", a: "Barbers in {city} specialise in clipper-driven cuts — fades, tapers, beard trims and shaves. Men's stylists in unisex salons are more focused on longer scissor cuts, colour, and styling. Pick based on the cut you want, not the venue type." },
           { q: "How often should men book a haircut in {city}?", a: "A skin fade in {city} needs a refresh every 2-3 weeks to keep the line tight. Standard scissor cuts hold their shape for 4-6 weeks. Beard trims usually pair with a haircut every visit." },
-          { q: "Best suburbs for men's haircuts in {city}?", a: "{city} barbers and men's stylists cluster around {suburbs5}. Use the listings above to book the highest-rated barbers, all verified with real Google reviews." },
+          { q: "Best suburbs for men's haircuts in {city}?", a: "{city} barbers and men's stylists cluster around {suburbs5}. Use the listings above to book the highest-rated barbers, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Top barbers and men's stylists in {city} put their scissors through 30+ cuts a week. ShearGenius supplies",

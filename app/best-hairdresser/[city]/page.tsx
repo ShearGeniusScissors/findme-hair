@@ -154,7 +154,7 @@ export async function generateMetadata({
   if (!config) return {};
 
   const title = `Best Hairdressers in ${config.name} (${new Date().getFullYear()}) — findme.hair`;
-  const description = `Find the best hairdressers and barbers in ${config.name}, ${stateName(config.state)}. Top-rated salons with verified reviews, hours, and online booking.`;
+  const description = `Find the best hairdressers and barbers in ${config.name}, ${stateName(config.state)}. Top-rated salons with Google reviews and opening hours.`;
 
   return {
     title,
@@ -237,7 +237,7 @@ export default async function CityGuidePage({
           {
             '@type': 'Question',
             name: `Who are the best hairdressers in ${config.name}?`,
-            acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists the top-rated hairdressers in ${config.name} based on verified Google reviews. ${businesses.length > 0 ? `Top rated include ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.` : `Browse our ${config.name} listings for the latest recommendations.`}` },
+            acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists the top-rated hairdressers in ${config.name} based on Google reviews. ${businesses.length > 0 ? `Top rated include ${businesses.slice(0, 3).map((b) => b.name).join(', ')}.` : `Browse our ${config.name} listings for the latest recommendations.`}` },
           },
           {
             '@type': 'Question',
@@ -315,7 +315,7 @@ export default async function CityGuidePage({
               Who we&rsquo;d send a friend to in {config.name}
             </h2>
             <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
-              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of hand-verified hair professionals on findme.hair. Listings are ranked by Google rating and review depth, never paid placement.
+              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of hair professionals on findme.hair. Listings are ranked by Google rating and review depth, never paid placement.
             </p>
             <div className="mt-6 space-y-5">
               {businesses.slice(0, 5).map((b) => {
@@ -386,8 +386,8 @@ export default async function CityGuidePage({
             <p>
               We currently list {businesses.length} top-rated salons and barbers across {config.name}.
               {salons.length > 0 && ` ${salons.length} hair salons`}
-              {barbers.length > 0 && ` and ${barbers.length} barber shops`} made our curated list based on
-              verified reviews, consistency, and local reputation.
+              {barbers.length > 0 && ` and ${barbers.length} barber shops`} made the list, ranked by
+              Google rating and review count.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Popular suburbs for hair services</h3>
             <p>

@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-spa-near-me";
 const title = `Hair Spa Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hair spa near you in Australia. Verified salons offering hair spa treatments, scalp massage, deep conditioning, keratin and Olaplex bond-building with real Google reviews.";
+const description = "Find a hair spa near you in Australia. Salons offering hair spa treatments, scalp massage, deep conditioning, keratin and Olaplex bond-building with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Hair Spa Near Me",
       metaDescription: description,
       h1: "Hair Spa Near Me",
-      hero: "Find a hair spa near you in Australia. Verified salons offering hair spa treatments — scalp massage, deep conditioning, keratin, Olaplex bond-building, and Japanese head-spa style services. Ranked by Google rating and review count.",
+      hero: "Find a hair spa near you in Australia. Salons offering hair spa treatments — scalp massage, deep conditioning, keratin, Olaplex bond-building, and Japanese head-spa style services. Ranked by Google rating and review count.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a hair spa near you",
       guideIntro: "A hair spa treatment goes beyond a wash and blow-dry — it includes a longer scalp massage, deep conditioning mask, often keratin or bond-building treatment, and a styled finish. Japanese head-spa services include extended pressure-point scalp work. Premium hair spas can run 90 minutes and feel more like a wellness service than a haircut.",
       whatToDo: [
         "Type your suburb above to find hair spa salons nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Specify the hair concern at booking — dry ends, scalp tension, color damage all need different treatments",
         "Allow 60-90 minutes for a quality hair spa session",
         "For maximum benefit, schedule monthly rather than as a one-off",

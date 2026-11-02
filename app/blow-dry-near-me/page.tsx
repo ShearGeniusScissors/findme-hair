@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/blow-dry-near-me";
 const title = `Blow Dry Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a blow dry near you in Australia. Verified salons offering wash-and-blow-dry, blowout styles, event hair and quick-finish blow-drys with real Google reviews.";
+const description = "Find a blow dry near you in Australia. Salons offering wash-and-blow-dry, blowout styles, event hair and quick-finish blow-drys with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Blow Dry Near Me",
       metaDescription: description,
       h1: "Blow Dry Near Me",
-      hero: "Find a blow dry near you in Australia. Verified salons offering wash-and-blow-dry, sleek blowouts, voluminous bouncy blow-drys, and event-ready styling — ranked by Google rating and review count.",
+      hero: "Find a blow dry near you in Australia. Salons offering wash-and-blow-dry, sleek blowouts, voluminous bouncy blow-drys, and event-ready styling — ranked by Google rating and review count.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a great blow dry near you",
       guideIntro: "A blow dry is the fastest way to walk out of a salon looking like the best version of yourself. The right blow dry stylist matches the technique to your hair type — round-brush for volume on fine hair, paddle-brush for smoothing thick or curly hair, ionic dryers for shine. Always specify the style you want when booking.",
       whatToDo: [
         "Type your suburb above to find blow dry salons nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Bring a photo of the style you want — sleek, voluminous, beachy, or curly",
         "Allow 30-45 minutes for a standard blow dry; 60-75 for elaborate styling",
         "For events, book the blow dry as close to the event start as possible",

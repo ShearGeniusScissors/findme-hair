@@ -27,7 +27,7 @@ export async function generateMetadata({
   const path = `https://www.findme.hair/best-haircut/${config.slug}`;
   const year = new Date().getFullYear();
   const title = `Best Haircut in ${config.name} ${year} | findme.hair`;
-  const description = `Where to get the best haircut in ${config.name}, ${stateName(config.state)}. Verified top hairdressers and barbers, ranked by Google rating and review count. Editorial guide refreshed ${year}.`;
+  const description = `Where to get the best haircut in ${config.name}, ${stateName(config.state)}. Top hairdressers and barbers, ranked by Google rating and review count. Editorial guide refreshed ${year}.`;
 
   return {
     title, description,
@@ -103,7 +103,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `Where can I get the best haircut in ${config.name}?`, acceptedAnswer: { '@type': 'Answer', text: `The verified top-rated hairdressers and barbers in ${config.name} are listed above, sorted by Google rating and review count. Recent reviews and consistent Instagram work separate the truly best from the merely good.` } },
+          { '@type': 'Question', name: `Where can I get the best haircut in ${config.name}?`, acceptedAnswer: { '@type': 'Answer', text: `The top-rated hairdressers and barbers in ${config.name} are listed above, sorted by Google rating and review count. Recent reviews and consistent Instagram work separate the truly best from the merely good.` } },
           { '@type': 'Question', name: `How much does the best haircut in ${config.name} cost?`, acceptedAnswer: { '@type': 'Answer', text: `Top salons in ${config.name} charge $120-$200 for a senior cut, $250-$650 for balayage, and $65-$90 for premium men's barber cuts. The premium reflects senior-stylist time and bond-builder products.` } },
           { '@type': 'Question', name: `What suburbs have the best hair salons in ${config.name}?`, acceptedAnswer: { '@type': 'Answer', text: `${config.name} top stylists cluster across the metro suburbs. The shortlist above filters by Google rating across all of ${config.name} so you start with the highest-rated options first.` } },
         ],
@@ -128,7 +128,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
             Best Haircut in {config.name} ({year})
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            Where to get the best haircut in {config.name}. Verified top hairdressers and barbers, ranked by Google rating across 4.5+ stars and review count. Refreshed continuously from the findme.hair directory.
+            Where to get the best haircut in {config.name}. Top hairdressers and barbers, ranked by Google rating across 4.5+ stars and review count. Refreshed continuously from the findme.hair directory.
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-color-near-me";
 const title = `Hair Color Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find hair color near you in Australia. Verified hair color specialists for balayage, foils, lived-in color, blonde, brunette, copper and corrective color with real Google reviews.";
+const description = "Find hair color near you in Australia. Hair color specialists for balayage, foils, lived-in color, blonde, brunette, copper and corrective color with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Hair Color Near Me",
       metaDescription: description,
       h1: "Hair Color Near Me",
-      hero: "Find hair color near you in Australia. Verified specialists for balayage, foils, lived-in color, blonde, brunette, copper, ash and corrective color — ranked by Google rating and review count. (Australian English: hair colour. Same service.)",
+      hero: "Find hair color near you in Australia. Specialists for balayage, foils, lived-in color, blonde, brunette, copper, ash and corrective color — ranked by Google rating and review count. (Australian English: hair colour. Same service.)",
       cityRoute: "/balayage-specialist",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find the right hair color near you",
       guideIntro: "Color is a skill that varies hugely between stylists. The right color stylist depends on what you want — balayage specialists hand-paint for soft grow-out, foil specialists drive maximum lift, corrective specialists fix what other salons couldn't. Always book a consultation before a major color change.",
       whatToDo: [
         "Type your suburb above to find color stylists nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Match the specialty to your goal — balayage, foils, blonde, copper, lived-in, corrective",
         "Bring at least 3 reference photos in different lighting",
         "For coloring over previous color, always book a consultation and strand test first",

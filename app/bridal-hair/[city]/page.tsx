@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Bridal Hair Stylists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified bridal hair stylists in ${config.name}, ${stateName(config.state)}. Wedding-day hair, on-location styling, bridal trials and bridesmaid packages with real Google reviews.`;
+  const description = `Find bridal hair stylists in ${config.name}, ${stateName(config.state)}. Wedding-day hair, on-location styling, bridal trials and bridesmaid packages with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Wedding-day hair stylists, on-location styling, bridal trials and bridesmaid packages",
-        hero: "Bridal hair stylists in {city} build the wedding-morning timeline as carefully as they build the actual hair — the right one is calm, fast, and has done the look you want a hundred times. Below are the verified bridal specialists across {city} with the strongest Google reviews.",
+        hero: "Bridal hair stylists in {city} build the wedding-morning timeline as carefully as they build the actual hair — the right one is calm, fast, and has done the look you want a hundred times. Below are {city} salons whose name or website mentions bridal or wedding hair, with the strongest Google reviews.",
         guideTitle: "How to choose a bridal hair stylist in {city}",
         guideIntro: "Wedding hair is one of the highest-stakes bookings a stylist takes — it has to last 14 hours, photograph well in soft and harsh light, and survive a first dance. The strongest bridal hair stylists in {city} run mandatory trials, time-block the morning, and bring backup product on the day. Book at least 6-9 months out for peak wedding season (October to April).",
         whatToLook: [
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much does a bridal hair stylist cost in {city}?", a: "Bridal hair in {city} typically runs $200-$450 for the bride, plus $90-$180 per bridesmaid and $90-$160 for the mother of the bride. On-location travel adds $100-$300. Most stylists also charge a non-refundable deposit to lock the date." },
           { q: "How far in advance should I book bridal hair in {city}?", a: "For Saturday weddings between October and April, the most in-demand bridal stylists in {city} book out 6-12 months ahead. Off-season weddings (May-September) often have 3-4 month availability. Book the trial 2-3 months before the wedding day." },
           { q: "Do bridal stylists in {city} travel to the venue?", a: "Yes — most bridal hair specialists in {city} offer on-location services for hotels, accommodations and regional venues. Travel fees vary by distance and the size of the bridal party. Always confirm parking and a power point at the venue." },
-          { q: "Best bridal hair suburbs in {city}?", a: "{city} bridal stylists cluster around {suburbs5}, but most travel city-wide and to regional venues. Use the listings above to book the highest-rated bridal specialists, all verified with real Google reviews." },
+          { q: "Best bridal hair suburbs in {city}?", a: "{city} bridal stylists cluster around {suburbs5}, but most travel city-wide and to regional venues. Use the listings above to book the highest-rated bridal specialists, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Bridal stylists in {city} use precision scissors for veil cutting, fringe trims and morning-of clean-ups. ShearGenius supplies",

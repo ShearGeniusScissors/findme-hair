@@ -25,7 +25,7 @@ export default function Page() {
         pageTitle: "Cheap Haircut Near Me",
         metaDescription: description,
         h1: "Cheap Haircut Near Me",
-        hero: "Find a cheap haircut near you in Australia. Verified hairdressers and barbers offering affordable cuts, student rates, men's clipper cuts and quick blow-dries — without sacrificing quality. Browse by city or suburb below.",
+        hero: "Find a cheap haircut near you in Australia. Hairdressers and barbers offering affordable cuts, student rates, men's clipper cuts and quick blow-dries — without sacrificing quality. Browse by city or suburb below.",
         cityRoute: "/best-hairdresser",
         suburbRoute: "/hairdresser",
         guideTitle: "How to find a cheap haircut near you, without regret",

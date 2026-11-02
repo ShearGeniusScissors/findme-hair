@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/kids-haircut-near-me";
 const title = `Kids Haircut Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a kids haircut near you in Australia. Verified family-friendly salons offering first haircuts, sensory-friendly cuts, and quick kid-favourite trims with real Google reviews.";
+const description = "Find a kids haircut near you in Australia. Family-friendly salons offering first haircuts, sensory-friendly cuts, and quick kid-favourite trims with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Kids Haircut Near Me",
       metaDescription: description,
       h1: "Kids Haircut Near Me",
-      hero: "Find a kids haircut near you in Australia. Verified family-friendly salons that handle first haircuts, the trickier toddler trims, sensory-friendly cuts and quick kid-favourite styles — ranked by Google rating and review count.",
+      hero: "Find a kids haircut near you in Australia. Family-friendly salons that handle first haircuts, the trickier toddler trims, sensory-friendly cuts and quick kid-favourite styles — ranked by Google rating and review count.",
       cityRoute: "/kids-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a great kids haircut near you",
       guideIntro: "A great kids haircut is patient, fast, and good at distraction. Some salons run dedicated kids studios with car-shaped chairs and cartoons; others are mixed salons with one or two stylists who genuinely enjoy cutting children. Sensory-friendly options matter for kids who struggle with clippers, mirrors, or the smell of styling product.",
       whatToDo: [
         "Type your suburb above to find kids haircut salons nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "For first haircuts, ask about certificate / photo / curl-saving offers",
         "For sensory needs, mention them at booking — many stylists will use scissors only, skip the cape, dim the lights",
         "Standard kids cut takes 15-25 minutes — book longer for first cuts or anxious kids",

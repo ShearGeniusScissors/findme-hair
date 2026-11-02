@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Korean Hair Salons in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified Korean hair salons in ${config.name}, ${stateName(config.state)}. Magic straightening, straight perm, layered Korean cuts and root touch-ups with real Google reviews.`;
+  const description = `Find Korean hair salons in ${config.name}, ${stateName(config.state)}. Magic straightening, straight perm, layered Korean cuts and root touch-ups with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Korean hair salons specialising in straight perm, magic straightening and layered Korean cuts",
-        hero: "Korean hair salons in {city} are known for magic straightening, straight perm, root touch-ups and the soft, layered cuts popularised by K-drama and K-pop. Below are the verified Korean stylists across {city} with the strongest Google reviews.",
+        hero: "Korean hair salons in {city} are known for magic straightening, straight perm, root touch-ups and the soft, layered cuts popularised by K-drama and K-pop. Below are {city} salons whose name or website mentions Korean styling, with the strongest Google reviews.",
         guideTitle: "How to choose a Korean hair salon in {city}",
         guideIntro: "Korean hair specialists in {city} typically use Japanese or Korean ionic clamps, lower-pH straightening systems, and a layered cutting approach that frames the face. Booking a Korean stylist is the right call when you want magic straight, healthy straight perm, root retouch, or a Korean-style layered cut that local Anglo-trained stylists rarely specialise in.",
         whatToLook: [
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much does Korean magic straightening cost in {city}?", a: "Magic straightening in {city} typically runs $200-$450 depending on hair length and condition. Korean salons often quote a base price plus an extra fee for very long or thick hair. Always confirm pricing with a strand test before committing." },
           { q: "How long does Korean straight perm last?", a: "A well-applied Korean magic straightening or straight perm in {city} lasts 4-6 months on the treated hair. Roots will need a touch-up every 4-5 months, but the previously straightened lengths stay smooth." },
           { q: "Do Korean salons in {city} also do colour?", a: "Yes — most Korean hair salons in {city} offer balayage, ash tones, and the soft brown shades popular in K-beauty. Discuss colour history and any past straightening when you book, since chemically treated hair needs gentler colour." },
-          { q: "Where are the best Korean hair salons in {city}?", a: "The strongest Korean salons in {city} cluster around {suburbs5} and surrounding suburbs. Use the listings above to book the highest-rated stylists, all verified with real Google reviews." },
+          { q: "Where are the best Korean hair salons in {city}?", a: "The strongest Korean salons in {city} cluster around {suburbs5} and surrounding suburbs. Use the listings above to book the highest-rated stylists, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Korean hair specialists in {city} rely on precision Japanese-steel scissors for soft layering and chip-cutting. ShearGenius supplies",

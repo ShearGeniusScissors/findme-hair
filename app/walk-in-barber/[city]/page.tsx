@@ -4,6 +4,7 @@ import CityPivotPage from "@/components/CityPivotPage";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { stateName } from "@/lib/geo";
 import { supabaseServerInternal } from "@/lib/supabase";
+import { PIVOT_NOINDEX, isCityPivotIndexable } from "@/lib/pivotCoverage";
 import type { AuState, Business } from "@/types/database";
 
 export const revalidate = 3600;
@@ -27,11 +28,14 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Walk-In Barbers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified walk-in barbers in ${config.name}, ${stateName(config.state)}. No-appointment cuts, fades, hot-towel shaves and beard trims with real Google reviews.`;
+  const description = `Find walk-in barbers in ${config.name}, ${stateName(config.state)}. No-appointment cuts, fades, hot-towel shaves and beard trims with real Google reviews.`;
+
+  const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
   return {
     title,
     description,
+    ...(indexable ? {} : { robots: PIVOT_NOINDEX }),
     alternates: {
       canonical: path,
       languages: { "en-AU": path, "x-default": path },
@@ -108,7 +112,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Walk-in barbers — no appointment needed for cuts, fades and hot-towel shaves",
-        hero: "Walk-in barbers in {city} take customers without an appointment — handy when you need a fade before an interview or a quick clean-up before a wedding. Below are the verified walk-in barbers across {city} with the strongest Google reviews.",
+        hero: "Walk-in barbers in {city} take customers without an appointment — handy when you need a fade before an interview or a quick clean-up before a wedding. Below are {city} barbers whose own websites say they take walk-ins, with the strongest Google reviews.",
         guideTitle: "How to find a good walk-in barber in {city}",
         guideIntro: "Walk-in barbers in {city} trade off the certainty of a booked time for the freedom to drop in. The best walk-in shops are honest about wait times, post live queue updates on Google or socials, and keep their chair turnover steady — usually 25-40 minutes per client. Avoid shops where the queue is long but the work looks rushed.",
         whatToLook: [
@@ -122,7 +126,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How long is the wait at walk-in barbers in {city}?", a: "Walk-in barbers in {city} typically run 15-45 minute waits depending on the day. Friday afternoon and Saturday morning are the busiest, while weekday mornings and early afternoons are quietest. Many shops post live queue updates on Google or Instagram." },
           { q: "How much do walk-in barbers in {city} charge?", a: "A walk-in cut in {city} typically runs $30-$55 for a standard cut, $45-$70 for a fade, and $25-$40 for a beard trim. Hot-towel shaves usually run $40-$60. Most walk-in shops are cash-friendly but accept card." },
           { q: "Do walk-in barbers in {city} do fades?", a: "Yes — most {city} walk-in barbers offer skin fades, taper fades and drop fades. Quality varies, so read recent reviews before committing for a high-stakes cut. Established walk-in shops post fade work on Instagram so you can check before you go." },
-          { q: "Best walk-in barber suburbs in {city}?", a: "{city} walk-in barbers cluster around {suburbs5}. Use the listings above to find the highest-rated walk-in shops, all verified with real Google reviews." },
+          { q: "Best walk-in barber suburbs in {city}?", a: "{city} walk-in barbers cluster around {suburbs5}. Use the listings above to find the highest-rated walk-in shops, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Busy walk-in barbers in {city} put their scissors through more cuts than appointment-only shops. ShearGenius supplies",

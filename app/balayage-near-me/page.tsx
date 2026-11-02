@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/balayage-near-me";
 const title = `Balayage Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a balayage near you in Australia. Verified balayage specialists for hand-painted highlights, lived-in colour, foilage, money-piece and ash-blonde with real Google reviews.";
+const description = "Find a balayage near you in Australia. Balayage specialists for hand-painted highlights, lived-in colour, foilage, money-piece and ash-blonde with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Balayage Near Me",
       metaDescription: description,
       h1: "Balayage Near Me",
-      hero: "Find a balayage near you in Australia. Verified balayage specialists for hand-painted highlights, lived-in colour, foilage, money-piece, ash-blonde and warm bronde — ranked by Google rating and review count.",
+      hero: "Find a balayage near you in Australia. Balayage specialists for hand-painted highlights, lived-in colour, foilage, money-piece, ash-blonde and warm bronde — ranked by Google rating and review count.",
       cityRoute: "/balayage-specialist",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a great balayage near you",
       guideIntro: "Balayage is a hand-painting technique, not a colour formula. The difference between a great balayage and an average one comes down to the colourist's eye, hand placement, and how they manage tone after lifting. The best balayage specialists have a consistent Instagram portfolio, charge by hours of work rather than a flat colour fee, and book strand tests for clients with previously coloured hair.",
       whatToDo: [
         "Type your suburb above to find balayage specialists nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Check Instagram for consistent before/after balayage in tones close to yours",
         "Confirm pricing structure — by hours/length is usually fairer than a flat fee",
         "Bond-building (Olaplex or equivalent) should be included as standard, not an upsell",

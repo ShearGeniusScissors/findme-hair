@@ -56,7 +56,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/mobile-hairdresser/${config.slug}`;
   const title = `Mobile Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified mobile hairdressers who come to you in ${config.name}, ${stateName(config.state)}. At-home cuts, colour, and styling with real Google reviews.`;
+  const description = `Find mobile hairdressers who come to you in ${config.name}, ${stateName(config.state)}. At-home cuts, colour, and styling with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable('mobile-hairdresser', config.state, config.suburbs);
 
@@ -264,7 +264,7 @@ export default async function MobileHairdresserCityPage({
               Who we&rsquo;d send a friend to in {config.name}
             </h2>
             <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
-              Picks from {config.name}&rsquo;s {businesses.length}-strong list of mobile-capable stylists on findme.hair. All hand-verified, ranked by review-quality, never paid placement.
+              Picks from {config.name}&rsquo;s {businesses.length}-strong list of mobile-capable stylists on findme.hair. Ranked by Google rating and review count, never paid placement.
             </p>
             <div className="mt-6 space-y-5">
               {businesses.slice(0, 5).map((b) => {

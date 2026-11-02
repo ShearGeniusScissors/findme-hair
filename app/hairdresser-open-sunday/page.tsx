@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hairdresser-open-sunday";
 const title = `Hairdresser Open Sunday — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hairdresser open Sunday near you in Australia. Verified salons and barbers with Sunday opening hours — same-day cuts, walk-ins, and weekend appointments.";
+const description = "Find a hairdresser open Sunday near you in Australia. Salons and barbers with Sunday opening hours — same-day cuts, walk-ins, and weekend appointments.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,7 +21,7 @@ export default function Page() {
       pageTitle: "Hairdresser Open Sunday",
       metaDescription: description,
       h1: "Hairdresser Open Sunday",
-      hero: "Find a hairdresser open Sunday near you in Australia. Verified salons and barbers with Sunday opening hours — type your suburb to see live Google opening hours, then call ahead to confirm walk-in availability.",
+      hero: "Find a hairdresser open Sunday near you in Australia. Salons and barbers with Sunday opening hours — type your suburb to see listed opening hours, then call ahead to confirm walk-in availability.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a hairdresser open on Sunday",

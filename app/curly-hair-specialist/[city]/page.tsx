@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Curly Hair Specialists in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find verified curly hair specialists in ${config.name}, ${stateName(config.state)}. Curly cut, Rezo cut, DevaCut, dry cutting and curly colour work with real Google reviews.`;
+  const description = `Find curly hair specialists in ${config.name}, ${stateName(config.state)}. Curly cut, Rezo cut, DevaCut, dry cutting and curly colour work with real Google reviews.`;
 
   const indexable = await isCityPivotIndexable(ROUTE, config.state, config.suburbs);
 
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Dedicated curly cutters, Rezo cut, DevaCut, dry cutting and curly colour specialists",
-        hero: "Curly hair specialists in {city} cut hair dry, curl by curl, so what you see in the mirror is what you'll see at home. Below are the verified curly cutters across {city} with the strongest Google reviews.",
+        hero: "Curly hair specialists in {city} cut hair dry, curl by curl, so what you see in the mirror is what you'll see at home. Below are {city} salons whose name or website mentions curly hair, with the strongest Google reviews.",
         guideTitle: "How to choose a curly hair specialist in {city}",
         guideIntro: "Most generalist hairdressers cut curls wet, which removes weight you need and creates a triangle shape when the hair dries. A trained curly specialist in {city} cuts dry, curl by curl, often using the Rezo or DevaCut method. They also understand low-poo washing, the curly girl method, and how to gloss curls without weighing them down.",
         whatToLook: [
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ city: string 
           { q: "How much does a curly cut cost in {city}?", a: "A dedicated curly cut in {city} typically runs $120-$220, more than a standard cut because the technique takes 60-90 minutes. Many curly specialists include a tutorial on washing, plopping and product application." },
           { q: "What's the difference between a Rezo cut and a DevaCut?", a: "DevaCut in {city} cuts each curl individually with the hair styled and dry. Rezo cut focuses on volume and weight balance, often combining wet and dry techniques. Most curly specialists in {city} are trained in both and choose based on your curl pattern." },
           { q: "Can curly specialists in {city} also colour curly hair?", a: "Yes — curly colour specialists in {city} use balayage and gloss techniques designed for curls, applying colour to the curl pattern rather than mid-shaft saturation. Always discuss colour history because curls are more porous than straight hair." },
-          { q: "Best curly hair suburbs in {city}?", a: "{city} curly specialists cluster around {suburbs5}. Use the listings above to book the highest-rated curly cutters, all verified with real Google reviews." },
+          { q: "Best curly hair suburbs in {city}?", a: "{city} curly specialists cluster around {suburbs5}. Use the listings above to book the highest-rated curly cutters, ranked by their Google reviews." },
         ],
         scissorPlug: {
           text: "Curly cutters in {city} need scissors that hold a fine edge for chip and slide cutting on dry hair. ShearGenius supplies",

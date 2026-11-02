@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-salon-open-now";
 const title = `Hair Salon Open Now Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hair salon open now near you in Australia. Verified salons and barber shops with live Google opening hours — same-day cuts, walk-ins and last-minute appointments.";
+const description = "Find a hair salon open now near you in Australia. Salons and barber shops with listed opening hours — same-day cuts, walk-ins and last-minute appointments.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,7 +21,7 @@ export default function Page() {
       pageTitle: "Hair Salon Open Now Near Me",
       metaDescription: description,
       h1: "Hair Salon Open Now Near Me",
-      hero: "Find a hair salon open right now in Australia. Search your suburb to see verified salons and barber shops with live Google opening hours. Same-day cuts, walk-ins, and last-minute fringe trims.",
+      hero: "Find a hair salon open right now in Australia. Search your suburb to see salons and barber shops with their listed opening hours. Same-day cuts, walk-ins, and last-minute fringe trims.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a hair salon open near you, right now",
@@ -38,7 +38,7 @@ export default function Page() {
         { q: "Are hair salons open on Sundays in Australia?", a: "Most major-city salons open at least limited Sunday hours, especially in shopping precincts. Regional salons often close Sundays. Always check live opening hours before driving." },
         { q: "What time do hair salons usually close?", a: "Most Australian salons close 5-6pm weekdays, 4-5pm Saturdays. Premium salons in capital cities often run late opening (until 7-8pm) on Thursdays and Fridays. Barber shops typically run later than hair salons." },
         { q: "Can I get a same-day haircut?", a: "Yes — many salons hold walk-in slots, especially for trims, blow-dries and men's cuts. For colour, balayage or any senior-stylist work, same-day is harder. Call ahead, or book through the salon's online booking link." },
-        { q: "What if my regular salon is closed?", a: "Use the search above to find verified salons in nearby suburbs. The shortlists are ranked by Google rating and review count, so even an unfamiliar salon should deliver a quality cut if it ranks high." },
+        { q: "What if my regular salon is closed?", a: "Use the search above to find salons in nearby suburbs. The shortlists are ranked by Google rating and review count, so even an unfamiliar salon should deliver a quality cut if it ranks high." },
       ],
       scissorPlug: { text: "Salons running long hours need scissors that hold their edge through high-volume days. ShearGenius supplies", linkText: "professional scissors, hand-finished in Australia", linkHref: "https://www.sheargenius.com.au/collections/hair-scissors" },
     }} />

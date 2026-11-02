@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (let offset = 0; ; offset += 1000) {
     const { data } = await supabase
       .from('businesses')
-      .select('slug, updated_at, confidence_score, region_id, state, suburb, specialties, is_mobile, name, business_type')
+      .select('slug, updated_at, confidence_score, region_id, state, suburb, specialties, is_mobile, name, business_type, walk_ins_welcome')
       .eq('status', 'active')
       .range(offset, offset + 999);
     if (!data || data.length === 0) break;

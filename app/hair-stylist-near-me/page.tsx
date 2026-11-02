@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-stylist-near-me";
 const title = `Hair Stylist Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hair stylist near you in Australia. Verified senior stylists for cuts, colour, balayage, blow-dries and special-occasion styling with real Google reviews.";
+const description = "Find a hair stylist near you in Australia. Stylists for cuts, colour, balayage, blow-dries and special-occasion styling with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Hair Stylist Near Me",
       metaDescription: description,
       h1: "Hair Stylist Near Me",
-      hero: "Find a hair stylist near you in Australia. Verified senior stylists for cuts, colour, balayage, blow-dries and special-occasion styling — ranked by Google rating and review count. The shortlist below filters for stylists clients actually rate.",
+      hero: "Find a hair stylist near you in Australia. Stylists for cuts, colour, balayage, blow-dries and special-occasion styling — ranked by Google rating and review count. The shortlist below filters for stylists clients actually rate.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find the right hair stylist near you",
       guideIntro: "Stylists matter more than salons. The same chair, same products, same blow-dryer can deliver wildly different results depending on the person holding the scissors. The fastest way to pick a stylist is to scan their Instagram for fresh work in your style — if their portfolio is consistent and recent, you're in good hands.",
       whatToDo: [
         "Type your suburb above to find stylists nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Check the stylist's individual Instagram, not just the salon's",
         "Senior stylists for high-stakes work; junior stylists for routine cuts (often great value at top salons)",
         "Read recent reviews mentioning the specific service you want",

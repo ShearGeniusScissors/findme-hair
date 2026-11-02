@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hair-extensions-near-me";
 const title = `Hair Extensions Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find hair extensions near you in Australia. Verified specialists for tape extensions, hand-tied wefts, bonds, micro-beads and Russian Remy human hair — with real Google reviews.";
+const description = "Find hair extensions near you in Australia. Specialists for tape extensions, hand-tied wefts, bonds, micro-beads and Russian Remy human hair — with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Hair Extensions Near Me",
       metaDescription: description,
       h1: "Hair Extensions Near Me",
-      hero: "Find hair extensions near you in Australia. Verified specialists for tape extensions, hand-tied wefts, keratin bonds, micro-beads and Russian Remy human hair, ranked by Google rating and review count. Browse by city or suburb below.",
+      hero: "Find hair extensions near you in Australia. Specialists for tape extensions, hand-tied wefts, keratin bonds, micro-beads and Russian Remy human hair, ranked by Google rating and review count. Browse by city or suburb below.",
       cityRoute: "/hair-extensions",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find the right hair extensions near you",
       guideIntro: "The right method depends on your natural hair density and how much maintenance you can commit to. Tape extensions are the most popular — fast install, easy removal. Hand-tied wefts last longer. Bonds and micro-beads need a skilled installer because poor placement causes traction damage. Always book a consultation before committing.",
       whatToDo: [
         "Type your suburb in the search above to find extension specialists nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Method match — tape vs weft vs bond should be discussed at consultation, not chosen for you",
         "Ask about hair grade — Russian Remy or European human hair is the gold standard",
         "Confirm aftercare kit, refit cadence, and removal cost up front",
