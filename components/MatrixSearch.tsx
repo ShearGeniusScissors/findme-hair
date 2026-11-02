@@ -279,7 +279,8 @@ export default function MatrixSearch({ totalCount, variant = 'hero', initial }: 
       {/* Refinement chips */}
       <div className={`${compact ? 'mt-3' : 'mt-5'} flex flex-wrap items-center gap-2`}>
         <Chip label="Open now" active={openNow} onClick={() => setOpenNow((v) => !v)} />
-        <Chip label="Walk-ins welcome" active={walkIns} onClick={() => setWalkIns((v) => !v)} />
+        {/* "Walk-ins welcome" chip hidden 2026-11-02: walk-ins is a keyword match on
+            salons' own websites, not verified. Re-enable once owners confirm it. */}
         <Chip label="Rating 4★+" active={minRating4} onClick={() => setMinRating4((v) => !v)} />
         {/* "Claimed only" chip hidden 2026-06-11: 0 claimed listings in the DB
             → the filter guaranteed empty results. Re-enable once claims exist. */}

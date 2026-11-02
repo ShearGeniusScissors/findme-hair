@@ -16,6 +16,7 @@ import {
   getSuburbByRegionAndSlug,
   listSuburbsInRegion,
 } from '@/lib/search';
+import { verifiedWalkIns } from '@/lib/listingCopy';
 import type { AuState } from '@/types/database';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -140,7 +141,8 @@ export default async function SuburbDirectoryPage({
       ? rated.reduce((sum, b) => sum + (b.google_rating ?? 0), 0) / rated.length
       : null;
   const totalReviews = rated.reduce((sum, b) => sum + (b.google_review_count ?? 0), 0);
-  const walkInCount = businesses.filter((b) => b.walk_ins_welcome === true).length;
+  // Owner-claimed listings only — walk-ins is a website keyword match (lib/listingCopy).
+  const walkInCount = businesses.filter((b) => verifiedWalkIns(b) === true).length;
   const updatedLabel = new Date().toLocaleDateString('en-AU', {
     month: 'long',
     year: 'numeric',
@@ -331,7 +333,7 @@ export default async function SuburbDirectoryPage({
                 .filter((b) => isOpenOnDay(b.google_hours, 6))
                 .slice(0, 8);
               const railWalk = businesses
-                .filter((b) => b.walk_ins_welcome === true)
+                .filter((b) => verifiedWalkIns(b) === true)
                 .slice(0, 8);
               return (
                 <>
@@ -358,7 +360,7 @@ export default async function SuburbDirectoryPage({
                 facets={businesses.map((b): CardFacets => ({
                   t: b.business_type,
                   r: b.google_rating,
-                  w: b.walk_ins_welcome === true,
+                  w: verifiedWalkIns(b) === true,
                   p: b.google_hours?.periods ?? null,
                 }))}
                 pins={businesses.map((b) => ({

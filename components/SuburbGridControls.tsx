@@ -253,12 +253,16 @@ export default function SuburbGridControls({
               >
                 Open now
               </FilterChip>
-              <FilterChip
-                active={pending.walkIns}
-                onClick={() => setPending({ ...pending, walkIns: !pending.walkIns })}
-              >
-                Walk-ins welcome
-              </FilterChip>
+              {/* Only offered when some listing has owner-confirmed walk-ins
+                  (facet w is gated in the page via lib/listingCopy). */}
+              {facets.some((f) => f.w) && (
+                <FilterChip
+                  active={pending.walkIns}
+                  onClick={() => setPending({ ...pending, walkIns: !pending.walkIns })}
+                >
+                  Walk-ins welcome
+                </FilterChip>
+              )}
             </div>
 
             <div className="mt-7 flex items-center gap-3">

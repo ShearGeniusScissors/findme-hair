@@ -21,24 +21,6 @@ interface Props {
   totalCount: number;
 }
 
-const SPECIALTIES = [
-  { value: 'colour-specialist', label: 'Colour Specialist' },
-  { value: 'balayage', label: 'Balayage' },
-  { value: 'curly-hair', label: 'Curly Hair' },
-  { value: 'extensions', label: 'Extensions' },
-  { value: 'kids', label: 'Kids' },
-  { value: 'bridal', label: 'Bridal' },
-  { value: 'mens', label: 'Mens Cuts' },
-  { value: 'mobile', label: 'Mobile' },
-  { value: 'japanese', label: 'Japanese' },
-  { value: 'korean', label: 'Korean' },
-  { value: 'keratin', label: 'Keratin' },
-  { value: 'organic', label: 'Organic' },
-  { value: 'barber', label: 'Barber' },
-  { value: 'blow-dry', label: 'Blow Dry' },
-  { value: 'afro', label: 'Textured Hair' },
-];
-
 const TYPES = [
   { value: '', label: 'All' },
   { value: 'hair_salon', label: 'Hair Salon' },
@@ -132,8 +114,8 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
   // Active filter chips for display
   const chips: { key: string; label: string }[] = [];
   if (type) chips.push({ key: 'type', label: TYPES.find(t => t.value === type)?.label || type });
-  if (specialty) chips.push({ key: 'specialty', label: SPECIALTIES.find(s => s.value === specialty)?.label || specialty });
-  if (walkIns) chips.push({ key: 'walk_ins', label: 'Walk-ins welcome' });
+  // Specialty and walk-ins filters hidden 2026-11-02: both are keyword matches on
+  // salons' own websites, not verified (lib/listingCopy). Old URLs still work.
   if (minRating) chips.push({ key: 'min_rating', label: `${minRating}+ stars` });
   if (state) chips.push({ key: 'state', label: STATES.find(s => s.value === state)?.label || state });
   if (region) chips.push({ key: 'region', label: regions.find(r => r.slug === region)?.name || region });
@@ -230,46 +212,7 @@ export default function SearchFilters({ regions, suburbs, totalCount }: Props) {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Specialty */}
-              <div>
-                <label className="block text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-2">
-                  Specialty
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {SPECIALTIES.map((s) => (
-                    <button
-                      key={s.value}
-                      type="button"
-                      onClick={() => setSpecialty(specialty === s.value ? '' : s.value)}
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
-                        specialty === s.value
-                          ? 'bg-[var(--color-gold)] text-white'
-                          : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] hover:bg-[var(--color-gold-light)] hover:text-[var(--color-gold-dark)]'
-                      }`}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Availability */}
-              <div>
-                <label className="block text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider mb-2">
-                  Availability
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={walkIns}
-                      onChange={(e) => setWalkIns(e.target.checked)}
-                      className="w-4 h-4 rounded border-[var(--color-border)] text-[var(--color-gold)] focus:ring-[var(--color-gold)]"
-                    />
-                    <span className="text-sm text-[var(--color-ink)]">Walk-ins welcome</span>
-                  </label>
-                </div>
-              </div>
+              {/* Specialty + walk-ins filters hidden 2026-11-02 (website keyword matches, not verified). */}
 
               {/* Rating */}
               <div>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Business } from '@/types/database';
 import StarRating from './StarRating';
 import OpenStatus from './OpenStatus';
-import { buildCardTeaser } from '@/lib/listingCopy';
+import { buildCardTeaser, verifiedSpecialties, verifiedWalkIns } from '@/lib/listingCopy';
 
 const TYPE_LABEL: Record<Business['business_type'], string> = {
   hair_salon: 'Hair Salon',
@@ -49,7 +49,9 @@ export default function BusinessCard({ business }: { business: Business }) {
 
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
   // Playbook Tactic 8: identical attribute slots, max 2 service tags.
-  const specialties = (business.specialties ?? []).slice(0, 2);
+  // Owner-claimed listings only — tags and walk-ins are website keyword matches (lib/listingCopy).
+  const specialties = verifiedSpecialties(business).slice(0, 2);
+  const walkIns = verifiedWalkIns(business) === true;
   // Built from verified fields only (lib/listingCopy). The old card_teaser was
   // the first sentence of the AI description — retired 2026-11-02.
   const teaser = buildCardTeaser(business);
@@ -132,7 +134,7 @@ export default function BusinessCard({ business }: { business: Business }) {
         )}
 
         {/* Specialty + walk-ins tags */}
-        {(specialties.length > 0 || business.walk_ins_welcome) && (
+        {(specialties.length > 0 || walkIns) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {specialties.map((tag) => (
               <span
@@ -142,7 +144,7 @@ export default function BusinessCard({ business }: { business: Business }) {
                 {SPECIALTY_DISPLAY[tag] ?? tag.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
               </span>
             ))}
-            {business.walk_ins_welcome && (
+            {walkIns && (
               <span className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2.5 py-0.5 text-[11px] font-medium text-green-700">
                 Walk-ins welcome
               </span>

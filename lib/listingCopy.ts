@@ -259,3 +259,18 @@ export function buildCardTeaser(b: ListingFacts): string | null {
   const where = street ? `${noun} at ${street}` : `${noun} in ${b.suburb}`;
   return hours.short ? `${where}. ${hours.short}.` : `${where}.`;
 }
+
+/**
+ * Specialty tags and the walk-ins flag are keyword matches on the salon's own
+ * website text (scripts/enrich-national.js), not verified facts — "family"
+ * anywhere on a site tags it "kids". They are shown only once the owner has
+ * claimed the listing and manages them (0 claimed on 2026-11-02, so hidden
+ * everywhere). The data stays in the DB; nothing is deleted.
+ */
+export function verifiedSpecialties(b: { specialties?: string[] | null; is_claimed?: boolean | null }): string[] {
+  return b.is_claimed ? (b.specialties ?? []) : [];
+}
+
+export function verifiedWalkIns(b: { walk_ins_welcome?: boolean | null; is_claimed?: boolean | null }): boolean | null {
+  return b.is_claimed ? (b.walk_ins_welcome ?? null) : null;
+}

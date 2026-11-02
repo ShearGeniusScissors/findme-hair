@@ -8,7 +8,7 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
-import { buildAboutParagraphs, buildMetaDescription, buildSchemaDescription } from '@/lib/listingCopy';
+import { buildAboutParagraphs, buildMetaDescription, buildSchemaDescription, verifiedSpecialties, verifiedWalkIns } from '@/lib/listingCopy';
 import { formatTag } from '@/lib/formatTag';
 import { isOpenOnDay } from '@/lib/openNow';
 import { supabaseServerInternal } from '@/lib/supabase';
@@ -689,9 +689,10 @@ export default async function BusinessProfilePage({
                   {business.description}
                 </p>
               )}
-              {business.specialties && business.specialties.length > 0 && (
+              {/* Owner-claimed listings only — specialty tags are website keyword matches (lib/listingCopy). */}
+              {verifiedSpecialties(business).length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {business.specialties.map((s) => (
+                  {verifiedSpecialties(business).map((s) => (
                     <Link
                       key={s}
                       href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
@@ -964,18 +965,20 @@ export default async function BusinessProfilePage({
                   </DetailRow>
                 )}
                 <DetailRow label="Type">{TYPE_LABEL[business.business_type]}</DetailRow>
-                {/* walk_ins_welcome is a keyword match on the salon's own website, not a
-                    verified fact — say where it comes from (listing-copy rebuild 2026-11-02). */}
+                {/* walk_ins_welcome is a keyword match on the salon's own website, so it
+                    only shows on owner-claimed listings (lib/listingCopy, 2026-11-02). */}
                 <DetailRow label="Booking">
-                  {business.walk_ins_welcome === true ? (
+                  {verifiedWalkIns(business) === true ? (
                     <span className="inline-flex items-center gap-1 text-green-700">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      Website mentions walk-ins
+                      Walk-ins welcome
                     </span>
-                  ) : business.walk_ins_welcome === false ? (
-                    'Website says book ahead'
+                  ) : verifiedWalkIns(business) === false ? (
+                    'Appointment only'
+                  ) : business.booking_url ? (
+                    'Book online'
                   ) : (
                     'Call to confirm'
                   )}
