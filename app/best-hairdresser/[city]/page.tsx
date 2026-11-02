@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { stripMarkdown } from '@/lib/seoMeta';
+import { buildCardTeaser } from '@/lib/listingCopy';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
@@ -322,11 +322,6 @@ export default async function CityGuidePage({
                 const rating = typeof b.google_rating === 'number' ? b.google_rating.toFixed(1) : null;
                 const reviews = typeof b.google_review_count === 'number' ? b.google_review_count : null;
                 const type = b.business_type === 'barber' ? 'barber shop' : b.business_type === 'unisex' ? 'unisex salon' : 'hair salon';
-                const specialties = (b.specialties ?? []) as string[];
-                const interestingSpecs = specialties.filter((s) => ['balayage','curly-hair','colour-specialist','colour-correction','japanese','korean','bridal','keratin','mobile','afro','extensions','barber','kids','mens'].includes(s));
-                const specBlurb = interestingSpecs.length > 0
-                  ? interestingSpecs.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ')
-                  : null;
                 return (
                   <article key={b.id} className="border-l-2 border-[var(--color-gold)] pl-5">
                     <h3 className="text-base text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
@@ -342,17 +337,8 @@ export default async function CityGuidePage({
                       {rating && reviews ? ` · ${rating}★ across ${reviews.toLocaleString()} reviews` : ''}
                     </p>
                     <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-relaxed">
-                      {b.ai_description
-                        ? (() => {
-                            // First 1-2 sentences of the AI description, capped for readability.
-                            const text = stripMarkdown(b.ai_description);
-                            const firstStop = text.search(/[.!?]\s/);
-                            return firstStop >= 60 && firstStop <= 240 ? text.slice(0, firstStop + 1) : text.slice(0, 220) + (text.length > 220 ? '…' : '');
-                          })()
-                        : `${b.name} is a verified ${type} in ${titleCase(b.suburb)}, ${fullState}. Listings include hours, booking links and verified reviews.`}
-                      {specBlurb && (
-                        <span className="text-[var(--color-ink-muted)]"> Strong on {specBlurb}.</span>
-                      )}
+                      {/* Verified fields only (lib/listingCopy) — no AI prose, no website-keyword specialty tags. */}
+                      {buildCardTeaser(b)}
                     </p>
                   </article>
                 );

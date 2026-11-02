@@ -174,7 +174,7 @@ const SEARCH_CARD_SELECT =
   'id, slug, name, suburb, state, postcode, business_type, lat, lng, ' +
   'google_rating, google_review_count, google_photos, specialties, ' +
   'walk_ins_welcome, is_claimed, featured_until, booking_url, website_url, ' +
-  'confidence_score, phone, google_hours, card_teaser';
+  'confidence_score, phone, google_hours, address_line1';
 
 export async function searchBusinesses(filters: SearchFilters): Promise<Business[]> {
   const supabase = supabaseServerInternal();
@@ -475,7 +475,7 @@ export async function getSuburbBusinesses(
   const suburbName = suburbSlug.replace(/-/g, ' ');
   const { data } = await supabase
     .from('businesses')
-    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, card_teaser, address_line1, top_rated_year')
+    .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, address_line1, top_rated_year')
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', region.id)

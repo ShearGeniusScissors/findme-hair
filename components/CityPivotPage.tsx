@@ -5,22 +5,7 @@ import { stateName, titleCase } from '@/lib/geo';
 import { getSuburbHubUrls } from '@/lib/search';
 import type { Business } from '@/types/database';
 import type { CityConfig } from '@/lib/cityPivotConfig';
-
-// Specialty tags we'll surface inline in editorial cards. Mirrors the
-// best-hairdresser/[city] template — keep these two lists in sync.
-const NOTABLE_SPECS = new Set<string>([
-  'balayage','curly-hair','colour-specialist','colour-correction','japanese',
-  'korean','bridal','keratin','mobile','afro','extensions','barber','kids',
-  'mens','blow-dry','highlights','organic','wigs',
-]);
-
-function firstSentence(text: string, maxLen = 240): string {
-  const t = text.replace(/\s+/g, ' ').trim();
-  if (!t) return '';
-  const stop = t.search(/[.!?]\s/);
-  if (stop >= 60 && stop <= maxLen) return t.slice(0, stop + 1);
-  return t.length > maxLen ? t.slice(0, maxLen) + '…' : t;
-}
+import { buildCardTeaser } from '@/lib/listingCopy';
 
 export interface PivotContent {
   // SEO + UI strings
@@ -180,14 +165,8 @@ export default async function CityPivotPage({ city, businesses, content, allCiti
                 const rating = typeof b.google_rating === 'number' ? b.google_rating.toFixed(1) : null;
                 const reviews = typeof b.google_review_count === 'number' ? b.google_review_count : null;
                 const type = b.business_type === 'barber' ? 'barber shop' : b.business_type === 'unisex' ? 'unisex salon' : 'hair salon';
-                const specialties = (b.specialties ?? []) as string[];
-                const interestingSpecs = specialties.filter((s) => NOTABLE_SPECS.has(s));
-                const specBlurb = interestingSpecs.length > 0
-                  ? interestingSpecs.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ')
-                  : null;
-                const editorialText = b.ai_description
-                  ? firstSentence(b.ai_description, 240)
-                  : `${b.name} is a verified ${type} in ${titleCase(b.suburb)}, ${fullState}. Listing includes hours, booking link and verified reviews.`;
+                // Verified fields only (lib/listingCopy) — no AI prose, no website-keyword specialty tags.
+                const editorialText = buildCardTeaser(b);
                 return (
                   <article key={b.id} className="border-l-2 border-[var(--color-gold)] pl-5">
                     <h3 className="text-base text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
@@ -204,9 +183,6 @@ export default async function CityPivotPage({ city, businesses, content, allCiti
                     </p>
                     <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-relaxed">
                       {editorialText}
-                      {specBlurb && (
-                        <span className="text-[var(--color-ink-muted)]"> Strong on {specBlurb}.</span>
-                      )}
                     </p>
                   </article>
                 );

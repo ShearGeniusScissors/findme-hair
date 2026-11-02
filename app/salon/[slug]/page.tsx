@@ -8,7 +8,7 @@ import StarRating from '@/components/StarRating';
 import OpenStatus from '@/components/OpenStatus';
 import { getBusinessBySlug, getNearbySalonsByDistance } from '@/lib/search';
 import { stateName, slugify } from '@/lib/geo';
-import { stripMarkdown, toParagraphs } from '@/lib/seoMeta';
+import { buildAboutParagraphs, buildMetaDescription, buildSchemaDescription } from '@/lib/listingCopy';
 import { formatTag } from '@/lib/formatTag';
 import { isOpenOnDay } from '@/lib/openNow';
 import { supabaseServerInternal } from '@/lib/supabase';
@@ -140,11 +140,8 @@ function buildProfileFaqs(business: ProfileBusiness): ProfileFaq[] {
   if (business.address_line1) {
     faqs.push({ q: `Where is ${business.name}?`, a: `${business.name} is at ${addr}.` });
   }
-  if (business.walk_ins_welcome === true) {
-    faqs.push({ q: `Does ${business.name} take walk-ins?`, a: `Yes — walk-ins are welcome at ${business.name}.` });
-  } else if (business.walk_ins_welcome === false) {
-    faqs.push({ q: `Does ${business.name} take walk-ins?`, a: `Appointments are recommended at ${business.name}.` });
-  }
+  // No walk-ins answer: walk_ins_welcome is a keyword match on the salon's own
+  // website text, not a verified fact (listing-copy rebuild 2026-11-02).
   if (business.google_hours?.periods?.length) {
     const sat = isOpenOnDay(business.google_hours, 6);
     const sun = isOpenOnDay(business.google_hours, 0);
@@ -196,20 +193,14 @@ export async function generateMetadata({
   const title = baseTitle.length <= 60
     ? baseTitle
     : `${business.name.slice(0, 40)} — ${business.suburb} | findme.hair`;
-  // Fallback description must always be ≥ ~80 chars (audit flagged ~3 salons
-  // with empty ai_description trimmed to a 0-char meta). Markdown stripped so
-  // **bold** etc. doesn't render literal asterisks in meta/JSON-LD.
-  const aiDesc = stripMarkdown(business.ai_description);
-  const fallback = `${business.name} is a ${typeLabel} in ${business.suburb}, ${stateName(business.state)}. ${ratingStr}View hours, photos and book online via findme.hair.`;
-  const description = aiDesc.length >= 50
-    ? `${aiDesc.slice(0, 155)}${aiDesc.length > 155 ? '…' : ''}`
-    : fallback;
-  // Audit row 3b164977 — pages with confidence_score < 30 and no enrichment
-  // (no Google photos AND no AI description AND no manual description) are
-  // paper-thin. Don't let Google index them — they dilute trust signals.
+  // Built from verified fields only (lib/listingCopy). Until 2026-11-02 this was
+  // the first 155 chars of the AI description, which invented specifics.
+  const description = buildMetaDescription(business);
+  // Audit row 3b164977 — pages with confidence_score < 30 and no photos or
+  // manual description are paper-thin: noindex (the sitemap already drops
+  // them). The AI description no longer renders, so it no longer counts as content.
   const isLowConfidence = (business.confidence_score ?? 0) < 30
     && (!business.google_photos || business.google_photos.length === 0)
-    && !business.ai_description
     && !business.description;
 
   return {
@@ -306,7 +297,7 @@ export default async function BusinessProfilePage({
   // regions inflate the count and the profile disagrees with the page.
   const { data: suburbPeerRows } = await supabaseServerInternal()
     .from('businesses')
-    .select('id, google_rating, google_review_count, google_hours, walk_ins_welcome')
+    .select('id, google_rating, google_review_count, google_hours')
     .eq('status', 'active')
     .eq('suburb', business.suburb)
     .eq('state', business.state)
@@ -316,7 +307,6 @@ export default async function BusinessProfilePage({
     google_rating: number | null;
     google_review_count: number | null;
     google_hours: { periods?: unknown[] } | null;
-    walk_ins_welcome: boolean | null;
   }>;
   const suburbCount = peers.length;
   const factClauses: string[] = [];
@@ -336,7 +326,6 @@ export default async function BusinessProfilePage({
     factClauses.push(`It holds a ${business.google_rating.toFixed(1)}-star rating from ${business.google_review_count} reviews on Google${comparative}.`);
   }
   // Distinctive real fact — first true, scarce-enough clause wins.
-  let walkInsUsedAsDistinctive = false;
   {
     const reviewCounts = peers.map((p) => p.google_review_count ?? 0);
     const isMostReviewed =
@@ -344,7 +333,6 @@ export default async function BusinessProfilePage({
       suburbCount > 3 &&
       reviewCounts.filter((c) => c >= (business.google_review_count ?? 0)).length === 1;
     const satCount = peers.filter((p) => isOpenOnDay(p.google_hours, 6)).length;
-    const walkInCount = peers.filter((p) => p.walk_ins_welcome === true).length;
     if (isMostReviewed) {
       factClauses.push(`It's the most-reviewed salon in ${business.suburb}.`);
     } else if (
@@ -352,26 +340,10 @@ export default async function BusinessProfilePage({
       satCount > 0 && suburbCount > 3 && satCount <= Math.ceil(suburbCount / 2)
     ) {
       factClauses.push(`It's one of ${satCount === 1 ? 'the few' : satCount} ${business.suburb} salons open Saturdays.`);
-    } else if (
-      business.walk_ins_welcome === true &&
-      walkInCount > 0 && suburbCount > 3 && walkInCount <= Math.ceil(suburbCount / 2)
-    ) {
-      factClauses.push(`It's one of ${walkInCount === 1 ? 'the few' : walkInCount} ${business.suburb} salons taking walk-ins.`);
-      walkInsUsedAsDistinctive = true;
     }
   }
-  // Service identity — real specialty tags only.
-  if (business.specialties && business.specialties.length > 0) {
-    // "colour specialist ... work" reads awkwardly — drop the role suffix in prose.
-    const tags = business.specialties.slice(0, 3).map((s) =>
-      formatTag(s).toLowerCase().replace(/\s+specialist$/, ''),
-    );
-    const tagList = tags.length === 1 ? tags[0] : `${tags.slice(0, -1).join(', ')} and ${tags[tags.length - 1]}`;
-    factClauses.push(`The salon is known for ${tagList} work.`);
-  }
-  if (business.walk_ins_welcome === true && !walkInsUsedAsDistinctive) {
-    factClauses.push('Walk-ins are welcome.');
-  }
+  // No specialty ("known for …") or walk-in clauses: both come from keyword
+  // matches on the salon's own website text, not verified facts (2026-11-02).
   if (business.is_claimed) {
     factClauses.push('Details on this page are confirmed by the owner.');
   }
@@ -447,12 +419,10 @@ export default async function BusinessProfilePage({
         '@id': `https://www.findme.hair/salon/${business.slug}#business`,
         name: business.name,
         url: `https://www.findme.hair/salon/${business.slug}`,
-        // Description is recommended by Google Rich Results validator. Fall back to a
-        // factual sentence if no AI/manual description exists, so every salon emits one.
-        // Markdown stripped — JSON-LD must not contain ** or other markdown markers.
-        description: stripMarkdown(business.ai_description)
-          || stripMarkdown(business.description)
-          || `${business.name} is a ${TYPE_LABEL[business.business_type].toLowerCase()} in ${business.suburb}, ${stateName(business.state)}.`,
+        // Description is recommended by Google Rich Results validator. Verified
+        // fields only (lib/listingCopy) — manual description if one exists, else
+        // the factual address + hours sentence. No AI prose (retired 2026-11-02).
+        description: buildSchemaDescription(business),
         address: {
           '@type': 'PostalAddress',
           streetAddress: business.address_line1,
@@ -698,46 +668,44 @@ export default async function BusinessProfilePage({
             )}
 
             {/* Description */}
-            {(business.ai_description || business.description) && (
-              <section>
-                <h2
-                  className="text-xl text-[var(--color-ink)]"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  About {business.name}
-                </h2>
-                {business.ai_description && (
-                  <div className="mt-4 space-y-3">
-                    {toParagraphs(business.ai_description).map((p, i) => (
-                      <p key={i} className="text-[var(--color-ink-light)] leading-relaxed">
-                        {p}
-                      </p>
-                    ))}
-                  </div>
-                )}
-                {business.description && (
-                  <p className={`${business.ai_description ? 'mt-3' : 'mt-4'} text-[var(--color-ink-light)] leading-relaxed whitespace-pre-wrap`}>
-                    {business.description}
+            {/* About — verified fields only (lib/listingCopy). The AI description
+                that used to render here invented specifics; retired 2026-11-02. */}
+            <section>
+              <h2
+                className="text-xl text-[var(--color-ink)]"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                About {business.name}
+              </h2>
+              <div className="mt-4 space-y-3">
+                {buildAboutParagraphs(business).map((p, i) => (
+                  <p key={i} className="text-[var(--color-ink-light)] leading-relaxed">
+                    {p}
                   </p>
-                )}
-                {business.specialties && business.specialties.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {business.specialties.map((s) => (
-                      <Link
-                        key={s}
-                        href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
-                        className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
-                      >
-                        {formatTag(s)}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
+                ))}
+              </div>
+              {business.description && (
+                <p className="mt-3 text-[var(--color-ink-light)] leading-relaxed whitespace-pre-wrap">
+                  {business.description}
+                </p>
+              )}
+              {business.specialties && business.specialties.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {business.specialties.map((s) => (
+                    <Link
+                      key={s}
+                      href={`/services/${SPECIALTY_SLUG[s] ?? s}`}
+                      className="inline-flex items-center rounded-full bg-[var(--color-gold-light)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] hover:bg-[var(--color-gold)] hover:text-white transition-colors"
+                    >
+                      {formatTag(s)}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
 
             {/* Opening hours */}
-            <section className={business.description ? 'mt-10' : ''}>
+            <section className="mt-10">
               <h2
                 className="text-xl text-[var(--color-ink)]"
                 style={{ fontFamily: 'var(--font-serif)' }}
@@ -996,16 +964,18 @@ export default async function BusinessProfilePage({
                   </DetailRow>
                 )}
                 <DetailRow label="Type">{TYPE_LABEL[business.business_type]}</DetailRow>
+                {/* walk_ins_welcome is a keyword match on the salon's own website, not a
+                    verified fact — say where it comes from (listing-copy rebuild 2026-11-02). */}
                 <DetailRow label="Booking">
                   {business.walk_ins_welcome === true ? (
                     <span className="inline-flex items-center gap-1 text-green-700">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      Walk-ins welcome
+                      Website mentions walk-ins
                     </span>
                   ) : business.walk_ins_welcome === false ? (
-                    'Appointment only'
+                    'Website says book ahead'
                   ) : (
                     'Call to confirm'
                   )}

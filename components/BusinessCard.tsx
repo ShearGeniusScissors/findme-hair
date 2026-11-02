@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Business } from '@/types/database';
 import StarRating from './StarRating';
 import OpenStatus from './OpenStatus';
+import { buildCardTeaser } from '@/lib/listingCopy';
 
 const TYPE_LABEL: Record<Business['business_type'], string> = {
   hair_salon: 'Hair Salon',
@@ -49,11 +50,9 @@ export default function BusinessCard({ business }: { business: Business }) {
   const isFeatured = business.featured_until && new Date(business.featured_until) > new Date();
   // Playbook Tactic 8: identical attribute slots, max 2 service tags.
   const specialties = (business.specialties ?? []).slice(0, 2);
-  // Teaser may be hard-cut at the 160-char generated-column cap — append an
-  // ellipsis when it doesn't end on sentence punctuation.
-  const teaser = business.card_teaser
-    ? /[.!?]$/.test(business.card_teaser) ? business.card_teaser : `${business.card_teaser}…`
-    : null;
+  // Built from verified fields only (lib/listingCopy). The old card_teaser was
+  // the first sentence of the AI description — retired 2026-11-02.
+  const teaser = buildCardTeaser(business);
 
   return (
     <div className="relative">
@@ -125,7 +124,7 @@ export default function BusinessCard({ business }: { business: Business }) {
           <OpenStatus hours={business.google_hours ?? null} />
         </div>
 
-        {/* One-line teaser — first sentence of the AI description */}
+        {/* One-line factual teaser — street + listed hours */}
         {teaser && (
           <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-snug line-clamp-2">
             {teaser}

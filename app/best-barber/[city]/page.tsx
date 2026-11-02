@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { stripMarkdown } from '@/lib/seoMeta';
+import { buildCardTeaser } from '@/lib/listingCopy';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
@@ -345,16 +345,8 @@ export default async function BestBarberCityPage({
                 const rating = typeof b.google_rating === 'number' ? b.google_rating.toFixed(1) : null;
                 const reviews = typeof b.google_review_count === 'number' ? b.google_review_count : null;
                 const type = b.business_type === 'barber' ? 'barber shop' : b.business_type === 'unisex' ? 'unisex salon' : 'hair salon';
-                const specialties = (b.specialties ?? []) as string[];
-                const interesting = specialties.filter((s) => ['barber','mens','fade','beard','kids','keratin','curly-hair','afro'].includes(s));
-                const specBlurb = interesting.length > 0 ? interesting.slice(0, 3).map((s) => s.replace(/-/g, ' ')).join(', ') : null;
-                const text = b.ai_description
-                  ? (() => {
-                      const t = stripMarkdown(b.ai_description);
-                      const stop = t.search(/[.!?]\s/);
-                      return stop >= 60 && stop <= 240 ? t.slice(0, stop + 1) : t.slice(0, 220) + (t.length > 220 ? '…' : '');
-                    })()
-                  : `${b.name} is a verified ${type} in ${titleCase(b.suburb)}, ${fullState}.`;
+                // Verified fields only (lib/listingCopy) — no AI prose, no website-keyword specialty tags.
+                const text = buildCardTeaser(b);
                 return (
                   <article key={b.id} className="border-l-2 border-[var(--color-gold)] pl-5">
                     <h3 className="text-base text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
@@ -366,7 +358,6 @@ export default async function BestBarberCityPage({
                     </p>
                     <p className="mt-2 text-sm text-[var(--color-ink-light)] leading-relaxed">
                       {text}
-                      {specBlurb && <span className="text-[var(--color-ink-muted)]"> Strong on {specBlurb}.</span>}
                     </p>
                   </article>
                 );
