@@ -353,24 +353,6 @@ function SiteFooter() {
                 </Link>
               </li>
             </ul>
-            <p className="text-editorial-overline mb-4 mt-8">For Professionals</p>
-            <ul className="space-y-2">
-              <li>
-                <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Professional Hairdressing Scissors
-                </a>
-              </li>
-              <li>
-                <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=sitewide_footer&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Scissor Sharpening Service
-                </a>
-              </li>
-              <li>
-                <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=sitewide_footer&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)]">
-                  Barber Scissors Australia
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
 
@@ -379,11 +361,7 @@ function SiteFooter() {
             &copy; {new Date().getFullYear()} findme.hair — An Australian hair directory.
           </p>
           <p className="text-xs text-[var(--color-ink-muted)]">
-            Every listing hand-verified. Hair &amp; barber only. Scissors by{" "}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="hover:text-[var(--color-gold-dark)]">
-              ShearGenius
-            </a>
-            .
+            Every listing hand-verified. Hair &amp; barber only. Scissors by ShearGenius.
           </p>
         </div>
       </div>

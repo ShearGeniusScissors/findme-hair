@@ -226,14 +226,11 @@ export default async function AboutPage() {
               <li>Highlight your services and specialisations</li>
             </ul>
             <p className="mt-3">
-              Looking to upgrade your tools? The best Australian salons trust{' '}
+              findme.hair is run by Matt Grumley, a hairdresser and scissorsmith in Victoria. His scissors,
+              hand-finished in Lake Wendouree, and his on-road sharpening service are at{' '}
               <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                ShearGenius professional hairdressing scissors
-              </a>{' '}
-              — named Japanese steel, hand-finished in Australia, an on-road{' '}
-              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=about&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                sharpening service
-              </a>, and interest-free payment plans.
+                ShearGenius
+              </a>.
             </p>
           </section>
 
