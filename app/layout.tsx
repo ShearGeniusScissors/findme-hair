@@ -103,7 +103,6 @@ export default function RootLayout({
                   description: "Australia's hand-verified hair salon and barber directory. Hair only — no beauty, no nails, no spa.",
                   areaServed: { '@type': 'Country', name: 'Australia' },
                   knowsAbout: ['hairdressers', 'barbers', 'hair salons', 'mobile hairdressers', 'haircut', 'balayage', 'bridal hair', 'kids haircuts', 'mens haircuts', 'curly hair', 'hair extensions', 'Australian salons'],
-                  sameAs: ['https://www.sheargenius.com.au'],
                 },
                 {
                   '@type': 'WebSite',
