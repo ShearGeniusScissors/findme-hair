@@ -309,9 +309,9 @@ export default async function RegionDirectoryPage({
           </h2>
           <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--color-ink-light)]">
             <p>
-              {regionName} is home to {totalCount.toLocaleString()} verified hair salons and barbers across{' '}
-              {suburbs.length} {suburbs.length === 1 ? 'suburb' : 'suburbs'}. Every listing on findme.hair is
-              hand-verified against Google, TrueLocal, and Yellow Pages.
+              {regionName} is home to {totalCount.toLocaleString()} hair salons and barbers across{' '}
+              {suburbs.length} {suburbs.length === 1 ? 'suburb' : 'suburbs'}. Listings on findme.hair are
+              matched to their Google Business Profiles.
             </p>
             <p>
               Popular services across {regionName} include haircuts, colour treatments, balayage, blowdries,

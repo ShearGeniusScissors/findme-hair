@@ -102,7 +102,7 @@ export default function ContactPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: "var(--font-serif)" }}>Editorial standards</h2>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">
-            Every listing on findme.hair is hand-verified. We do not accept payment for placement. See{" "}
+            Listings on findme.hair are matched to their Google Business Profiles. We do not accept payment for placement. See{" "}
             <Link href="/trust" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] underline">our trust &amp; editorial standards</Link>{" "}
             for the full process and review policy.
           </p>

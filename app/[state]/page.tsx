@@ -171,7 +171,7 @@ export default async function StatePage({
         mainEntity: [
           { '@type': 'Question', name: `Where can I find a hairdresser in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists verified hairdressers across all major ${name} regions and suburbs. Browse the regions below or use the search to find a salon by suburb name.` } },
           { '@type': 'Question', name: `How are listings ranked in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `Listings are ranked by Google star rating and review count. Featured (paid) placement is clearly marked at the top of each region. The default ranking is editorial.` } },
-          { '@type': 'Question', name: `How many hair salons does findme.hair list in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair covers ${sorted.length} regions across ${name} with thousands of verified hair salons, barber shops, and unisex salons. Every listing is hand-verified.` } },
+          { '@type': 'Question', name: `How many hair salons does findme.hair list in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair covers ${sorted.length} regions across ${name} with thousands of hair salons, barber shops and unisex salons, matched to their Google Business Profiles.` } },
         ],
       }} />
       {/* Breadcrumb */}

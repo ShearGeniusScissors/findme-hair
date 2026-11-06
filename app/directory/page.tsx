@@ -132,7 +132,7 @@ export default async function DirectoryPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>A&ndash;Z list of every salon</h2>
           <p className="text-sm text-[var(--color-ink-muted)] mb-4">
-            Complete listing of every verified hair salon and barber on findme.hair — {totalSalons.toLocaleString()} listings across {totalSalonPages} pages of 100. Sorted by state, suburb and name.
+            Complete listing of every hair salon and barber on findme.hair — {totalSalons.toLocaleString()} listings across {totalSalonPages} pages of 100. Sorted by state, suburb and name.
           </p>
           {/* Direct one-click links to every paginated salon-index page. This is the
               fix for the "orphan salon profile pages" issue: every /salon/{slug}

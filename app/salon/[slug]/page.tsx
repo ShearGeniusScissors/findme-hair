@@ -366,6 +366,41 @@ export default async function BusinessProfilePage({
   // neither may be represented as serviced. This never affects the salon's own address or
   // directory geography, only whether ShearGenius claims to visit it.
   const SG_SA_SERVICED_SUBURBS = new Set(['mount gambier']);
+  // In-person check (2026-11-06): the latest road-run visit that found this salon open and trading
+  // (verification_log field_visit_sg_routes = active). First-hand data Google doesn't have. Shopfronts
+  // only: published hours and no home-salon or route-exclude flag, so a home client is never shown.
+  const hoursObj = business.google_hours as Record<string, unknown> | null;
+  const hasPublishedHours =
+    !!hoursObj &&
+    ((Array.isArray(hoursObj.periods) && hoursObj.periods.length > 0) ||
+      Object.keys(hoursObj).some((k) => k.endsWith('day')));
+  // Flags are stored as objects ({"is_home_client":true}) and sometimes as plain strings; accept either.
+  const flagList: unknown[] = Array.isArray(business.verification_flags) ? business.verification_flags : [];
+  const hasFlag = (k: string) =>
+    flagList.some(
+      (x) =>
+        x === k ||
+        (!!x && typeof x === 'object' && ((x as Record<string, unknown>)[k] === true || (x as Record<string, unknown>)[k] === 'true')),
+    );
+  const isPublicShopfront = hasPublishedHours && !hasFlag('is_home_client') && !hasFlag('sg_route_exclude');
+  let inPersonCheck: string | null = null;
+  if (isPublicShopfront) {
+    const { data: visitRows } = await supabaseServerInternal()
+      .from('verification_log')
+      .select('checked_at, result')
+      .eq('business_id', business.id)
+      .eq('check_type', 'field_visit_sg_routes')
+      .in('result', ['active', 'closed'])
+      .order('checked_at', { ascending: false })
+      .limit(1);
+    // Only when the most recent field result is "active": a later "closed" visit wins.
+    const latest = visitRows?.[0] as { checked_at: string; result: string } | undefined;
+    inPersonCheck = latest?.result === 'active' ? latest.checked_at : null;
+  }
+  const inPersonMonth = inPersonCheck
+    ? new Date(inPersonCheck).toLocaleDateString('en-AU', { month: 'long', year: 'numeric', timeZone: 'Australia/Melbourne' })
+    : null;
+
   const showSgBadge = SG_TERRITORIES.has(business.state);
   const sgVisitsThisSalon =
     showSgBadge &&
@@ -376,13 +411,13 @@ export default async function BusinessProfilePage({
   if (sgVisitsThisSalon) {
     const today = new Date().toISOString().slice(0, 10);
     const db = supabaseServerInternal();
-    const [lastRes, nextRes] = await Promise.all([
-      db.from('field_runs').select('run_date').eq('state', business.state)
-        .lte('run_date', today).order('run_date', { ascending: false }).limit(1),
-      db.from('field_runs').select('run_date').eq('state', business.state)
-        .gt('run_date', today).order('run_date', { ascending: true }).limit(1),
-    ]);
-    sgLastVisit = (lastRes.data?.[0] as { run_date: string } | undefined)?.run_date ?? null;
+    // "Last visit" is this salon's own in-person visit (above), never the state's latest run: the
+    // state-level date used to read as if the van had called at every salon in the state.
+    const nextRes = await db.from('field_runs').select('run_date').eq('state', business.state)
+      .gt('run_date', today).order('run_date', { ascending: true }).limit(1);
+    sgLastVisit = inPersonCheck
+      ? new Date(inPersonCheck).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      : null;
     sgNextVisit = (nextRes.data?.[0] as { run_date: string } | undefined)?.run_date ?? null;
   }
 
@@ -664,6 +699,16 @@ export default async function BusinessProfilePage({
             {factParagraph && (
               <p className="mb-8 rounded-xl bg-[var(--color-surface-warm)] px-5 py-4 text-sm leading-relaxed text-[var(--color-ink-light)]">
                 {factParagraph}
+              </p>
+            )}
+
+            {inPersonMonth && (
+              <p className="-mt-4 mb-8 flex items-start gap-2 text-sm text-[var(--color-ink-light)]">
+                <span aria-hidden="true" className="text-[var(--color-gold-dark)]">&#10003;</span>
+                <span>
+                  <strong className="text-[var(--color-ink)]">Checked in person:</strong> {inPersonMonth}. The salon was
+                  open and trading.
+                </span>
               </p>
             )}
 
@@ -1046,7 +1091,7 @@ export default async function BusinessProfilePage({
 
       {/* ─── ShearGenius supplier badge; visit dates only where the van actually goes ── */}
       {showSgBadge && (
-        <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} />
+        <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} state={business.state} />
       )}
 
       {/* ─── Sticky mobile action bar — Call / Directions / Book ───

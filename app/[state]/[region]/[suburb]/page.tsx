@@ -460,8 +460,8 @@ export default async function SuburbDirectoryPage({
                   );
                 })()}
                 <p>
-                  Every listing on findme.hair is hand-verified against
-                  Google, TrueLocal, and Yellow Pages. Browse {readable}&rsquo;s verified
+                  Listings on findme.hair are matched to their
+                  Google Business Profiles. Browse {readable}&rsquo;s
                   salons and barbers with real Google reviews, hours, and Book Now links.
                 </p>
               </>

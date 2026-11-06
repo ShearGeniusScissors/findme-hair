@@ -6,11 +6,11 @@ import { supabaseServerInternal } from '@/lib/supabase';
 export const metadata: Metadata = {
   title: 'About findme.hair — Australia\'s Hair Salon & Barber Directory',
   description:
-    'findme.hair is Australia\'s dedicated hair salon and barber directory. 13,900+ hand-verified listings across all 8 states and territories. Hair only — nothing else.',
+    'findme.hair is Australia\'s dedicated hair salon and barber directory. 13,900+ listings across all 8 states and territories. Hair only — nothing else.',
   alternates: { canonical: 'https://www.findme.hair/about', languages: { 'en-AU': 'https://www.findme.hair/about', 'x-default': 'https://www.findme.hair/about' } },
   openGraph: {
     title: 'About findme.hair',
-    description: 'Australia\'s dedicated hair salon and barber directory. 13,900+ verified listings.',
+    description: 'Australia\'s dedicated hair salon and barber directory. 13,900+ listings.',
     url: 'https://www.findme.hair/about',
     siteName: 'findme.hair',
     locale: 'en_AU',
@@ -80,12 +80,12 @@ export default async function AboutPage() {
           {
             '@type': 'Question',
             name: 'What is findme.hair?',
-            acceptedAnswer: { '@type': 'Answer', text: `findme.hair is Australia's dedicated hair salon and barber directory with ${total.toLocaleString()} hand-verified listings across all 8 states and territories. We list hair salons, barber shops, and unisex salons only — no beauty, nails, or spas.` },
+            acceptedAnswer: { '@type': 'Answer', text: `findme.hair is Australia's dedicated hair salon and barber directory with ${total.toLocaleString()} listings across all 8 states and territories. We list hair salons, barber shops, and unisex salons only — no beauty, nails, or spas.` },
           },
           {
             '@type': 'Question',
             name: 'How are listings verified?',
-            acceptedAnswer: { '@type': 'Answer', text: 'Every listing on findme.hair is hand-verified against Google Maps, TrueLocal, and Yellow Pages. We check that the business exists, is currently trading, and is genuinely a hair salon or barber shop. Ghost listings, duplicates, and non-hair businesses are removed.' },
+            acceptedAnswer: { '@type': 'Answer', text: 'Listings on findme.hair are matched to their Google Business Profiles, which list each business as a hair salon or barber at that address. Websites are checked where a salon lists one, and hundreds of salons have been visited in person. Closed, duplicate and non-hair businesses are removed when we find them.' },
           },
           {
             '@type': 'Question',
@@ -130,7 +130,7 @@ export default async function AboutPage() {
             </h2>
             <p>
               findme.hair is Australia&rsquo;s only directory dedicated exclusively to hair salons
-              and barber shops. We list {total.toLocaleString()} verified businesses across all 8
+              and barber shops. We list {total.toLocaleString()} businesses across all 8
               states and territories — {salons.toLocaleString()} hair salons,{' '}
               {barbers.toLocaleString()} barber shops, and{' '}
               {(total - salons - barbers).toLocaleString()} unisex salons.
@@ -170,12 +170,12 @@ export default async function AboutPage() {
               Our verification process
             </h2>
             <p>
-              Every listing on findme.hair goes through a manual verification process:
+              How listings are checked:
             </p>
             <ul className="mt-3 space-y-2 list-disc pl-5">
-              <li><strong>Cross-referenced</strong> against Google Maps, TrueLocal, and Yellow Pages to confirm the business exists and is currently trading</li>
+              <li><strong>Matched</strong> to its Google Business Profile, which lists it as a hair salon or barber at that address</li>
               <li><strong>Categorised</strong> as hair salon, barber shop, or unisex based on the services they actually offer</li>
-              <li><strong>De-duplicated</strong> — one business, one listing, no ghost entries</li>
+              <li><strong>De-duplicated</strong> — duplicates come out when we find them</li>
               <li><strong>Non-hair businesses removed</strong> — beauty salons, nail bars, day spas, and lash studios are excluded</li>
             </ul>
           </section>
@@ -189,7 +189,7 @@ export default async function AboutPage() {
                 <p className="text-2xl font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>
                   {total.toLocaleString()}
                 </p>
-                <p className="mt-1 text-xs text-[var(--color-ink-muted)]">Verified listings</p>
+                <p className="mt-1 text-xs text-[var(--color-ink-muted)]">Listings</p>
               </div>
               <div className="card p-4 text-center">
                 <p className="text-2xl font-semibold text-[var(--color-ink)]" style={{ fontFamily: 'var(--font-serif)' }}>8</p>

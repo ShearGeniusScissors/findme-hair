@@ -41,7 +41,7 @@ export async function GET() {
     <title>findme.hair Editorial Blog</title>
     <link>${BASE}/blog</link>
     <atom:link href="${BASE}/rss.xml" rel="self" type="application/rss+xml" />
-    <description>Editorial guides on Australian hairdressing, barbering, pricing, and salon selection from findme.hair — Australia's hand-verified hair salon and barber directory.</description>
+    <description>Editorial guides on Australian hairdressing, barbering, pricing, and salon selection from findme.hair — Australia's hair salon and barber directory.</description>
     <language>en-AU</language>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <generator>findme.hair</generator>

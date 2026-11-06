@@ -84,7 +84,7 @@ export default function BestHaircutAustraliaPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>How we rank</h2>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">
-            Every salon and barber on findme.hair is hand-verified against Google Business Profile, TrueLocal and Yellow Pages. Within each city, the &ldquo;best&rdquo; ranking is editorial — Google rating multiplied by review count, with verification-flag adjustments. We don&rsquo;t take payments to move salons up the list. Senior-stylist availability and recent review freshness break ties.
+            Salons and barbers on findme.hair are matched to their Google Business Profiles. Within each city, the &ldquo;best&rdquo; ranking is editorial — Google rating multiplied by review count, with verification-flag adjustments. We don&rsquo;t take payments to move salons up the list. Senior-stylist availability and recent review freshness break ties.
           </p>
         </section>
 

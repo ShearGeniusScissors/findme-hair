@@ -82,7 +82,7 @@ export default function ForSalonsPage() {
             />
             <Feature
               title="Verified badge"
-              description="Listings are cross-checked against Google, TrueLocal, and Yellow Pages. Verified salons earn a trust badge."
+              description="Listings are matched to their Google Business Profiles. Verified salons earn a trust badge."
             />
             <Feature
               title="Professional tools matter"

@@ -7,10 +7,12 @@
  */
 
 interface ShearGeniusBadgeProps {
-  /** ISO date string for last field run in this state, e.g. "2026-04-18" */
+  /** ISO date of this salon's own last in-person visit (never the state's latest run), e.g. "2026-04-18" */
   lastVisit?: string | null;
-  /** ISO date string for next scheduled field run in this state */
+  /** ISO date of the next scheduled field run in this state */
   nextVisit?: string | null;
+  /** State code, so the next run reads as the state's run rather than a booked visit */
+  state?: string;
 }
 
 const SHEARGENIUS_URL =
@@ -24,7 +26,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function ShearGeniusBadge({ lastVisit, nextVisit }: ShearGeniusBadgeProps) {
+export default function ShearGeniusBadge({ lastVisit, nextVisit, state }: ShearGeniusBadgeProps) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-6">
       <div className="border-t border-[var(--color-border-light)] pt-6">
@@ -66,7 +68,7 @@ export default function ShearGeniusBadge({ lastVisit, nextVisit }: ShearGeniusBa
                 <span>Last visit: <span className="font-medium">{formatDate(lastVisit)}</span></span>
               )}
               {nextVisit && (
-                <span>Next visit: <span className="font-medium">{formatDate(nextVisit)}</span></span>
+                <span>Next {state ? `${state} ` : ''}run: <span className="font-medium">{formatDate(nextVisit)}</span></span>
               )}
             </div>
           )}

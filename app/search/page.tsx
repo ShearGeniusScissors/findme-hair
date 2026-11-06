@@ -17,14 +17,14 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Search Hair Salons & Barbers Near You — findme.hair",
-  description: "Search Australia's hand-verified hair salon and barber directory. Filter by suburb, region, type, walk-ins, specialty and rating.",
+  description: "Search Australia's hair salon and barber directory. Filter by suburb, region, type, walk-ins, specialty and rating.",
   alternates: {
     canonical: 'https://www.findme.hair/search',
     languages: { 'en-AU': 'https://www.findme.hair/search', 'x-default': 'https://www.findme.hair/search' },
   },
   openGraph: {
     title: "Search — findme.hair",
-    description: "Search Australia's hand-verified hair directory.",
+    description: "Search Australia's hair salon and barber directory.",
     url: 'https://www.findme.hair/search',
     siteName: 'findme.hair',
     locale: 'en_AU',

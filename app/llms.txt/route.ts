@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const TEXT = `# findme.hair
 
-> Australia's hand-verified hair salon and barber directory. Hair only — no beauty, nails, or spa. Every listing cross-checked against Google, TrueLocal and Yellow Pages. 13,900+ verified salons and barber shops across every Australian state and territory.
+> Australia's hair salon and barber directory. Hair only — no beauty, nails, or spa. Listings are matched to their Google Business Profiles; hundreds of salons have been visited in person. 13,900+ salons and barber shops across every Australian state and territory.
 
 ## Find a haircut
 
@@ -74,7 +74,7 @@ Examples: /hairdresser/south-yarra, /barber/surry-hills, /at-home-hairdresser/bo
 
 ## Editorial standards
 
-- Every business listing is hand-verified against Google Business Profile, TrueLocal and Yellow Pages
+- Almost every listing is matched to its Google Business Profile; websites are checked where listed, and hundreds of salons have been visited in person (shopfront listings show the month of the visit)
 - The directory excludes beauty salons, nail bars, lash studios and spas — hair-only scope
 - Listings are ranked by Google rating and review count, not by paid placement
 - Salon owners can claim their listing for free at /claim and update photos, hours, and booking links

@@ -98,7 +98,7 @@ export default async function ReviewsPage() {
             Top-Rated Hair Salons &amp; Barbers in Australia
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            The most-reviewed and highest-rated salons and barber shops on findme.hair. Ranked by Google reviews stored in the directory — every listing hand-verified against Google Business Profile, TrueLocal and Yellow Pages.
+            The most-reviewed and highest-rated salons and barber shops on findme.hair. Ranked by Google reviews stored in the directory — listings matched to their Google Business Profiles.
           </p>
         </div>
       </div>

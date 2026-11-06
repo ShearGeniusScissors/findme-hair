@@ -115,7 +115,7 @@ export default function HowToChooseArticle() {
           </p>
           <p>
             On <Link href="/search" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">findme.hair</Link>,
-            every listing shows verified Google review data so you can compare at a glance.
+            listings show their Google rating and review count so you can compare at a glance.
           </p>
 
           <h2>Ask about consultations</h2>

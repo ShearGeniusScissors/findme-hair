@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/trust";
 const title = "Trust & Editorial Standards — findme.hair";
-const description = "How findme.hair verifies salons, ranks listings, and maintains editorial independence. The standards behind Australia's hand-verified hair directory.";
+const description = "How findme.hair verifies salons, ranks listings, and maintains editorial independence. The standards behind Australia's hair-only directory.";
 
 export const metadata: Metadata = {
   title,
@@ -40,7 +40,7 @@ export default function TrustPage() {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: 'How does findme.hair verify salons?', acceptedAnswer: { '@type': 'Answer', text: 'Every business listing is cross-referenced against three third-party sources — Google Business Profile, TrueLocal, and Yellow Pages. We verify the business exists, is currently trading, and is genuinely a hair salon or barber shop. Beauty salons, nail bars, lash studios, and day spas are excluded at the verification stage.' } },
+          { '@type': 'Question', name: 'How does findme.hair verify salons?', acceptedAnswer: { '@type': 'Answer', text: 'Listings are matched to their Google Business Profiles, which list each business as a hair salon or barber at that address. Websites are checked where a salon lists one, and hundreds of salons have been visited in person. Beauty salons, nail bars, lash studios and day spas are excluded.' } },
           { '@type': 'Question', name: 'How are listings ranked?', acceptedAnswer: { '@type': 'Answer', text: 'Listings are ranked first by Google star rating, then by review count. Featured listings (paid placement) are clearly marked at the top of category pages. The default ranking is editorial — Google rating × review count — not paid.' } },
           { '@type': 'Question', name: 'Does findme.hair accept paid listings?', acceptedAnswer: { '@type': 'Answer', text: 'Salon owners can claim their listing for free to update photos, hours, services, and booking links. Featured (paid) placement is available and clearly marked. The base directory ranking is independent of paid placement.' } },
           { '@type': 'Question', name: 'How often is data refreshed?', acceptedAnswer: { '@type': 'Answer', text: 'Google rating, review count, and opening hours are sourced from Google Business Profile and re-checked on a rolling basis, not live. Salon-claimed details (photos, custom descriptions, booking links) update in real time.' } },
@@ -77,7 +77,7 @@ export default function TrustPage() {
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Verification process</h2>
-          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">Before a business appears on findme.hair, we cross-reference it against Google Business Profile, TrueLocal, and Yellow Pages. The verification confirms three things: the business exists at the address claimed, it is currently trading, and it is genuinely a hair salon or barber. Beauty salons, nail bars, lash studios, and day spas are excluded at this stage — even if they offer hair services as a sideline.</p>
+          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">We match each listing to the business&rsquo;s Google Business Profile, which lists it as a hair salon or barber at that address. Where a salon lists a website, we check the site is live. Hundreds of salons have also been visited in person, and shopfront listings show the month of the visit. Beauty salons, nail bars, lash studios, and day spas are excluded at this stage — even if they offer hair services as a sideline.</p>
         </section>
 
         <section className="card p-8">

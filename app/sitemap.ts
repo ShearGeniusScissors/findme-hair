@@ -171,18 +171,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }));
-  // Preserve the original slug list for downstream pagination counts.
-  const allBusinessSlugs: string[] = businessPages.map((p) => String(p.url).split('/salon/')[1]);
 
-  // Paginated /directory/salons/[page] — every salon links from these pages,
-  // killing the "orphan page" issue Ahrefs flagged on 8,764 salon profiles.
-  const totalSalonPages = Math.ceil(allBusinessSlugs.length / 100);
-  const salonDirectoryPages: MetadataRoute.Sitemap = Array.from({ length: totalSalonPages }, (_, i) => ({
-    url: `${base}/directory/salons/${i + 1}`,
-    lastModified: dataUpdated,
-    changeFrequency: 'weekly' as const,
-    priority: 0.5,
-  }));
+  // Paginated /directory/salons/[page] — every salon links from these pages, killing the "orphan page"
+  // issue Ahrefs flagged on 8,764 salon profiles. Since 2026-11-06 they're noindex,follow and left out
+  // of the sitemap.
 
   // City guide pages (8 capitals + 8 regional) — PIVOT_CITIES is the same
   // 16-city set every city-pivot route renders.
@@ -288,5 +280,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
   );
 
-  return [...staticPages, ...statePages, ...stateStatsPages, ...regionPages, ...suburbPages, ...businessPages, ...salonDirectoryPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
+  return [...staticPages, ...statePages, ...stateStatsPages, ...regionPages, ...suburbPages, ...businessPages, ...cityGuidePages, ...suburbPivotPages, ...nearMePages, ...blogPages, ...servicePages, ...aboutPage];
 }

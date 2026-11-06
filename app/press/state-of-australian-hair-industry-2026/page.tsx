@@ -122,7 +122,7 @@ export default function StateOfHairIndustry2026() {
               "@id": path + "#dataset",
               name: "findme.hair Australian Hair Industry Snapshot 2026",
               description:
-                "Aggregate counts derived from 13,812 hand-verified active hair salon and barber listings on findme.hair as of 2026-05-22. Sourced from Google Business Profile, TrueLocal and Yellow Pages cross-checks.",
+                "Aggregate counts derived from 13,812 active hair salon and barber listings on findme.hair as of 2026-05-22. Sourced from Google Business Profile data.",
               url: path,
               datePublished,
               creator: { "@id": "https://www.findme.hair/#organization" },
@@ -174,7 +174,7 @@ export default function StateOfHairIndustry2026() {
             State of the Australian Hair Industry 2026
           </h1>
           <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed">
-            An aggregate snapshot drawn from {total.toLocaleString()} hand-verified hair businesses listed on findme.hair as of May 2026. Every listing is cross-checked against Google Business Profile, TrueLocal and Yellow Pages before publishing. Beauty salons, nail bars, lash studios and day spas are excluded — this is hair, deliberately and only.
+            An aggregate snapshot drawn from {total.toLocaleString()} hair businesses listed on findme.hair as of May 2026. Listings are matched to their Google Business Profiles before publishing. Beauty salons, nail bars, lash studios and day spas are excluded — this is hair, deliberately and only.
           </p>
           <p className="mt-3 text-xs text-[var(--color-ink-muted)]">
             Published 22 May 2026 · CC BY 4.0 · Cite as: findme.hair (2026). <em>State of the Australian Hair Industry 2026</em>. https://www.findme.hair/press/state-of-australian-hair-industry-2026
@@ -293,7 +293,7 @@ export default function StateOfHairIndustry2026() {
           <ul className="text-sm text-[var(--color-ink-light)] list-disc pl-5 space-y-2 leading-relaxed">
             <li>Source: findme.hair active-listings index, retrieved 22 May 2026.</li>
             <li>Sample frame: every business with <em>status = active</em> in the directory database (n = {total.toLocaleString()}).</li>
-            <li>Verification: each listing cross-checked against Google Business Profile, TrueLocal and Yellow Pages prior to publication. Listings primarily offering nails, beauty, lash, brow, spa or tattoo are excluded.</li>
+            <li>Verification: listings matched to their Google Business Profiles prior to publication. Listings primarily offering nails, beauty, lash, brow, spa or tattoo are excluded.</li>
             <li>Business type derived from venue name, services, and Google category. Ambiguous cases default to <em>unisex</em>.</li>
             <li>Walk-ins / appointment-only inferred from venue website language and Google review content. ~25% of listings declare neither and are not represented in walk-in totals.</li>
             <li>Mobile / at-home flag is set on any business whose primary or secondary service mode is travel-to-client.</li>
@@ -324,7 +324,7 @@ export default function StateOfHairIndustry2026() {
             About findme.hair
           </h2>
           <p className="text-sm leading-relaxed">
-            findme.hair is Australia&rsquo;s hand-verified hair salon and barber directory. Every listing is hand-checked, every ranking is by Google rating and review count, and there is no paid placement and no booking commission. <Link href="/press" className="underline">See the full press kit</Link> · <Link href="/about" className="underline">About</Link>
+            findme.hair is Australia&rsquo;s hair salon and barber directory. Listings are matched to their Google Business Profiles, every ranking is by Google rating and review count, and there is no paid placement and no booking commission. <Link href="/press" className="underline">See the full press kit</Link> · <Link href="/about" className="underline">About</Link>
           </p>
         </section>
       </div>

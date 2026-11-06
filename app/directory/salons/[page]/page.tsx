@@ -70,8 +70,8 @@ export async function generateMetadata({
       : `findme.hair Salon Directory — Page ${pageNum} | Australia`;
   const description =
     pageNum === 1
-      ? "Complete A-Z directory of every verified hair salon and barber on findme.hair. 13,900+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
-      : `Hair salon and barber directory page ${pageNum} of findme.hair — verified Australian listings, sorted by state and suburb.`;
+      ? "Complete A-Z directory of every hair salon and barber listed on findme.hair. 13,900+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
+      : `Hair salon and barber directory page ${pageNum} of findme.hair — Australian listings, sorted by state and suburb.`;
   return {
     title,
     description,
@@ -88,6 +88,10 @@ export async function generateMetadata({
       type: "website",
       images: [{ url: "https://www.findme.hair/og-image.jpg", width: 1200, height: 630 }],
     },
+    // 2026-11-06: pure link lists (100 names a page) add nothing a searcher needs, and Google rates the
+    // site low-value as a whole. noindex,follow keeps them as a crawl path to every salon without
+    // offering them for indexing; they're out of the sitemap too.
+    robots: { index: false, follow: true },
   };
 }
 

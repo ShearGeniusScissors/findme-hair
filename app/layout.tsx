@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: '%s',
   },
   description:
-    "Hand-verified hair salons and barber shops across Australia. Hair and barber only — no beauty, no nails, no spa. Just hair.",
+    "Hair salons and barber shops across Australia, matched to their Google Business Profiles. Hair and barber only — no beauty, no nails, no spa. Just hair.",
   metadataBase: new URL("https://www.findme.hair"),
   // Explicit robots + hreflang at root so every page inherits a complete head
   // section. Audit reminder: omitting these means homepage fails OG/robots
@@ -100,7 +100,7 @@ export default function RootLayout({
                   alternateName: 'Find Me Hair',
                   url: 'https://www.findme.hair',
                   logo: 'https://www.findme.hair/og-image.jpg',
-                  description: "Australia's hand-verified hair salon and barber directory. Hair only — no beauty, no nails, no spa.",
+                  description: "Australia's hair salon and barber directory. Hair only — no beauty, no nails, no spa.",
                   areaServed: { '@type': 'Country', name: 'Australia' },
                   knowsAbout: ['hairdressers', 'barbers', 'hair salons', 'mobile hairdressers', 'haircut', 'balayage', 'bridal hair', 'kids haircuts', 'mens haircuts', 'curly hair', 'hair extensions', 'Australian salons'],
                 },
@@ -109,7 +109,7 @@ export default function RootLayout({
                   '@id': 'https://www.findme.hair/#website',
                   url: 'https://www.findme.hair',
                   name: 'findme.hair',
-                  description: "Australia's hand-verified hair salon and barber directory.",
+                  description: "Australia's hair salon and barber directory.",
                   inLanguage: 'en-AU',
                   publisher: { '@id': 'https://www.findme.hair/#organization' },
                   potentialAction: {
@@ -201,7 +201,7 @@ function SiteFooter() {
           <div className="md:col-span-1">
             <BrandMark size="md" href={null} />
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink-muted)]">
-              Australia&rsquo;s hand-verified hair salon &amp; barber directory.
+              Australia&rsquo;s hair salon &amp; barber directory.
               Hair only — nothing else.
             </p>
           </div>
@@ -360,7 +360,7 @@ function SiteFooter() {
             &copy; {new Date().getFullYear()} findme.hair — An Australian hair directory.
           </p>
           <p className="text-xs text-[var(--color-ink-muted)]">
-            Every listing hand-verified. Hair &amp; barber only. Scissors by ShearGenius.
+            Listings matched to Google Business Profiles. Hair &amp; barber only. Scissors by ShearGenius.
           </p>
         </div>
       </div>
