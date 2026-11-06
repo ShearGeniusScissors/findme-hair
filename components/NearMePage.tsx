@@ -2,6 +2,7 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
+import BrandMention from "@/components/BrandMention";
 
 export interface NearMeContent {
   // SEO
@@ -166,10 +167,7 @@ export default function NearMePage({ content }: { content: NearMeContent }) {
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                {content.scissorPlug.text}{' '}
-                <a href={content.scissorPlug.linkHref} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                  {content.scissorPlug.linkText}
-                </a>.
+                <BrandMention sentence={`${content.scissorPlug.text} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
               </p>
             )}
           </div>

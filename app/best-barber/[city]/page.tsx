@@ -390,15 +390,12 @@ export default async function BestBarberCityPage({
             </ul>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
             <p>
-              The barbers behind {config.name}&rsquo;s top-rated shops invest in their tools. Premium{' '}
+              The barbers behind {config.name}&rsquo;s top-rated shops invest in their tools. Premium barber scissors in named Japanese steel, kept
+              professionally sharpened every six to twelve months — that&rsquo;s what separates a $25 chop from a $60 cut you remember for weeks.{' '}
               <a href="https://www.sheargenius.com.au/collections/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_barber_city&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                barber scissors
+                ShearGenius
               </a>{' '}
-              in named Japanese steel, kept{' '}
-              <a href="https://www.sheargenius.com.au/pages/scissor-sharpening?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_barber_city&utm_content=scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                professionally sharpened
-              </a>{' '}
-              every six to twelve months — that&rsquo;s what separates a $25 chop from a $60 cut you remember for weeks.
+              offers both.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>

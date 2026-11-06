@@ -4,6 +4,7 @@ import JsonLd from "@/components/JsonLd";
 import { stateName } from "@/lib/geo";
 import type { Business } from "@/types/database";
 import type { SuburbConfig } from "@/lib/suburbConfig";
+import BrandMention from "@/components/BrandMention";
 
 export interface SuburbPivotContent {
   // SEO + UI strings
@@ -160,10 +161,7 @@ export default function SuburbPivotPage({ suburb, businesses, content, siblingSu
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                {interp(content.scissorPlug.text, vars)}{' '}
-                <a href={content.scissorPlug.linkHref} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                  {content.scissorPlug.linkText}
-                </a>.
+                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
               </p>
             )}
           </div>

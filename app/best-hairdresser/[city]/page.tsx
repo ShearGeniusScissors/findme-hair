@@ -372,15 +372,11 @@ export default async function CityGuidePage({
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
             <p>
               One way to judge a salon&rsquo;s quality is by looking at their tools. The best hairdressers in {config.name} use
-              professional-grade{' '}
-              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                hairdressing scissors
+              professional-grade hairdressing scissors made from Japanese steel, and keep them professionally sharpened.{' '}
+              <a href="https://www.sheargenius.com.au/?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_hairdresser_city&utm_content=home" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+                ShearGenius
               </a>{' '}
-              made from Japanese steel, and keep them{' '}
-              <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_hairdresser_city&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                professionally sharpened
-              </a>.
-              Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.
+              offers both. Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>

@@ -317,15 +317,11 @@ export default async function MobileHairdresserCityPage({
             </ul>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools they bring with them</h3>
             <p>
-              Top mobile hairdressers in {config.name} use professional-grade{' '}
-              <a href="https://www.sheargenius.com.au/collections/hairdressing-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=mobile_hairdresser_city&utm_content=hairdressing-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                Japanese-steel scissors
-              </a>
-              {' '}and a sharpening service to keep them at salon quality between visits. ShearGenius offers{' '}
+              Top mobile hairdressers in {config.name} use professional-grade Japanese-steel scissors and a sharpening service to keep them at salon quality between visits.{' '}
               <a href="https://www.sheargenius.com.au/pages/scissor-sharpening?utm_source=findme_hair&utm_medium=referral&utm_campaign=mobile_hairdresser_city&utm_content=scissor-sharpening" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                on-road sharpening across Victoria and Tasmania
+                ShearGenius
               </a>
-              {' '}— a tool tip for any mobile stylist.
+              {' '}offers on-road sharpening across Victoria and Tasmania — a tool tip for any mobile stylist.
             </p>
           </div>
         </section>

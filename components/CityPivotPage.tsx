@@ -6,6 +6,7 @@ import { getSuburbHubUrls } from '@/lib/search';
 import type { Business } from '@/types/database';
 import type { CityConfig } from '@/lib/cityPivotConfig';
 import { buildCardTeaser } from '@/lib/listingCopy';
+import BrandMention from '@/components/BrandMention';
 
 export interface PivotContent {
   // SEO + UI strings
@@ -209,10 +210,7 @@ export default async function CityPivotPage({ city, businesses, content, allCiti
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                {interp(content.scissorPlug.text, vars)}{' '}
-                <a href={content.scissorPlug.linkHref} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                  {content.scissorPlug.linkText}
-                </a>.
+                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
               </p>
             )}
           </div>

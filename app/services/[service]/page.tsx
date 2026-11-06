@@ -5,6 +5,7 @@ import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { supabaseServerInternal } from '@/lib/supabase';
 import type { Business, BusinessType } from '@/types/database';
+import BrandMention from '@/components/BrandMention';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
 
@@ -634,10 +635,7 @@ export default async function ServicePage({
           </p>
           {config.content.proTip && (
             <p className="mt-3 text-sm text-[var(--color-ink-muted)] italic">
-              {config.content.proTip.text}{' '}
-              <a href={config.content.proTip.linkHref} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic">
-                {config.content.proTip.linkText}
-              </a>.
+              <BrandMention sentence={`${config.content.proTip.text} ${config.content.proTip.linkText}.`} href={config.content.proTip.linkHref} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic" />
             </p>
           )}
         </section>
