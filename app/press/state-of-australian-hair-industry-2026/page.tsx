@@ -220,7 +220,7 @@ export default function StateOfHairIndustry2026() {
             State of the Australian Hair Industry 2026
           </h1>
           <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed">
-            An aggregate snapshot of the {fmt(total)} hair salons and barbers listed on findme.hair on 7 November 2026, set against the latest official population figures. {pct(totalGoogleMatched, total)}% of listings are matched to their Google Business Profiles, and our team checks salons in person on the road. Beauty salons, nail bars, lash studios and day spas are excluded — this is hair, deliberately and only.
+            An aggregate snapshot of the {fmt(total)} hair salons and barbers listed on findme.hair on 7 November 2026, set against the latest official population figures. {pct(totalGoogleMatched, total)}% of listings are matched to their Google Business Profiles, and salons are checked in person on the road. Beauty salons, nail bars, lash studios and day spas are excluded — this is hair, deliberately and only.
           </p>
           <p className="mt-3 text-xs text-[var(--color-ink-muted)]">
             First published 22 May 2026 · Updated 7 November 2026 · CC BY 4.0 · Cite as: findme.hair (2026). <em>State of the Australian Hair Industry 2026</em>. https://www.findme.hair/press/state-of-australian-hair-industry-2026
@@ -239,7 +239,7 @@ export default function StateOfHairIndustry2026() {
               findme.hair lists {fmt(total)} hair salons and barbers, about one for every {fmt(residentsPerListing)} Australians ({per10k(total, ausErpThousands)} per 10,000 residents).
             </li>
             <li>
-              Of the {fmt(inPerson.checked)} listed salons and barbers our team checked in person between April and November 2026, {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed.
+              Of the {fmt(inPerson.checked)} listed salons and barbers checked in person between April and November 2026, {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed.
             </li>
             <li>
               Almost half of the hair businesses with a perfect 5.0 Google rating ({fmt(national.fiveStarUnder20Reviews)} of {fmt(totalFiveStar)}) have fewer than 20 reviews.
@@ -311,7 +311,7 @@ export default function StateOfHairIndustry2026() {
             </tbody>
           </table>
           <p className="mt-3 text-xs text-[var(--color-ink-muted)] leading-relaxed">
-            Victoria and Tasmania, where our team checks salons in person, also list salons that are not matched to a Google Business Profile ({fmt(byState("VIC").total - byState("VIC").googleMatched)} in Victoria, {fmt(byState("TAS").total - byState("TAS").googleMatched)} in Tasmania). The last column counts only Google-matched listings, for a like-for-like comparison between states. These are directory counts, not an official census.
+            Victoria and Tasmania, where salons are checked in person, also list salons that are not matched to a Google Business Profile ({fmt(byState("VIC").total - byState("VIC").googleMatched)} in Victoria, {fmt(byState("TAS").total - byState("TAS").googleMatched)} in Tasmania). The last column counts only Google-matched listings, for a like-for-like comparison between states. These are directory counts, not an official census.
           </p>
 
           <h3 className="mt-8 text-lg text-[var(--color-ink)] mb-3" style={{ fontFamily: "var(--font-serif)" }}>
@@ -362,7 +362,7 @@ export default function StateOfHairIndustry2026() {
             <Stat label="Found closed" value={fmt(inPerson.closed)} />
           </div>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">
-            Our team visits salons on the road and records whether each one is open and trading. Between April and November 2026 it checked {fmt(inPerson.checked)} listed salons and barbers in person: {fmt(inPerson.byState.VIC)} in Victoria, {fmt(inPerson.byState.TAS)} in Tasmania, {fmt(inPerson.byState.SA)} in South Australia and {fmt(inPerson.byState.NSW)} in New South Wales. At the latest visit, {fmt(inPerson.open)} ({pct(inPerson.open, inPerson.checked)}%) were open and trading and {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed: {pct(inPerson.closedByState.VIC, inPerson.byState.VIC)}% in Victoria and {pct(inPerson.closedByState.TAS, inPerson.byState.TAS)}% in Tasmania.
+            Salons are visited in person on the road, and each visit records whether the salon is open and trading. Between April and November 2026, {fmt(inPerson.checked)} listed salons and barbers were checked in person: {fmt(inPerson.byState.VIC)} in Victoria, {fmt(inPerson.byState.TAS)} in Tasmania, {fmt(inPerson.byState.SA)} in South Australia and {fmt(inPerson.byState.NSW)} in New South Wales. At the latest visit, {fmt(inPerson.open)} ({pct(inPerson.open, inPerson.checked)}%) were open and trading and {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed: {pct(inPerson.closedByState.VIC, inPerson.byState.VIC)}% in Victoria and {pct(inPerson.closedByState.TAS, inPerson.byState.TAS)}% in Tasmania.
           </p>
           <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
             This is not an industry closure rate. It shows how often a listed salon was no longer there when someone actually walked in, which is why we check in person. Salons found closed are never named.
@@ -482,7 +482,7 @@ export default function StateOfHairIndustry2026() {
             <li>Websites: the website on record for each listing. A social media page means a facebook.com, instagram.com or tiktok.com address.</li>
             <li>Chains: the largest chain is the one with the most listings matching its name or website address.</li>
             <li>Population: Australian Bureau of Statistics, <a href={absRelease.url} className="underline">{absRelease.name}</a>, released 17 September 2026. Estimated resident population at 31 March 2026; Australia = 27,921,150 (includes Other Territories). Rate per 10,000 = listings ÷ population × 10,000.</li>
-            <li>In-person checks: the latest result our team recorded for each listing, open and trading or closed, on visits from 9 April to 4 November 2026. Visits that could not confirm either way, and duplicate records, are not counted.</li>
+            <li>In-person checks: the latest result recorded for each listing, open and trading or closed, on visits from 9 April to 4 November 2026. Visits that could not confirm either way, and duplicate records, are not counted.</li>
             <li>Not in this edition: walk-in policy, mobile service, specialties and online booking. These are either inferred from salon websites or recorded for too few listings to count reliably, so we left them out.</li>
             <li>Every figure comes from a saved, repeatable query. The numbers move as salons open, close and are checked again.</li>
           </ul>
@@ -510,7 +510,7 @@ export default function StateOfHairIndustry2026() {
             About findme.hair
           </h2>
           <p className="text-sm leading-relaxed">
-            findme.hair is Australia&rsquo;s hair salon and barber directory: hair only, with no beauty, nails or spa. Listings are matched to their Google Business Profiles where one exists, and our team checks salons in person on the road. There is no booking commission. <Link href="/press" className="underline">See the full press kit</Link> · <Link href="/about" className="underline">About</Link>
+            findme.hair is Australia&rsquo;s hair salon and barber directory: hair only, with no beauty, nails or spa. Listings are matched to their Google Business Profiles where one exists, and salons are checked in person on the road. There is no booking commission. <Link href="/press" className="underline">See the full press kit</Link> · <Link href="/about" className="underline">About</Link>
           </p>
         </section>
       </div>
