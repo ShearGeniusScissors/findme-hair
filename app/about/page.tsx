@@ -235,6 +235,13 @@ export default async function AboutPage() {
 
           <section>
             <h2 className="text-xl text-[var(--color-ink)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+              Who runs findme.hair
+            </h2>
+            <p>findme.hair is run by Rebecca Dunbar.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl text-[var(--color-ink)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
               Contact
             </h2>
             <p>
