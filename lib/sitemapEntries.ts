@@ -100,7 +100,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     // sitemap is a "blocked URL in sitemap" coverage error. Removed 2026-06-20.
     { url: `${base}/directory`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.85 },
     { url: `${base}/press`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-05-22'), changeFrequency: 'yearly', priority: 0.85 },
+    { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-11-07'), changeFrequency: 'yearly', priority: 0.85 },
     { url: `${base}/for-salons/badge`, lastModified: new Date('2026-05-22'), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/trust`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/best-haircut-australia`, lastModified: dataUpdated, changeFrequency: 'weekly', priority: 0.9 },
