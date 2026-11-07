@@ -89,6 +89,16 @@ export default function ForSalonsPage() {
               description="Clients notice when their stylist uses quality equipment. Investing in professional Japanese steel scissors — like those from ShearGenius — shows you take your craft seriously."
               link={{ text: 'Shop professional scissors', href: 'https://www.sheargenius.com.au' }}
             />
+            <Feature
+              title="The business side"
+              description="Shear Profit's free calculators work out your break-even, chair utilisation and the true cost of a rostered hour from your own numbers."
+              link={{ text: 'Free salon profit tools', href: 'https://www.shearprofit.com.au/tools?utm_source=findme_hair&utm_medium=referral&utm_campaign=for_salons' }}
+            />
+            <Feature
+              title="Scissors for the team"
+              description="Shearlo sells all-rounder scissors made by ShearGenius, with a six-question finder that matches each stylist to the right length."
+              link={{ text: 'Shop Shearlo', href: 'https://www.shearlo.com/?utm_source=findme_hair&utm_medium=referral&utm_campaign=for_salons' }}
+            />
           </div>
         </div>
       </section>
