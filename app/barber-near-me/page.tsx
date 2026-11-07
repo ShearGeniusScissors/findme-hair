@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/barber-near-me";
 const title = `Barber Near Me — Find a Barber in Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a barber near you in Australia. Verified barber shops in every major city and suburb — skin fades, scissor cuts, hot-towel shaves and beard trims with real Google reviews.";
+const description = "Find a barber near you in Australia. Barber shops in every major city and suburb — skin fades, scissor cuts, hot-towel shaves and beard trims with real Google reviews.";
 
 export const metadata: Metadata = {
   title,
@@ -25,14 +25,14 @@ export default function Page() {
         pageTitle: "Barber Near Me",
         metaDescription: description,
         h1: "Barber Near Me",
-        hero: "Find a barber near you in Australia. Verified barber shops in every major city and high-density suburb — skin fades, taper fades, scissor cuts, hot-towel shaves and beard trims, all ranked by Google rating and review count.",
+        hero: "Find a barber near you in Australia. Barber shops in every major city and high-density suburb — skin fades, taper fades, scissor cuts, hot-towel shaves and beard trims, all ranked by Google rating and review count.",
         cityRoute: "/best-barber",
         suburbRoute: "/barber",
         guideTitle: "How to find the best barber near you",
         guideIntro: "Picking the right barber comes down to two things — the cut you want and how busy your week is. For a sharp fade, look for a dedicated barber shop with strong recent Instagram fade work. For a longer scissor cut, a salon-trained barber will often deliver better. Walk-in versus booked is the other axis: walk-ins suit a quick refresh, bookings make sense for high-stakes cuts before weddings or interviews.",
         whatToDo: [
           "Type your suburb in the search above to find barbers around you",
-          "Or pick a city or suburb below to browse the verified shortlist",
+          "Or pick a city or suburb below to browse the shortlist",
           "Read the most recent Google reviews — fade quality changes when senior staff move shops",
           "Check the shop's Instagram for fresh fade work in your style",
           "Confirm walk-in availability if you don't have time to book ahead",

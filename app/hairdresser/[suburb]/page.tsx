@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   const path = `https://www.findme.hair/${ROUTE}/${config.slug}`;
   const title = `Hairdressers in ${config.name} ${new Date().getFullYear()} | findme.hair`;
-  const description = `Find the best hairdressers in ${config.name}, ${stateName(config.state)}. Verified salons with real Google reviews — cuts, colour, balayage, blow-dries and more.`;
+  const description = `Find the best hairdressers in ${config.name}, ${stateName(config.state)}. Salons with real Google reviews — cuts, colour, balayage, blow-dries and more.`;
 
   const indexable = await isSuburbPivotIndexable(ROUTE, config.state, config.name);
 
@@ -86,7 +86,7 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Hair salons offering cuts, colour, balayage, blow-dries and treatments",
-        hero: "Hairdressers in {suburb} cover everything from a quick fringe trim to balayage, foils, blow-dries and bridal hair. Below are the verified salons in {suburb} with the strongest Google reviews.",
+        hero: "Hairdressers in {suburb} cover everything from a quick fringe trim to balayage, foils, blow-dries and bridal hair. Below are the salons in {suburb} with the strongest Google reviews.",
         guideTitle: "How to choose a hairdresser in {suburb}",
         guideIntro: "Pick a hairdresser in {suburb} based on the work in their portfolio, not the salon fit-out. Recent reviews, fresh Instagram cuts, and a clear consultation up front matter more than the chair you sit in. The shortlist below is filtered by Google rating and review count, so you start with the salons that local clients actually rate.",
         whatToLook: [

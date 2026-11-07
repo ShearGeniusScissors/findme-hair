@@ -67,7 +67,7 @@ export async function generateMetadata({
     : `${suburbName} ${stateCode} Hair & Barbers — findme.hair`;
   return {
     title,
-    description: `Find hair salons and barbers in ${suburbName}${postcode ? ` ${postcode}` : ''}, ${fullState}. Verified listings with real Google reviews, hours, and Book Now links.`,
+    description: `Find hair salons and barbers in ${suburbName}${postcode ? ` ${postcode}` : ''}, ${fullState}. Listings matched to Google Business Profiles, with real Google reviews, hours and Book Now links.`,
     alternates: {
       canonical: path,
       languages: {
@@ -78,7 +78,7 @@ export async function generateMetadata({
     ...(!hasListings && { robots: { index: false, follow: true } }),
     openGraph: {
       title: `Hair Salons & Barbers in ${suburbName} — findme.hair`,
-      description: `Find hair salons and barbers in ${suburbName}, ${fullState}. Verified listings with reviews and booking.`,
+      description: `Find hair salons and barbers in ${suburbName}, ${fullState}. Listings with Google reviews and booking links.`,
       url: `https://www.findme.hair/${state.toLowerCase()}/${region}/${suburb}`,
       siteName: 'findme.hair',
       locale: 'en_AU',

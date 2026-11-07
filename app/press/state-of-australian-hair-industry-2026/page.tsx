@@ -24,11 +24,11 @@ const ausErpThousands = 27921.15; // 27,921,150 people (includes Other Territori
 
 const stateRows = [
   { state: "NSW", name: "New South Wales", total: 4227, salons: 2745, barbers: 934, unisex: 548, googleMatched: 4226, rated: 4145, medianRating: 4.8, meanRating: 4.73, medianReviews: 55, fiveStar: 1280, withHours: 3983, erp: 8670.1 },
-  { state: "VIC", name: "Victoria", total: 3509, salons: 2296, barbers: 809, unisex: 404, googleMatched: 3254, rated: 3231, medianRating: 4.8, meanRating: 4.71, medianReviews: 55, fiveStar: 967, withHours: 2974, erp: 7154.2 },
+  { state: "VIC", name: "Victoria", total: 3487, salons: 2275, barbers: 808, unisex: 404, googleMatched: 3257, rated: 3234, medianRating: 4.8, meanRating: 4.71, medianReviews: 54.5, fiveStar: 967, withHours: 2977, erp: 7154.2 },
   { state: "QLD", name: "Queensland", total: 2991, salons: 1964, barbers: 721, unisex: 306, googleMatched: 2991, rated: 2925, medianRating: 4.9, meanRating: 4.75, medianReviews: 52, fiveStar: 1003, withHours: 2805, erp: 5739.5 },
   { state: "WA", name: "Western Australia", total: 1636, salons: 1042, barbers: 386, unisex: 208, googleMatched: 1636, rated: 1584, medianRating: 4.8, meanRating: 4.7, medianReviews: 53, fiveStar: 468, withHours: 1534, erp: 3096.2 },
   { state: "SA", name: "South Australia", total: 913, salons: 578, barbers: 253, unisex: 82, googleMatched: 901, rated: 880, medianRating: 4.8, meanRating: 4.7, medianReviews: 49, fiveStar: 241, withHours: 816, erp: 1916.8 },
-  { state: "TAS", name: "Tasmania", total: 293, salons: 208, barbers: 70, unisex: 15, googleMatched: 204, rated: 201, medianRating: 4.8, meanRating: 4.65, medianReviews: 42, fiveStar: 33, withHours: 182, erp: 580.7 },
+  { state: "TAS", name: "Tasmania", total: 286, salons: 201, barbers: 70, unisex: 15, googleMatched: 204, rated: 201, medianRating: 4.8, meanRating: 4.65, medianReviews: 42, fiveStar: 33, withHours: 182, erp: 580.7 },
   { state: "ACT", name: "the ACT", total: 226, salons: 124, barbers: 83, unisex: 19, googleMatched: 226, rated: 220, medianRating: 4.7, meanRating: 4.59, medianReviews: 88.5, fiveStar: 33, withHours: 214, erp: 489.7 },
   { state: "NT", name: "the Northern Territory", total: 121, salons: 67, barbers: 37, unisex: 17, googleMatched: 121, rated: 114, medianRating: 4.8, meanRating: 4.64, medianReviews: 47.5, fiveStar: 28, withHours: 107, erp: 268.9 },
 ];
@@ -52,33 +52,33 @@ const national = {
   medianReviews: 53,
   p25Reviews: 21,
   p75Reviews: 122,
-  rated45Plus: 11175,
+  rated45Plus: 11178,
   fiveStarUnder20Reviews: 2015,
   topRated2026: 1362,
-  withWebsite: 8160,
+  withWebsite: 8161,
   websiteIsSocial: 1369,
   largestChainListings: 126,
 };
 
 // Of the listings that publish opening hours (n = totalWithHours), how many open on each day.
 const openByDay = [
-  { day: "Mon", open: 7384 },
-  { day: "Tue", open: 11365 },
-  { day: "Wed", open: 11948 },
-  { day: "Thu", open: 12279 },
-  { day: "Fri", open: 12299 },
-  { day: "Sat", open: 11244 },
+  { day: "Mon", open: 7385 },
+  { day: "Tue", open: 11368 },
+  { day: "Wed", open: 11951 },
+  { day: "Thu", open: 12282 },
+  { day: "Fri", open: 12302 },
+  { day: "Sat", open: 11245 },
   { day: "Sun", open: 3635 },
 ];
 const openSevenDays = 2805;
 
 // Latest in-person result per listing, 9 April to 4 November 2026.
 const inPerson = {
-  checked: 1194,
-  open: 1006,
-  closed: 188,
-  byState: { VIC: 881, TAS: 267, SA: 38, NSW: 8 },
-  closedByState: { VIC: 123, TAS: 58 },
+  checked: 1133,
+  open: 948,
+  closed: 185,
+  byState: { VIC: 830, TAS: 261, SA: 36, NSW: 6 },
+  closedByState: { VIC: 120, TAS: 58 },
 };
 
 const topSuburbs = [
@@ -239,13 +239,13 @@ export default function StateOfHairIndustry2026() {
               findme.hair lists {fmt(total)} hair salons and barbers, about one for every {fmt(residentsPerListing)} Australians ({per10k(total, ausErpThousands)} per 10,000 residents).
             </li>
             <li>
-              Of the {fmt(inPerson.checked)} listed salons and barbers checked in person between April and November 2026, {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed.
+              Of the {fmt(inPerson.checked)} salons and barbers checked in person between April and November 2026, {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed.
             </li>
             <li>
               Almost half of the hair businesses with a perfect 5.0 Google rating ({fmt(national.fiveStarUnder20Reviews)} of {fmt(totalFiveStar)}) have fewer than 20 reviews.
             </li>
             <li>
-              Sunday and Monday are the hair industry&rsquo;s days off: of the salons and barbers that publish opening hours, {openOn("Sun")}% open on Sundays and {openOn("Mon")}% on Mondays, against {openOn("Thu")}% on Thursdays and Fridays.
+              Sunday and Monday are the hair industry&rsquo;s quietest days: of the salons and barbers that publish opening hours, {openOn("Sun")}% open on Sundays and {openOn("Mon")}% on Mondays, against {openOn("Thu")}% on Thursdays and Fridays.
             </li>
             <li>
               In {topBarberState.name}, {pct(topBarberState.barbers, topBarberState.total)}% of listed hair businesses are barbers, the highest share in Australia; nationally it is {pct(totalBarbers, total)}%.
@@ -362,7 +362,7 @@ export default function StateOfHairIndustry2026() {
             <Stat label="Found closed" value={fmt(inPerson.closed)} />
           </div>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">
-            Salons are visited in person on the road, and each visit records whether the salon is open and trading. Between April and November 2026, {fmt(inPerson.checked)} listed salons and barbers were checked in person: {fmt(inPerson.byState.VIC)} in Victoria, {fmt(inPerson.byState.TAS)} in Tasmania, {fmt(inPerson.byState.SA)} in South Australia and {fmt(inPerson.byState.NSW)} in New South Wales. At the latest visit, {fmt(inPerson.open)} ({pct(inPerson.open, inPerson.checked)}%) were open and trading and {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed: {pct(inPerson.closedByState.VIC, inPerson.byState.VIC)}% in Victoria and {pct(inPerson.closedByState.TAS, inPerson.byState.TAS)}% in Tasmania.
+            Salons are visited in person on the road, and each visit records whether the salon is open and trading. Between April and November 2026, {fmt(inPerson.checked)} salons and barbers were checked in person: {fmt(inPerson.byState.VIC)} in Victoria, {fmt(inPerson.byState.TAS)} in Tasmania, {fmt(inPerson.byState.SA)} in South Australia and {fmt(inPerson.byState.NSW)} in New South Wales. At the latest visit, {fmt(inPerson.open)} ({pct(inPerson.open, inPerson.checked)}%) were open and trading and {fmt(inPerson.closed)} ({pct(inPerson.closed, inPerson.checked)}%) had closed: {pct(inPerson.closedByState.VIC, inPerson.byState.VIC)}% in Victoria and {pct(inPerson.closedByState.TAS, inPerson.byState.TAS)}% in Tasmania.
           </p>
           <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
             This is not an industry closure rate. It shows how often a listed salon was no longer there when someone actually walked in, which is why we check in person. Salons found closed are never named.
@@ -482,7 +482,7 @@ export default function StateOfHairIndustry2026() {
             <li>Websites: the website on record for each listing. A social media page means a facebook.com, instagram.com or tiktok.com address.</li>
             <li>Chains: the largest chain is the one with the most listings matching its name or website address.</li>
             <li>Population: Australian Bureau of Statistics, <a href={absRelease.url} className="underline">{absRelease.name}</a>, released 17 September 2026. Estimated resident population at 31 March 2026; Australia = 27,921,150 (includes Other Territories). Rate per 10,000 = listings ÷ population × 10,000.</li>
-            <li>In-person checks: the latest result recorded for each listing, open and trading or closed, on visits from 9 April to 4 November 2026. Visits that could not confirm either way, and duplicate records, are not counted.</li>
+            <li>In-person checks: the latest result recorded for each listing, open and trading or closed, on visits from 9 April to 4 November 2026. Visits that could not confirm either way, duplicate records, and private records that were never published (such as home salons without their own Google listing) are not counted.</li>
             <li>Not in this edition: walk-in policy, mobile service, specialties and online booking. These are either inferred from salon websites or recorded for too few listings to count reliably, so we left them out.</li>
             <li>Every figure comes from a saved, repeatable query. The numbers move as salons open, close and are checked again.</li>
           </ul>

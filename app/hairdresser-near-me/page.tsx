@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/hairdresser-near-me";
 const title = `Hairdresser Near Me — Find a Hairdresser in Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a hairdresser near you in Australia. Verified salons and stylists in every major city and suburb — cuts, colour, balayage, blow-dries and treatments with real Google reviews.";
+const description = "Find a hairdresser near you in Australia. Salons and stylists in every major city and suburb — cuts, colour, balayage, blow-dries and treatments with real Google reviews.";
 
 export const metadata: Metadata = {
   title,
@@ -25,14 +25,14 @@ export default function Page() {
         pageTitle: "Hairdresser Near Me",
         metaDescription: description,
         h1: "Hairdresser Near Me",
-        hero: "Find a hairdresser near you in Australia. Verified hair salons and stylists in every major city and high-density suburb — cuts, colour, balayage, foils, blow-dries and treatments, ranked by Google rating and review count.",
+        hero: "Find a hairdresser near you in Australia. Hair salons and stylists in every major city and high-density suburb — cuts, colour, balayage, foils, blow-dries and treatments, ranked by Google rating and review count.",
         cityRoute: "/best-hairdresser",
         suburbRoute: "/hairdresser",
         guideTitle: "How to find the best hairdresser near you",
         guideIntro: "The right hairdresser depends on the work you want done. For a quick cut and blow-dry, last-minute Saturday slots and walk-in flexibility matter most. For colour, balayage, or a major change, look for senior-stylist availability, a clear consultation step, and recent Instagram work in your style. The shortlists below are filtered by Google rating and review count, so you start with the salons local clients actually rate.",
         whatToDo: [
           "Type your suburb in the search above to find hairdressers around you",
-          "Or pick a city or suburb below to browse the verified shortlist",
+          "Or pick a city or suburb below to browse the shortlist",
           "Read the most recent Google reviews — quality changes when senior staff move salons",
           "Check the salon's Instagram for fresh cuts and colour in your style",
           "Book consultations for colour, balayage, or any major cut change",
@@ -43,7 +43,7 @@ export default function Page() {
           { q: "What's the difference between a hairdresser and a barber?", a: "Hairdressers cover the full salon range — cuts, colour, balayage, treatments and styling. Barbers focus on clipper-driven men's cuts, fades, beards and shaves. Pick based on the cut you want, not just gender." },
           { q: "How do I find a good hairdresser for colour or balayage?", a: "Always book a consultation first — colour is a skill that varies hugely between stylists. Look for a strong Instagram portfolio of work in your tone, and check that bond-building (Olaplex or similar) is included as standard, not an upsell." },
           { q: "Do hairdressers take walk-ins?", a: "Some salons take walk-ins for trims, blow-dries, and last-minute fringe cuts. Colour and senior-stylist work usually need a booking. Always call ahead, especially Friday afternoons and Saturdays." },
-          { q: "How do I find a hairdresser open near me right now?", a: "Use the search above with your suburb name to see verified salons nearby. Then check Google for live opening hours and recent reviews. Many salons also post Instagram stories with same-day availability." },
+          { q: "How do I find a hairdresser open near me right now?", a: "Use the search above with your suburb name to see salons nearby. Then check Google for live opening hours and recent reviews. Many salons also post Instagram stories with same-day availability." },
         ],
         scissorPlug: {
           text: "Top hairdressers in Australia put their scissors through hundreds of cuts a year. ShearGenius supplies",

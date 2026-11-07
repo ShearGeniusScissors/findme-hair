@@ -5,12 +5,12 @@ export const revalidate = 86400;
 
 const TEXT = `# findme.hair
 
-> Australia's hair salon and barber directory. Hair only — no beauty, nails, or spa. Listings are matched to their Google Business Profiles; hundreds of salons have been visited in person. 13,900+ salons and barber shops across every Australian state and territory.
+> Australia's hair salon and barber directory. Hair only — no beauty, nails, or spa. Listings are matched to their Google Business Profiles; hundreds of salons have been visited in person. 13,800+ salons and barber shops across every Australian state and territory.
 
 ## Find a haircut
 
-- [Hairdresser Near Me](https://www.findme.hair/hairdresser-near-me): national directory of verified hairdressers across Australia, browse by city or suburb
-- [Barber Near Me](https://www.findme.hair/barber-near-me): national directory of verified barbers — fades, scissor cuts, hot-towel shaves
+- [Hairdresser Near Me](https://www.findme.hair/hairdresser-near-me): national directory of hairdressers across Australia, browse by city or suburb
+- [Barber Near Me](https://www.findme.hair/barber-near-me): national directory of barbers — fades, scissor cuts, hot-towel shaves
 - [Haircut Near Me](https://www.findme.hair/haircut-near-me): combined directory covering hairdressers and barbers
 - [Mobile Hairdresser Near Me](https://www.findme.hair/mobile-hairdresser-near-me): at-home hairdressers who travel to your suburb
 - [Cheap Haircut Near Me](https://www.findme.hair/cheap-haircut-near-me): student rates, junior stylists, TAFE clinics, mall barbers

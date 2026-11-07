@@ -81,11 +81,11 @@ export default async function TopRatedPage() {
             </h2>
             <p>
               {winners > 0 && active > 0 ? (
-                <>Of the {active.toLocaleString()} verified hair salons and barbers listed on
+                <>Of the {active.toLocaleString()} hair salons and barbers listed on
                 findme.hair, {winners.toLocaleString()} earned the Top Rated {YEAR} badge —
                 the top 10% nationally.</>
               ) : (
-                <>The Top Rated {YEAR} badge marks the top 10% of verified hair salons and
+                <>The Top Rated {YEAR} badge marks the top 10% of listed hair salons and
                 barbers listed on findme.hair nationally.</>
               )}{' '}
               Every {YEAR} badge holder maintains at least a 4.9-star average on Google

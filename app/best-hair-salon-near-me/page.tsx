@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/best-hair-salon-near-me";
 const title = `Best Hair Salon Near Me — Australia ${new Date().getFullYear()} | findme.hair`;
-const description = "Find the best hair salon near you in Australia. Verified top-rated salons in every major city and suburb — cuts, colour, balayage, blow-dries with real Google reviews.";
+const description = "Find the best hair salon near you in Australia. Top-rated salons in every major city and suburb — cuts, colour, balayage, blow-dries with real Google reviews.";
 
 export const metadata: Metadata = {
   title, description,
@@ -21,14 +21,14 @@ export default function Page() {
       pageTitle: "Best Hair Salon Near Me",
       metaDescription: description,
       h1: "Best Hair Salon Near Me",
-      hero: "Find the best hair salon near you in Australia. Verified top-rated salons in every major city and high-density suburb, ranked by Google rating and review count. The best salons earn their reputation visit by visit — the shortlist below filters for that.",
+      hero: "Find the best hair salon near you in Australia. Top-rated salons in every major city and high-density suburb, ranked by Google rating and review count. The best salons earn their reputation visit by visit — the shortlist below filters for that.",
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find the best hair salon near you",
       guideIntro: "&ldquo;Best&rdquo; is subjective for hair, but a few signals separate the top salons from the rest. The shortlists below filter by Google rating and review count first, then verify against multiple third-party sources. Read the latest 30 reviews — the best salons earn most of their reviews recently because they&rsquo;re consistently good.",
       whatToDo: [
         "Type your suburb above to find top-rated salons nearby",
-        "Or pick a city below to browse the verified shortlist",
+        "Or pick a city below to browse the shortlist",
         "Read recent (last 90 days) reviews — lifetime ratings hide stylist turnover",
         "Look for senior-stylist availability if you want sharper colour or balayage work",
         "Check Instagram for fresh work in your style before committing for a major change",

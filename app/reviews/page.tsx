@@ -93,7 +93,7 @@ export default async function ReviewsPage() {
 
       <div className="bg-[var(--color-white)]">
         <div className="mx-auto max-w-4xl px-6 py-12">
-          <p className="text-editorial-overline">Verified reviews</p>
+          <p className="text-editorial-overline">Google reviews</p>
           <h1 className="mt-3 text-3xl text-[var(--color-ink)] sm:text-4xl" style={{ fontFamily: 'var(--font-serif)' }}>
             Top-Rated Hair Salons &amp; Barbers in Australia
           </h1>
@@ -131,7 +131,7 @@ export default async function ReviewsPage() {
         {fiveStarList.length > 0 && (
           <section className="card p-8">
             <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Perfect 5-star (100+ reviews)</h2>
-            <p className="text-sm text-[var(--color-ink-muted)] mb-6">Salons and barbers maintaining a perfect 5.0 star average across 100 or more verified Google reviews.</p>
+            <p className="text-sm text-[var(--color-ink-muted)] mb-6">Salons and barbers maintaining a perfect 5.0 star average across 100 or more Google reviews.</p>
             <ol className="space-y-4">
               {fiveStarList.map((b, i) => (
                 <li key={b.id} className="flex items-baseline justify-between gap-4 border-b border-[var(--color-border-light)] pb-3">

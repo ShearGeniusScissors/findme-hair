@@ -6,11 +6,11 @@ import { supabaseServerInternal } from '@/lib/supabase';
 export const metadata: Metadata = {
   title: 'About findme.hair — Australia\'s Hair Salon & Barber Directory',
   description:
-    'findme.hair is Australia\'s dedicated hair salon and barber directory. 13,900+ listings across all 8 states and territories. Hair only — nothing else.',
+    'findme.hair is Australia\'s dedicated hair salon and barber directory. 13,800+ listings across all 8 states and territories. Hair only — nothing else.',
   alternates: { canonical: 'https://www.findme.hair/about', languages: { 'en-AU': 'https://www.findme.hair/about', 'x-default': 'https://www.findme.hair/about' } },
   openGraph: {
     title: 'About findme.hair',
-    description: 'Australia\'s dedicated hair salon and barber directory. 13,900+ listings.',
+    description: 'Australia\'s dedicated hair salon and barber directory. 13,800+ listings.',
     url: 'https://www.findme.hair/about',
     siteName: 'findme.hair',
     locale: 'en_AU',
@@ -155,7 +155,7 @@ export default async function AboutPage() {
               <div className="card p-5 text-center">
                 <p className="text-2xl font-semibold text-[var(--color-gold)]" style={{ fontFamily: 'var(--font-serif)' }}>2</p>
                 <p className="mt-2 font-medium text-[var(--color-ink)]">Compare</p>
-                <p className="mt-1 text-xs">View verified Google reviews, photos, services, and opening hours for each listing.</p>
+                <p className="mt-1 text-xs">View Google reviews, photos, services, and opening hours for each listing.</p>
               </div>
               <div className="card p-5 text-center">
                 <p className="text-2xl font-semibold text-[var(--color-gold)]" style={{ fontFamily: 'var(--font-serif)' }}>3</p>

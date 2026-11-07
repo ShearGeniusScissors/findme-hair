@@ -970,7 +970,7 @@ export default async function BusinessProfilePage({
               ) : (
                 <div className="mt-4 card p-6">
                   <p className="text-sm text-[var(--color-ink-light)]">
-                    No verified salons nearby yet — be the first to claim a listing in your area.
+                    No other salons listed nearby yet — be the first to claim a listing in your area.
                   </p>
                   <Link
                     href="/claim"

@@ -70,7 +70,7 @@ export async function generateMetadata({
       : `findme.hair Salon Directory — Page ${pageNum} | Australia`;
   const description =
     pageNum === 1
-      ? "Complete A-Z directory of every hair salon and barber listed on findme.hair. 13,900+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
+      ? "Complete A-Z directory of every hair salon and barber listed on findme.hair. 13,800+ listings across Australia, paginated by 100. Browse all and click through to full profiles."
       : `Hair salon and barber directory page ${pageNum} of findme.hair — Australian listings, sorted by state and suburb.`;
   return {
     title,
@@ -164,7 +164,7 @@ export default async function SalonDirectoryPage({
             findme.hair Salon Directory — Page {pageNum} of {totalPages}
           </h1>
           <p className="mt-3 text-[var(--color-ink-light)]">
-            Every hair salon and barber on findme.hair, verified and paginated. Sorted by state, then suburb, then name.
+            Every hair salon and barber on findme.hair, paginated. Sorted by state, then suburb, then name.
           </p>
         </div>
       </div>

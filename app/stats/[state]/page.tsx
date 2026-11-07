@@ -144,7 +144,7 @@ export default async function StateStatsPage({ params }: { params: Promise<{ sta
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>At a glance</h2>
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
-            <Stat label="Verified active listings" value={total} />
+            <Stat label="Active listings" value={total} />
             <Stat label="Google reviews aggregated" value={reviews} />
             <Stat label="Regions covered" value={regions.length} />
           </div>

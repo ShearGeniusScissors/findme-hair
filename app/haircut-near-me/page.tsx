@@ -5,7 +5,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/haircut-near-me";
 const title = `Haircut Near Me ${new Date().getFullYear()} | findme.hair`;
-const description = "Find a haircut near you in Australia. Verified hairdressers, barbers and salons in every major city and suburb — quick cuts, fades, blow-dries.";
+const description = "Find a haircut near you in Australia. Hairdressers, barbers and salons in every major city and suburb — quick cuts, fades, blow-dries.";
 
 export const metadata: Metadata = {
   title,

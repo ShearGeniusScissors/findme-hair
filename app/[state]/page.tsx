@@ -50,7 +50,7 @@ export async function generateMetadata({
     : `Hair Salons & Barbers in ${code} — findme.hair`;
   return {
     title,
-    description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb. Free listings, real reviews.`,
+    description: `Find hair salons and barbers across ${name}. Browse by city and suburb. Free listings, real reviews.`,
     alternates: {
       canonical: path,
       languages: {
@@ -60,7 +60,7 @@ export async function generateMetadata({
     },
     openGraph: {
       title: `Hair Salons & Barbers in ${name} — findme.hair`,
-      description: `Find verified hair salons and barbers across ${name}. Browse by city and suburb.`,
+      description: `Find hair salons and barbers across ${name}. Browse by city and suburb.`,
       url: path,
       siteName: 'findme.hair',
       locale: 'en_AU',
@@ -169,7 +169,7 @@ export default async function StatePage({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `Where can I find a hairdresser in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists verified hairdressers across all major ${name} regions and suburbs. Browse the regions below or use the search to find a salon by suburb name.` } },
+          { '@type': 'Question', name: `Where can I find a hairdresser in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair lists hairdressers across all major ${name} regions and suburbs. Browse the regions below or use the search to find a salon by suburb name.` } },
           { '@type': 'Question', name: `How are listings ranked in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `Listings are ranked by Google star rating and review count. Featured (paid) placement is clearly marked at the top of each region. The default ranking is editorial.` } },
           { '@type': 'Question', name: `How many hair salons does findme.hair list in ${name}?`, acceptedAnswer: { '@type': 'Answer', text: `findme.hair covers ${sorted.length} regions across ${name} with thousands of hair salons, barber shops and unisex salons, matched to their Google Business Profiles.` } },
         ],

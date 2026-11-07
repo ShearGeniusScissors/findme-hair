@@ -81,8 +81,8 @@ export default function ForSalonsPage() {
               description="Your star rating and review count from Google are shown on your listing. Social proof that works."
             />
             <Feature
-              title="Verified badge"
-              description="Listings are matched to their Google Business Profiles. Verified salons earn a trust badge."
+              title="Claimed badge"
+              description="Listings are matched to their Google Business Profiles. Owners who claim their listing get a Claimed badge on it."
             />
             <Feature
               title="Professional tools matter"
@@ -146,7 +146,7 @@ export default function ForSalonsPage() {
             />
             <FaqItem
               question="How is findme.hair different from Google?"
-              answer="We're hair and barber only. Google mixes in beauty salons, nail bars, and day spas. We verify every listing to ensure it's a genuine hair salon or barber shop — nothing else."
+              answer="We're hair and barber only. Google mixes in beauty salons, nail bars, and day spas. Almost every listing is matched to a Google Business Profile listed as a hair salon or barber, and beauty, nail and spa businesses are removed when we find them."
             />
             <FaqItem
               question="What if my salon isn't listed yet?"

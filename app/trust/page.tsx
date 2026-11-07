@@ -44,7 +44,7 @@ export default function TrustPage() {
           { '@type': 'Question', name: 'How are listings ranked?', acceptedAnswer: { '@type': 'Answer', text: 'Listings are ranked first by Google star rating, then by review count. Featured listings (paid placement) are clearly marked at the top of category pages. The default ranking is editorial — Google rating × review count — not paid.' } },
           { '@type': 'Question', name: 'Does findme.hair accept paid listings?', acceptedAnswer: { '@type': 'Answer', text: 'Salon owners can claim their listing for free to update photos, hours, services, and booking links. Featured (paid) placement is available and clearly marked. The base directory ranking is independent of paid placement.' } },
           { '@type': 'Question', name: 'How often is data refreshed?', acceptedAnswer: { '@type': 'Answer', text: 'Google rating, review count, and opening hours are sourced from Google Business Profile and re-checked on a rolling basis, not live. Salon-claimed details (photos, custom descriptions, booking links) update in real time.' } },
-          { '@type': 'Question', name: 'How do you handle errors or fake reviews?', acceptedAnswer: { '@type': 'Answer', text: 'Each verified salon has a contact channel for corrections. Suspected fake-review patterns are reviewed manually. We exclude listings with confirmed review-fraud signals.' } },
+          { '@type': 'Question', name: 'How do you handle errors or fake reviews?', acceptedAnswer: { '@type': 'Answer', text: 'Corrections can be sent through the contact page. Suspected fake-review patterns are reviewed manually. We exclude listings with confirmed review-fraud signals.' } },
         ],
       }} />
 

@@ -7,7 +7,7 @@ export const revalidate = 3600;
 
 const path = "https://www.findme.hair/stats";
 const title = `Australian Hair Industry Stats ${new Date().getFullYear()} | findme.hair`;
-const description = "Live Australian hair industry stats — total verified salons by state, business type breakdowns, walk-in coverage, mobile and specialty stylists.";
+const description = "Live Australian hair industry stats — total salons by state, business type breakdowns, walk-in coverage, mobile and specialty stylists.";
 
 export const metadata: Metadata = {
   title,
@@ -79,7 +79,7 @@ export default async function StatsPage() {
         '@context': 'https://schema.org',
         '@type': 'Dataset',
         name: 'Australian Hair Industry Statistics',
-        description: 'Live counts of verified Australian hair salons and barber shops, by state, type, and specialty.',
+        description: 'Live counts of Australian hair salons and barber shops, by state, type, and specialty.',
         url: path,
         creator: { '@id': 'https://www.findme.hair/#organization' },
         keywords: ['Australian hair industry', 'hair salon statistics', 'barber statistics', 'hairdresser data Australia'],
@@ -114,7 +114,7 @@ export default async function StatsPage() {
             Australian Hair Industry Stats
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            Counts of verified hair salons and barber shops across Australia — by state, business type, walk-in availability, and specialty. Counts recompute continuously from the findme.hair directory. Free to cite under CC BY 4.0; please link back.
+            Counts of listed hair salons and barber shops across Australia — by state, business type, walk-in availability, and specialty. Counts recompute continuously from the findme.hair directory. Free to cite under CC BY 4.0; please link back.
           </p>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default async function StatsPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Overall</h2>
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-            <Stat label="Verified active listings" value={total.toLocaleString()} />
+            <Stat label="Active listings" value={total.toLocaleString()} />
             <Stat label="Australian regions covered" value={regions.toLocaleString()} />
             <Stat label="Total Google reviews aggregated" value={totalReviews.toLocaleString()} />
             <Stat label="Coverage" value="All 8 states &amp; territories" small />
@@ -146,7 +146,7 @@ export default async function StatsPage() {
             <thead>
               <tr className="border-b border-[var(--color-border)]">
                 <th className="text-left py-2 font-semibold text-[var(--color-ink)]">State</th>
-                <th className="text-right py-2 font-semibold text-[var(--color-ink)]">Verified listings</th>
+                <th className="text-right py-2 font-semibold text-[var(--color-ink)]">Active listings</th>
                 <th className="text-right py-2 font-semibold text-[var(--color-ink)] hidden sm:table-cell">% of total</th>
               </tr>
             </thead>

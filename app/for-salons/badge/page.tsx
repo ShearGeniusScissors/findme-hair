@@ -7,7 +7,7 @@ export const revalidate = 86400;
 const path = "https://www.findme.hair/for-salons/badge";
 const title = "Salon owner: add the findme.hair badge to your website (free)";
 const description =
-  "Copy-paste HTML for the 'Featured on findme.hair' badge. Free for any active salon or barber listing. Helps clients see you&rsquo;re a verified salon and helps your site's SEO.";
+  "Copy-paste HTML for the 'Featured on findme.hair' badge. Free for any active salon or barber listing. Shows clients where to find your listing and Google reviews.";
 
 export const metadata: Metadata = {
   title,
@@ -26,12 +26,12 @@ export const metadata: Metadata = {
 
 const badgeHtmlLight = `<a href="https://www.findme.hair/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#ffffff;color:#1a1a1a;border:1px solid #e6e1d8;border-radius:8px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px;text-decoration:none;line-height:1.2">
   <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#c9a96e;color:#1a1a1a;border-radius:50%;font-weight:700;font-size:13px;font-family:Georgia,'Times New Roman',serif">F</span>
-  <span><strong>Listed on</strong> findme.hair<br><span style="font-size:11px;color:#7a7163">Australia's verified hair directory</span></span>
+  <span><strong>Listed on</strong> findme.hair<br><span style="font-size:11px;color:#7a7163">Australia's hair salon directory</span></span>
 </a>`;
 
 const badgeHtmlDark = `<a href="https://www.findme.hair/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#1a1a1a;color:#ffffff;border:1px solid #2a2a2a;border-radius:8px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px;text-decoration:none;line-height:1.2">
   <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#c9a96e;color:#1a1a1a;border-radius:50%;font-weight:700;font-size:13px;font-family:Georgia,'Times New Roman',serif">F</span>
-  <span><strong>Listed on</strong> findme.hair<br><span style="font-size:11px;color:#a8a094">Australia's verified hair directory</span></span>
+  <span><strong>Listed on</strong> findme.hair<br><span style="font-size:11px;color:#a8a094">Australia's hair salon directory</span></span>
 </a>`;
 
 const badgeHtmlInline = `<a href="https://www.findme.hair/" target="_blank" rel="noopener">Listed on findme.hair</a>`;
@@ -77,7 +77,7 @@ export default function BadgePage() {
             Add the findme.hair badge to your website
           </h1>
           <p className="mt-4 text-[var(--color-ink-light)] leading-relaxed">
-            If your salon is listed on findme.hair (and every active hair salon and barber in Australia is) — add this small badge to the footer of your website. It tells clients you&rsquo;re a verified salon, and it helps your site rank better in local search.
+            If your salon is listed on findme.hair, add this small badge to the footer of your website. It shows clients where to find your listing and Google reviews, and links your site to a hair-only directory.
           </p>
           <p className="mt-3 text-[var(--color-ink-light)] leading-relaxed">
             Free, forever. No tracking pixel. No JavaScript. Just one line of HTML.
@@ -120,10 +120,9 @@ export default function BadgePage() {
             Why bother?
           </h2>
           <ul className="text-sm text-[var(--color-ink-light)] list-disc pl-5 space-y-2 leading-relaxed">
-            <li><strong>Client trust.</strong> findme.hair only lists genuine hair professionals — no booking platforms, no scammers, no fake salons. The badge tells visitors a third party has verified your business is real.</li>
+            <li><strong>Client trust.</strong> findme.hair is hair only — no beauty, nails or spa — and listings are matched to their Google Business Profiles. The badge tells visitors you&rsquo;re listed there.</li>
             <li><strong>Search engine signal.</strong> A reciprocal link between your site and findme.hair adds a relevance signal to Google&rsquo;s local search algorithm. Small effect, but it compounds.</li>
-            <li><strong>Network of peers.</strong> The badge is used by salons across all states. You&rsquo;re joining a network of independent hairdressers and barbers who chose not to pay a booking platform.</li>
-            <li><strong>Zero load.</strong> The badge is inline HTML — no external scripts, no images loaded from our server, no tracking, no privacy concerns. It works offline. It works without JavaScript.</li>
+                        <li><strong>Zero load.</strong> The badge is inline HTML — no external scripts, no images loaded from our server, no tracking, no privacy concerns. It works offline. It works without JavaScript.</li>
           </ul>
         </section>
 
@@ -133,7 +132,7 @@ export default function BadgePage() {
             Not sure if your salon is already listed?
           </h2>
           <p className="text-sm leading-relaxed mb-4">
-            Every active hair salon and barber in Australia is in our directory — 13,900+ businesses across all 8 states and territories. Search for your salon name and claim your listing for free. Claiming lets you update photos, hours, and your booking link.
+            13,800+ hair salons and barber shops are listed across all 8 states and territories. Search for your salon name and claim your listing for free. Claiming lets you update photos, hours, and your booking link.
           </p>
           <Link href="/claim" className="inline-block px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-medium rounded text-sm">Claim your listing →</Link>
         </section>

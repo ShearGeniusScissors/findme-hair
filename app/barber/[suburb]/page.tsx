@@ -111,7 +111,7 @@ export default async function Page({ params }: { params: Promise<{ suburb: strin
         h1Prefix: TITLE_BASE,
         routePrefix: ROUTE,
         metaDescribeShort: "Barber shops for fades, scissor cuts, hot-towel shaves and beard work",
-        hero: "Barbers in {suburb} cover skin fades, taper fades, scissor cuts, hot-towel shaves and beard trims. Below are the verified barber shops in {suburb} with the strongest Google reviews.",
+        hero: "Barbers in {suburb} cover skin fades, taper fades, scissor cuts, hot-towel shaves and beard trims. Below are the barber shops in {suburb} with the strongest Google reviews.",
         guideTitle: "How to find a great barber in {suburb}",
         guideIntro: "The fastest way to pick a barber in {suburb} is to scan recent Instagram fade work and the latest 30 Google reviews. Lifetime ratings hide stylist turnover — when senior staff move shops, the work changes fast. The shortlist below is filtered by Google rating and review count, so you start with the barbers locals actually rate.",
         whatToLook: [

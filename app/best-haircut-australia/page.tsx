@@ -9,7 +9,7 @@ export const revalidate = 86400;
 const path = "https://www.findme.hair/best-haircut-australia";
 const year = new Date().getFullYear();
 const title = `Best Haircut in Australia ${year} | findme.hair`;
-const description = `Find the best haircut in Australia. Verified top hairdressers and barbers in Melbourne, Sydney, Brisbane, Perth, Adelaide. Ranked by Google rating.`;
+const description = `Find the best haircut in Australia. Top-rated hairdressers and barbers in Melbourne, Sydney, Brisbane, Perth, Adelaide. Ranked by Google rating.`;
 
 export const metadata: Metadata = {
   title,
@@ -53,7 +53,7 @@ export default function BestHaircutAustraliaPage() {
           { '@type': 'Question', name: 'How much does the best haircut in Australia cost?', acceptedAnswer: { '@type': 'Answer', text: "A men's cut at a senior barber typically runs $65-$90, a women's cut at a senior stylist $120-$200, and balayage colour $400-$650. Premium 'best of' salons charge a 30-50% premium over standard rates because of senior-stylist time, included bond-builders, and longer service durations." } },
           { '@type': 'Question', name: 'Which Australian city has the best hair scene?', acceptedAnswer: { '@type': 'Answer', text: "Melbourne and Sydney lead Australia's hair scene by depth and density of senior-trained stylists, but Brisbane, Perth and Adelaide all have world-class salons. Regional centres like Geelong, Ballarat, the Sunshine Coast and Hobart are increasingly competitive — many capital-trained stylists now run boutique salons in regional Australia." } },
           { '@type': 'Question', name: 'What is the difference between best haircut and best hair salon?', acceptedAnswer: { '@type': 'Answer', text: '"Best haircut" usually refers to the result and the stylist who delivered it. "Best hair salon" usually refers to the venue and the team. The two often overlap — the best salons employ the best stylists — but a senior stylist at a quiet salon can deliver an equal or better haircut than a junior at a famous salon.' } },
-          { '@type': 'Question', name: 'How do I find a top-rated hairdresser near me?', acceptedAnswer: { '@type': 'Answer', text: 'Type your suburb into findme.hair to see verified salons nearby, sorted by Google rating and review count. For city-level browsing, use the listings below — every major Australian city has a dedicated top-rated page.' } },
+          { '@type': 'Question', name: 'How do I find a top-rated hairdresser near me?', acceptedAnswer: { '@type': 'Answer', text: 'Type your suburb into findme.hair to see salons nearby, sorted by Google rating and review count. For city-level browsing, use the listings below — every major Australian city has a dedicated top-rated page.' } },
         ],
       }} />
 
@@ -74,7 +74,7 @@ export default function BestHaircutAustraliaPage() {
             Best Haircut in Australia ({year})
           </h1>
           <p className="mt-3 max-w-2xl text-[var(--color-ink-light)] leading-relaxed">
-            Where to get the best haircut in Australia, city by city. Top-rated hairdressers and barbers in every major city, verified against Google reviews and ranked by rating and review count.
+            Where to get the best haircut in Australia, city by city. Top-rated hairdressers and barbers in every major city, matched to their Google Business Profiles and ranked by Google rating and review count.
           </p>
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function BestHaircutAustraliaPage() {
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Best haircut by city</h2>
-          <p className="text-sm text-[var(--color-ink-muted)] mb-6">Click through to the verified shortlist for any major Australian city.</p>
+          <p className="text-sm text-[var(--color-ink-muted)] mb-6">Click through to the shortlist for any major Australian city.</p>
           <div className="grid gap-4 sm:grid-cols-2">
             {PIVOT_CITIES.map((c) => (
               <div key={c.slug} className="card p-5">

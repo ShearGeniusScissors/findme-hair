@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 const path = "https://www.findme.hair/press";
 const title = "Press & Media — findme.hair | Australia's Hair Directory";
-const description = "Media kit, brand assets, and press contact for findme.hair — Australia's hair salon and barber directory with 13,900+ listings.";
+const description = "Media kit, brand assets, and press contact for findme.hair — Australia's hair salon and barber directory with 13,800+ listings.";
 
 export const metadata: Metadata = {
   title,
@@ -65,7 +65,7 @@ export default function PressPage() {
       <div className="mx-auto max-w-3xl px-6 py-10 space-y-10">
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>About findme.hair</h2>
-          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">findme.hair is Australia&rsquo;s hair salon and barber directory. Hair only — no beauty, nails, or spa. Listings are matched to their Google Business Profiles, and hundreds of salons have been visited in person. The site lists 13,900+ hair businesses across all eight Australian states and territories, organised by state, city, region, suburb, service category, and specialty.</p>
+          <p className="text-sm text-[var(--color-ink-light)] leading-relaxed">findme.hair is Australia&rsquo;s hair salon and barber directory. Hair only — no beauty, nails, or spa. Listings are matched to their Google Business Profiles, and hundreds of salons have been visited in person. The site lists 13,800+ hair businesses across all eight Australian states and territories, organised by state, city, region, suburb, service category, and specialty.</p>
         </section>
 
         <section className="card p-8">
@@ -76,14 +76,14 @@ export default function PressPage() {
             <li>Listings are ranked by Google star rating and review count, not paid placement</li>
             <li>Salon owners can claim listings free of charge to update photos, hours, and booking links</li>
             <li>Pricing references reflect Australian market rates, refreshed yearly</li>
-            <li>Editorial guides are published under a verified Organization byline (findme.hair) and dated</li>
+            <li>Editorial guides are published under the findme.hair Organization byline and dated</li>
           </ul>
         </section>
 
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Latest data report</h2>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed mb-3">
-            <Link href="/press/state-of-australian-hair-industry-2026" className="underline font-medium">State of the Australian Hair Industry 2026</Link> — aggregate counts and benchmarks drawn from 13,916 hair businesses listed on findme.hair (updated 7 November 2026). Released under CC BY 4.0 for free editorial reuse.
+            <Link href="/press/state-of-australian-hair-industry-2026" className="underline font-medium">State of the Australian Hair Industry 2026</Link> — aggregate counts and benchmarks drawn from 13,887 hair businesses listed on findme.hair (updated 7 November 2026). Released under CC BY 4.0 for free editorial reuse.
           </p>
           <p className="text-xs text-[var(--color-ink-muted)]">Suggested citation: <em>findme.hair (2026). State of the Australian Hair Industry 2026.</em></p>
         </section>

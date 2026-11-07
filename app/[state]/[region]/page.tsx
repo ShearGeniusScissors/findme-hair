@@ -54,7 +54,7 @@ export async function generateMetadata({
 
   return {
     title,
-    description: `Find verified hair salons and barbers across ${regionName}, ${fullState}. Browse by suburb, real Google reviews, hours, and Book Now links.`,
+    description: `Find hair salons and barbers across ${regionName}, ${fullState}. Browse by suburb, real Google reviews, hours, and Book Now links.`,
     alternates: {
       canonical: path,
       languages: {
@@ -64,7 +64,7 @@ export async function generateMetadata({
     },
     openGraph: {
       title: `Hair Salons & Barbers in ${regionName} — findme.hair`,
-      description: `Find verified hair salons and barbers across ${regionName}, ${fullState}.`,
+      description: `Find hair salons and barbers across ${regionName}, ${fullState}.`,
       url: path,
       siteName: 'findme.hair',
       locale: 'en_AU',
@@ -168,7 +168,7 @@ export default async function RegionDirectoryPage({
             Hair salons &amp; barbers in {regionName}
           </h1>
           <p className="mt-2 text-[var(--color-ink-light)]">
-            {totalCount.toLocaleString()} verified {totalCount === 1 ? 'listing' : 'listings'} across {suburbs.length} {suburbs.length === 1 ? 'suburb' : 'suburbs'}
+            {totalCount.toLocaleString()} {totalCount === 1 ? 'listing' : 'listings'} across {suburbs.length} {suburbs.length === 1 ? 'suburb' : 'suburbs'}
           </p>
         </div>
       </div>
