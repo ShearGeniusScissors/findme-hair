@@ -11,6 +11,7 @@ import type { AuState, Business } from '@/types/database';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const PUBLISHED = '2026-04-13';
+const MODIFIED = '2026-11-07'; // city copy rewritten from live findme.hair data
 const suburbToSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -30,56 +31,56 @@ const CITIES: CityConfig[] = [
     slug: 'melbourne',
     state: 'VIC',
     suburbs: ['melbourne', 'south yarra', 'fitzroy', 'richmond', 'carlton', 'collingwood', 'prahran', 'st kilda', 'brunswick', 'windsor'],
-    description: 'Melbourne has the most stylistically self-aware hair scene in the country. The CBD trades on convenience and Korean precision (Kis Hair on Spencer and Bourke set the template); Fitzroy and Brunswick lean into bold colour, mullets, and unapologetic creative cutting; South Yarra and Prahran skew premium and bridal-ready, with Rakis on Collins and similar legacy salons still pulling regulars after thirty years. Richmond and Collingwood sit between the two cultures — modern unisex studios where you book online and pay $120-180 for a women\'s cut. Pricing across Melbourne runs higher than the national average: expect $90-150 for a women\'s wash-cut-blow-dry in inner-city postcodes, $180-350 for balayage, and $40-65 for a men\'s barber cut. The city has the largest cluster of Japanese-trained dry-cutting specialists in Australia, and the second largest Korean magic-straightening market after Sydney.',
+    description: 'findme.hair lists 230+ active salons and barbers across the ten inner-Melbourne suburbs this guide covers. South Yarra and Richmond have 35+ listings each, the CBD has 30+, Prahran 30+, St Kilda and Brunswick 20+ each, and Windsor and Collingwood 15+ each. Nearly a quarter of them are barber shops. Among the highest-rated hair salons on Google, all at 5.0 stars, are Zayn The Organic Salon in St Kilda (300+ reviews), Valentina Ardila Hair in Richmond (290+) and Freshhh salon in the CBD (200+). For a barber, Beef\'s Barbers Richmond holds 5.0 from more than 1,100 reviews. Ratings and review counts change over time, so read recent reviews and check each salon\'s own price list before you book.',
   },
   {
     name: 'Sydney',
     slug: 'sydney',
     state: 'NSW',
     suburbs: ['sydney', 'surry hills', 'bondi', 'paddington', 'newtown', 'darlinghurst', 'mosman', 'double bay', 'manly', 'balmain'],
-    description: 'Sydney\'s hairdressing market is structurally split by harbour and headland. East of the bridge — Double Bay, Paddington, Bondi, Mosman — you pay $150-250 for a cut at salons that build their books on consistent, conservative high-end work and a loyal clientele that doesn\'t flinch at $400 colour appointments. North of the harbour, Mosman and the lower North Shore tilt toward established legacy studios with longer client tenure. Surry Hills and Newtown trade in the inner-west\'s appetite for editorial work, queer-friendly stylists, and unconventional colour. Manly and the beaches lean toward textured, sun-bleached cuts and high balayage volume. The Korean precincts of Eastwood, Chatswood and Strathfield host most of Australia\'s magic-straightening and Korean cut specialists. Sydney pricing runs the widest range in the country — $35 for a fade at a no-frills Eastwood barber, $480 for a colour correction in Double Bay.',
+    description: 'This Sydney guide spans the CBD, the inner east (Surry Hills, Darlinghurst and Paddington), Double Bay and Bondi in the Eastern Suburbs, Newtown and Balmain in the inner west, Mosman on the lower North Shore and Manly on the Northern Beaches. findme.hair lists 270+ active salons and barbers across those ten suburbs: 45+ in the CBD, 35+ each in Surry Hills and Newtown, 30+ in Darlinghurst and nearly 30 in Manly. Among the highest-rated hair salons on Google, all at 5.0 stars, are New in Town Salon in Newtown (390+ reviews), 3Sixty Hair in Balmain (180+), Kim Sun Young World Square in the CBD (170+), Wakefields Hair Salon in Surry Hills (170+) and Dealis Hair Boutique in Manly (160+). For a barber, 5000 BC - Barbershop in the CBD holds 5.0 from 340+ reviews.',
   },
   {
     name: 'Brisbane',
     slug: 'brisbane',
     state: 'QLD',
     suburbs: ['brisbane', 'fortitude valley', 'south brisbane', 'west end', 'paddington', 'new farm', 'bulimba', 'woolloongabba', 'ascot', 'indooroopilly'],
-    description: 'Brisbane\'s hairdressing scene has matured fast over the last five years. Fortitude Valley and New Farm have effectively become the city\'s creative quarter — boutique salons, owner-operator stylists, full editorial colour menus. Paddington and Bulimba trade on heritage Queenslander cottages converted into intimate studios where you book one-on-one. West End leans bohemian and queer-friendly; Ascot and Hamilton skew traditional luxury. The subtropical climate genuinely shapes the work — every senior Brisbane stylist has a position on humidity, frizz control, and the seasonal toll of pool chlorine on lightened hair. Brisbane salons hold the highest average Google rating of any state capital (4.75/5.0 across our 3,000 active listings, up from 4.69 two years ago) — a quirk usually attributed to the high proportion of newer, owner-operator businesses that haven\'t yet acquired the corporate scaling problems that dilute reviews elsewhere. Pricing sits below Sydney and Melbourne: $75-120 for a women\'s cut, $35-55 for a barber cut.',
+    description: 'This Brisbane guide covers ten inner and middle-ring suburbs on both sides of the river: West End, South Brisbane and Woolloongabba on the south side, Fortitude Valley, New Farm, Paddington and Ascot on the north side, Bulimba to the east and Indooroopilly to the west. findme.hair lists 150+ active salons and barbers across them, and West End and Fortitude Valley have the most, with 25+ each. Among the highest-rated hair salons on Google, all at 5.0 stars, are Fgdolls hair in West End (1,500+ reviews), MABASA Hair Salon in South Brisbane (370+), STONE. The Studio in Paddington (320+) and Haven Hair in New Farm (150+). Barbers make up nearly a third of the list; The Moustachery in Paddington holds 5.0 from 900+ reviews and Johnny\'s Barber in Woolloongabba 5.0 from 870+. Brisbane summers are hot and humid, so raise frizz control and colour fade at your consultation if they matter to you.',
   },
   {
     name: 'Perth',
     slug: 'perth',
     state: 'WA',
     suburbs: ['perth', 'subiaco', 'leederville', 'fremantle', 'mount lawley', 'claremont', 'nedlands', 'victoria park', 'scarborough', 'cottesloe'],
-    description: 'Perth\'s hair industry has a distinctly West Coast pace — fewer salons per capita than the eastern capitals, longer wait times for the established names, and a strong owner-operator culture. Subiaco and Leederville are the city\'s creative core, with mid-to-high-end salons that have built local reputations over twenty-plus years. Claremont and Nedlands are old-money traditional; Mount Lawley leans alternative and queer-friendly. Fremantle has its own gravitational pull — coastal, slower, with a higher concentration of bohemian and natural-product salons than anywhere else in WA. The northern beach suburbs (Scarborough, Cottesloe) trade in textured beachy cuts and high mobile-hairdresser uptake. Perth pricing tracks Brisbane closely: $80-130 for a women\'s cut, $40-60 for a barber cut. Walk-in availability is materially higher than the eastern capitals, which matters if you\'ve just landed and need a haircut today.',
+    description: 'This Perth guide covers the CBD, Leederville and Mount Lawley in the inner north, Subiaco, Nedlands, Claremont and Cottesloe in the western suburbs, Fremantle, Scarborough on the coast and Victoria Park across the Swan River. findme.hair lists 200+ active salons and barbers across those ten suburbs: 45+ in the CBD, 30+ in Subiaco and 20+ in Fremantle. Among the highest-rated on Google, all at 5.0 stars, are Eesome in Leederville (240+ reviews), Lily Lane Creative Hair in Subiaco (180+), Ellie Dunne Collective in Claremont (180+), Fremantle Hair Studio (150+) and Mane Code + Co in Mount Lawley (100+). More than a quarter of the list are barber shops; Empire State Barbershop in Claremont holds 5.0 from 120+ reviews.',
   },
   {
     name: 'Adelaide',
     slug: 'adelaide',
     state: 'SA',
     suburbs: ['adelaide', 'norwood', 'unley', 'glenelg', 'prospect', 'hyde park', 'north adelaide', 'burnside', 'henley beach', 'mitcham'],
-    description: 'Adelaide is the most under-rated hair city in Australia — small enough that the best stylists are personally known to most regulars, large enough to host genuinely skilled creative work. Norwood and Unley anchor the premium end with long-standing studios where you\'ll often see three generations of the same family on the books. North Adelaide and the city centre concentrate the corporate and convenience end. Glenelg and Henley Beach lean coastal-casual, with strong textured-cut and beachy-balayage practice. Prospect and Hyde Park host most of the city\'s queer-friendly and alternative salons. Adelaide is also the second-best place in Australia to be a barber apprentice (after regional Victoria) — labour costs are lower than the eastern capitals, and there are still walk-in barber shops in the CBD asking $35 for a cut. Women\'s cuts run $70-110 in most suburbs; balayage starts at $180. The market is heavily concentrated in the CBD: Adelaide is the densest capital city for hair businesses per square kilometre.',
+    description: 'This Adelaide guide covers the city centre and North Adelaide, Norwood to the east, the beachside suburbs of Glenelg and Henley Beach, and Prospect, Unley, Hyde Park, Burnside and Mitcham. findme.hair lists 130+ active salons and barbers across them. The city centre has by far the most (50+), followed by Norwood (25+) and North Adelaide (15+), with more than a dozen each in Glenelg and Henley Beach. Among the highest-rated on Google, all at 5.0 stars, are Etcher (400+ reviews), Socoh Salon (140+) and Cabal Hair (100+) in the city, and Enough Studio in Hyde Park (120+). More than a quarter of the list are barber shops; Plek. Barbershop in the city holds 5.0 from 250+ reviews.',
   },
   {
     name: 'Hobart',
     slug: 'hobart',
     state: 'TAS',
     suburbs: ['hobart', 'north hobart', 'battery point', 'sandy bay', 'new town', 'moonah', 'glenorchy', 'kingston', 'bellerive', 'rosny'],
-    description: 'Hobart\'s hair scene runs on word-of-mouth more than any other Australian capital. The market is small enough that everybody knows who the three or four top colourists are, and you generally need to book six to eight weeks out for senior chairs. North Hobart and Sandy Bay anchor the premium end with established owner-operator studios. The CBD has reasonable walk-in availability at the more mid-market end. Battery Point and West Hobart skew traditional. The Eastern Shore (Bellerive, Lindisfarne, Howrah, Warrane) has its own quietly growing scene of boutique studios serving the suburban shift away from CBD bookings. Pricing in Hobart is the lowest of any state capital: $65-95 for a women\'s cut, $30-45 for a barber cut, balayage from $160. Mobile hairdressing has higher uptake here than the national average — practical for elderly clients in the Eastern Shore and for stylists who don\'t want to pay CBD rent.',
+    description: 'This Hobart guide covers the city centre, Battery Point and Sandy Bay to the south, North Hobart, New Town, Moonah and Glenorchy to the north, Kingston further south, and Bellerive and Rosny on the Eastern Shore across the Derwent. findme.hair lists 85+ active salons and barbers across those suburbs and 150+ across the wider Hobart region. The city centre has the most, followed by Moonah and Sandy Bay with 10+ each. Among the highest-rated hair salons on Google are Eye Am Hair (4.9 from 400+ reviews), Paradise Lost (4.9 from 250+) and Glow on Collins (4.9 from 110+), all in the city. Hobart\'s barbers post some of the strongest numbers in this guide: The Blades Barber in North Hobart holds 5.0 from 850+ reviews, and The Blades Barber Moonah 5.0 from 580+.',
   },
   {
     name: 'Darwin',
     slug: 'darwin',
     state: 'NT',
     suburbs: ['darwin', 'stuart park', 'parap', 'fannie bay', 'nightcliff', 'casuarina', 'palmerston', 'rapid creek', 'woolner', 'larrakeyah'],
-    description: 'Darwin\'s hair market is the smallest of any Australian capital — 122 active listings across the entire territory — but the standard of the top operators is genuinely high. Stuart Park, Parap and Nightcliff host most of the established studios. Casuarina and Palmerston serve the wider suburban population. The market is shaped by two things: tropical humidity (which drives strong demand for keratin treatments, smoothing services, and frizz-control work) and a transient client base (defence force families, FIFO workers, contractors) which keeps stylists on their toes with shorter average client tenure. Most stylists in Darwin can do excellent textured and Afro-textured work — a market reality of a more diverse population than many southern capitals. Pricing: $70-100 women\'s cut, $30-45 barber. Walk-in availability is high outside school holidays. Pre-book during the dry season — June through September fills up fast.',
+    description: 'findme.hair lists 120+ active hair businesses across the whole Northern Territory, fewer than any other state or territory. Within the suburbs this guide covers, Parap has the most listings, followed by Nightcliff and Casuarina, with a few more in Fannie Bay and Rapid Creek. Among the highest-rated on Google are Navi Stylish Zone in Nightcliff (4.9 from 95+ reviews), Tenda Salon in Parap (4.9 from 80+) and Dapper & Dame at Casuarina (4.7 from 90+). For a barber, AlleyKatz Barber Shop in Nightcliff holds 4.8 from 180+ reviews. Darwin\'s wet season is hot and humid, so raise frizz control and colour fade at your consultation if they matter to you.',
   },
   {
     name: 'Canberra',
     slug: 'canberra',
     state: 'ACT',
     suburbs: ['canberra', 'braddon', 'kingston', 'manuka', 'woden', 'belconnen', 'civic', 'dickson', 'fyshwick', 'griffith'],
-    description: 'Canberra hairdressing is shaped by the city\'s structural quirks — the public-service workforce keeps demand for corporate-conservative cuts and reliable colour high year-round, the dispersed urban planning means most clients drive 15-25 minutes to their stylist, and the cold winter months drive strong demand for warmer-tone colour work (copper, chocolate brown, espresso balayage). Braddon, Kingston and Manuka are the established premium quarters; Civic concentrates the CBD chains; Belconnen and Tuggeranong serve the wider suburban catchment. The barber scene is genuinely strong — Canberra has the highest barber-to-salon ratio of any non-NT capital, partly explained by the public service and defence force male population. Pricing: $75-110 women\'s cut, $35-55 barber cut. The premium end of the market here punches above its weight; senior colourists in Manuka and Kingston quietly rival anything in Sydney or Melbourne for technical balayage work, at materially lower prices.',
+    description: 'Canberra stands out for barbers: more than a third of the 220+ active hair businesses findme.hair lists across the ACT are barber shops, the highest share of any state or territory on the site. This guide covers the city centre, Braddon and Dickson in the inner north, Kingston, Manuka and Griffith in the inner south, the Belconnen and Woden town centres, and Fyshwick, with 100+ listings between them. The city centre has the most, followed by Braddon and Belconnen. Among the highest-rated on Google are Falekosi in Braddon (5.0 from 220+ reviews), Kajal\'s salon in Dickson (5.0 from 120+) and Luminous Hair Salon in Belconnen (4.9 from 390+). For a barber, The Barbershop Club by Benjamin Tuita in the city holds 5.0 from 130+ reviews, and Sleight Of Hand Barber Studio in Kingston 5.0 from 110+.',
   },
   // Regional cities
   {
@@ -87,56 +88,56 @@ const CITIES: CityConfig[] = [
     slug: 'ballarat',
     state: 'VIC',
     suburbs: ['ballarat', 'ballarat central', 'ballarat east', 'ballarat north', 'wendouree', 'lake wendouree', 'alfredton', 'mount pleasant', 'sebastopol', 'buninyong'],
-    description: 'Ballarat is the strongest regional hair market in Australia by any meaningful measure — 39 verified hair businesses in Ballarat Central alone, and another forty-plus across Wendouree, Sebastopol, Alfredton, Mount Pleasant and the broader Greater Ballarat region. The city has supported a continuous hairdressing trade through Victorian-era gold-rush prosperity, post-war population growth, and the modern regional renaissance — which means there are still operators on Sturt Street with thirty-five-year client books, and a parallel younger generation in Bridge Mall and Lydiard Street running modern boutique studios. The Stag Ballarat anchors the established premium end with the longest continuous trading history of any city salon. Bricktop Barbershop, Mr V & Co, and Archive Hair are the names that show up most often when locals are asked who they actually go to. Pricing in Ballarat tracks 25-35% below Melbourne CBD: $55-95 women\'s cut, $30-45 barber cut. Walk-in availability is consistently better than Melbourne. The city\'s mobile-sharpening base (Matt Grumley\'s territory) means most senior Ballarat stylists run notably sharper scissors than equivalent salons in larger cities.',
+    description: 'Ballarat\'s hair trade is concentrated in Ballarat Central, the city centre around Sturt Street, Bridge Mall and Lydiard Street, which holds nearly 40 of the 70+ active salons and barbers findme.hair lists across the ten suburbs this guide covers. Wendouree is next, followed by Ballarat East, with smaller numbers in Sebastopol, Alfredton, Buninyong, Ballarat North and Mount Pleasant. Among the highest-rated hair salons on Google are Cutting Culture (5.0 from 150+ reviews), Dexterity Studio (4.9 from 80+) and The Groomerz (4.8 from 200+), all in Ballarat Central. For a barber, Golden Feather Barber and Jimmys Barbershop in Ballarat Central each hold 4.9 from 130+ reviews, and Mr. Bailey\'s Barbershop in Wendouree holds 5.0 from 60+.',
   },
   {
     name: 'Geelong',
     slug: 'geelong',
     state: 'VIC',
     suburbs: ['geelong', 'geelong west', 'newtown', 'belmont', 'highton', 'pakington street', 'ocean grove', 'leopold', 'corio', 'grovedale'],
-    description: 'Geelong\'s hair market has tripled in active operator count over the last decade, riding the same Melbourne-overflow growth that\'s reshaped the wider city. Pakington Street — the Geelong West main strip — is now the city\'s established creative quarter, with boutique studios that would feel at home in Brunswick or Northcote, often run by former Melbourne stylists who moved down for cheaper rent and a better lifestyle. The CBD hosts the bigger-name chain salons and convenience-end options. Belmont and Highton serve the suburban family market. The Bellarine Peninsula villages (Ocean Grove, Barwon Heads, Queenscliff) trade in textured beachy cuts and high mobile-hairdresser uptake — Bellarine clients increasingly book stylists who travel to the home rather than commuting in. Pricing tracks 20-30% below central Melbourne: $70-110 women\'s cut, $35-50 barber. Geelong is the easiest city in Victoria to find a same-week appointment with a senior stylist.',
+    description: 'This Geelong guide covers central Geelong, Geelong West (home to the Pakington Street strip), Newtown, Belmont, Highton and Grovedale, Corio in the north, and Ocean Grove and Leopold on the Bellarine Peninsula. findme.hair lists 140+ active salons and barbers across them. Central Geelong has the most, with Geelong West and Newtown close behind at 20+ each, nearly 20 in Belmont, and 10+ each in Ocean Grove and Leopold. Among the highest-rated hair salons on Google are Rixon Hairdressing in central Geelong (4.9 from 560+ reviews), Phoenix Hair Society in Geelong West (4.9 from 270+) and BLUSH BAR Newtown (4.9 from 220+). For a barber, Masterpiece Barbershop in Geelong West holds 5.0 from 360+ reviews.',
   },
   {
     name: 'Newcastle',
     slug: 'newcastle',
     state: 'NSW',
     suburbs: ['newcastle', 'newcastle east', 'hamilton', 'charlestown', 'lambton', 'merewether', 'adamstown', 'the junction', 'darby street', 'beaumont street'],
-    description: 'Newcastle\'s hair scene runs on two parallel tracks — Darby Street and the CBD trade on creative, editorial, queer-friendly work (the city\'s closest analogue to inner-Sydney Newtown), while Hamilton\'s Beaumont Street and the broader east-end suburbs (Merewether, The Junction, Cooks Hill) host the established premium studios that have been on the same blocks for two decades. Charlestown, Kotara and the western suburbs serve the suburban family market with strong barber depth. The Hunter Valley overflow effect is real — high-end weddings drive consistent bridal-hair work, and several Newcastle stylists travel to Pokolbin and the Lower Hunter on Saturdays during wedding season. Pricing: $75-115 women\'s cut, $35-55 barber. Walk-in availability is genuinely high in the CBD and Hamilton; if you need a haircut on a Saturday morning without booking, Newcastle is the easiest east-coast city to make that work in.',
+    description: 'This Newcastle guide covers the city centre and Newcastle East, Hamilton (home to the Beaumont Street strip), The Junction, Merewether, Adamstown, Lambton and Charlestown. findme.hair lists 45+ active salons and barbers across those suburbs and 110+ across the wider Newcastle region. The city centre has the most, followed by The Junction and Hamilton. Among the highest-rated on Google are WAK The Salon in the city (4.9 from 540+ reviews), Sol + Soma Salon at The Junction (4.9 from 300+) and Emphasized Hair in Hamilton (4.9 from 90+). For a barber, The Lane Way Barbers in Hamilton holds 4.9 from 170+ reviews.',
   },
   {
     name: 'Wollongong',
     slug: 'wollongong',
     state: 'NSW',
     suburbs: ['wollongong', 'fairy meadow', 'corrimal', 'thirroul', 'figtree', 'shellharbour', 'unanderra', 'dapto', 'bulli', 'austinmer'],
-    description: 'Wollongong\'s hair scene reflects a city that\'s halfway between coastal lifestyle and serious working population. The CBD hosts the established premium studios and the bigger-name chains. North Wollongong, Thirroul and the Northern Suburbs (Bulli, Austinmer, Coledale) run distinctly beachier — textured cuts, sun-bleached colour, walk-in friendly. South to Warrawong, Dapto and Shellharbour, the market shifts to convenience and family-oriented salons with strong barber depth. The University of Wollongong\'s student catchment keeps a meaningful budget-end market alive in the city centre. Pricing sits noticeably below Sydney: $65-105 women\'s cut, $30-45 barber. A growing number of Sydney-trained stylists have moved south, which means the top end of the Wollongong market is genuinely competitive with anything you\'d find in the Eastern Suburbs — without the wait or the prices.',
+    description: 'Wollongong\'s hair listings are concentrated in the city centre, which holds 40+ of the 75+ active salons and barbers findme.hair lists across the suburbs this guide covers (100+ across the wider Wollongong region). Corrimal in the northern suburbs is next with 15+, then Fairy Meadow, while Figtree, Unanderra, Dapto and Shellharbour to the south and west have far fewer. Among the highest-rated on Google, all at 5.0 stars, are Hair braids by Somah (110+ reviews), Electric Curl Studio (100+) and Salt Hair Society (55+) in the city, and Hair By Emilie Grace in Corrimal (90+). The Fade District in the city holds 5.0 from 360+ reviews, and Cartel Barbers Wollongong 5.0 from 130+.',
   },
   {
     name: 'Gold Coast',
     slug: 'gold-coast',
     state: 'QLD',
     suburbs: ['gold coast', 'surfers paradise', 'broadbeach', 'burleigh heads', 'palm beach', 'coolangatta', 'robina', 'southport', 'mermaid beach', 'currumbin'],
-    description: 'The Gold Coast hair market is shaped by tourism, lifestyle migration, and one of the highest concentrations of bridal work in Australia. Burleigh Heads has become the city\'s creative epicentre over the last five years — boutique studios, owner-operators, strong editorial colour menus, prices that have started to rival Sydney\'s East. Broadbeach and Mermaid Beach trade on the resort-luxury end. Robina, Nerang and Helensvale serve the family suburban market. Southport hosts the larger volume operations and the CBD chains. Coolangatta and Tugun anchor the southern end with surf-textured cuts and a mid-priced market. The Gold Coast has the highest density of bridal-specialty stylists per capita in the country — fuelled by destination weddings, hinterland venues, and a year-round wedding season. Pricing: $90-150 women\'s cut, $40-60 barber, balayage $200-380. Book ahead — the top names regularly sit on three-month waitlists during the Sept-Nov and Mar-May wedding peaks.',
+    description: 'findme.hair lists 650+ active salons and barbers across the Gold Coast region, and 200+ in the ten suburbs this guide covers, from Southport and Surfers Paradise down the coast through Broadbeach, Mermaid Beach, Burleigh Heads, Palm Beach and Currumbin to Coolangatta, plus Robina inland. Southport, the city\'s business centre, has the most listings, followed by Robina (30+), Surfers Paradise and Burleigh Heads (25+ each) and Coolangatta (20+). Among the highest-rated hair salons on Google, all at 5.0 stars, are Cosimo Hair Studio in Broadbeach (440+ reviews), Beauty Works Hair & Beauty in Robina (200+), Organic Hair by Tunde in Surfers Paradise (130+) and Elleve Hair Co. in Mermaid Beach (120+). More than a quarter of the list are barber shops; Mate\'s Barbershop in Surfers Paradise holds 5.0 from 530+ reviews.',
   },
   {
     name: 'Sunshine Coast',
     slug: 'sunshine-coast',
     state: 'QLD',
     suburbs: ['sunshine coast', 'maroochydore', 'noosa', 'mooloolaba', 'caloundra', 'buderim', 'nambour', 'coolum', 'noosaville', 'alexandra headland'],
-    description: 'The Sunshine Coast hair scene is structurally bimodal — Noosa anchors the premium end with prices and stylist quality that match inner-Sydney suburbs, while everywhere from Maroochydore down to Caloundra runs noticeably more affordable and walk-in friendly. Noosa Heads and Noosaville host the city\'s editorial-end studios, several of them with reputation as good as anywhere in the country for creative colour and bridal work. Mooloorbah, Buderim and Maleny serve the in-between market. Maroochydore is the volume centre; Caloundra has the strongest barber depth on the Coast. The hinterland villages (Eumundi, Montville, Maleny) host a small but distinctive cluster of natural-product and organic-only salons. Pricing varies wildly by suburb: $90-160 women\'s cut in Noosa, $60-100 in Maroochydore, $30-50 barber cuts across the board. The mobile hairdresser uptake is among the highest in QLD — practical for the dispersed semi-rural population and elderly retirees.',
+    description: 'The Sunshine Coast runs from Caloundra in the south to Noosa in the north, and findme.hair lists 350+ active salons and barbers across the region, 140+ of them in the suburbs this guide covers. Maroochydore has the most (35+), followed by Caloundra (nearly 30), Buderim and Mooloolaba (20+ each), then Nambour and Noosaville. Among the highest-rated on Google, all at 5.0 stars, are Henshall Hair Extensions in Maroochydore (520+ reviews), Oxley Plus Cut & Colour in Mooloolaba (200+), Elle Studio in Buderim (170+) and Si.Organics Noosa in Noosaville (110+). For a barber, Saints Barber Lounge in Maroochydore holds 5.0 from 250+ reviews.',
   },
   {
     name: 'Townsville',
     slug: 'townsville',
     state: 'QLD',
     suburbs: ['townsville', 'north ward', 'south townsville', 'cranbrook', 'kirwan', 'aitkenvale', 'hyde park', 'pimlico', 'castletown', 'belgian gardens'],
-    description: 'Townsville anchors the entire North Queensland hair market — the closest comparable salon city is 350km in either direction. The result is a market that punches well above its size: 400+ verified hair businesses across Greater Townsville, several with reputation that travels well outside North QLD for tropical-hair specialty work. The Palmer Street precinct and Castletown serve the CBD and student catchment. Aitkenvale and Kirwan host the suburban-volume operators. Mundingburra, Hyde Park and North Ward run more boutique. The military and FIFO population shapes barber demand — the Townsville barber scene is genuinely deep, with several shops specialising in defence-force-regulation cuts and beard work. Tropical climate work (humidity-resistant smoothing, anti-frizz treatments, sun-damage colour repair) is universal Townsville stylist competence. Pricing tracks regional QLD: $60-90 women\'s cut, $30-40 barber.',
+    description: 'Townsville is North Queensland\'s largest city, and findme.hair lists 100+ active salons and barbers across the Townsville region. Within the suburbs this guide covers, Aitkenvale has the most, followed by Kirwan, then North Ward, Hyde Park and Pimlico, with a few more in Belgian Gardens, Cranbrook and South Townsville. Among the highest-rated on Google are Artside Hair Studio in North Ward (5.0 from 270+ reviews), Coulture Hair Studio in Pimlico (4.9 from 55+), Paragon Hair in Belgian Gardens (4.9 from 55+) and Sizzas Hair and Beauty in Kirwan (4.8 from 130+). For a barber, Just My Barberz in North Ward holds 4.9 from 490+ reviews. Townsville\'s summers are hot and humid, so raise frizz control and colour fade at your consultation if they matter to you.',
   },
   {
     name: 'Cairns',
     slug: 'cairns',
     state: 'QLD',
     suburbs: ['cairns', 'cairns north', 'edge hill', 'parramatta park', 'manunda', 'westcourt', 'earlville', 'smithfield', 'palm cove', 'trinity beach'],
-    description: 'Cairns is the highest-humidity hair market in Australia, and the local stylists know it cold. Every senior Cairns stylist has a tested keratin-treatment protocol, a preferred smoothing product line, and an opinion about which colour formulas hold under year-round 70%+ humidity. The Esplanade and Shields Street/Lake Street precinct host the established CBD studios. Edge Hill and Cairns North lean boutique. Smithfield, Trinity Beach, Palm Cove and the northern beaches run more resort-luxury — strong destination-wedding bridal work, premium balayage on coloured hair. The tourist economy means most CBD operators speak some Japanese, Mandarin and Korean; multilingual front-of-house is unusually common. Pricing: $70-110 women\'s cut, $30-50 barber. Wet-season bookings (Dec-Apr) tighten up — bridal work dominates and tourist demand spikes. Dry-season walk-in availability is solid.',
+    description: 'findme.hair lists 85+ active salons and barbers across the Cairns region. Within the suburbs this guide covers, Edge Hill and Manunda have the most, followed by Westcourt, with a smaller group at Palm Cove on the northern beaches. Among the highest-rated on Google are Elvi The Salon (5.0 from 60+ reviews) and Reds Hair & Co. (5.0 from 50+) in Edge Hill, Effigy Hair in Westcourt (5.0 from 50+), Berry Lane Hair in Manunda (4.9 from 390+) and Beachfront Hair in Palm Cove (4.9 from 160+). Cairns is hot and humid for much of the year, so raise frizz control and colour fade at your consultation if they matter to you.',
   },
 ];
 
@@ -224,7 +225,7 @@ export default async function CityGuidePage({
         description: `Top-rated hair salons and barbers in ${config.name}, ${fullState}.`,
         image: 'https://www.findme.hair/og-image.jpg',
         datePublished: PUBLISHED,
-        dateModified: PUBLISHED,
+        dateModified: MODIFIED,
         author: { '@id': 'https://www.findme.hair/#organization' },
         publisher: { '@id': 'https://www.findme.hair/#organization' },
         mainEntityOfPage: path,
@@ -242,12 +243,12 @@ export default async function CityGuidePage({
           {
             '@type': 'Question',
             name: `How much does a haircut cost in ${config.name}?`,
-            acceptedAnswer: { '@type': 'Answer', text: `Haircut prices in ${config.name} vary by salon type. Men's barber cuts typically range from $25-$45, while women's salon cuts start from $60. Premium salons in ${config.suburbs[1] ? config.suburbs.slice(1, 3).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' and ') : config.name} may charge more.` },
+            acceptedAnswer: { '@type': 'Answer', text: `Haircut prices in ${config.name} vary from salon to salon, and by stylist and service. Check each salon's own price list or phone ahead before you book.` },
           },
           {
             '@type': 'Question',
-            name: `What are the most popular suburbs for hair salons in ${config.name}?`,
-            acceptedAnswer: { '@type': 'Answer', text: `Popular suburbs for hair salons in ${config.name} include ${config.suburbs.slice(0, 5).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')}. Each area has its own character, from boutique studios to high-volume salons.` },
+            name: `Which suburbs does this ${config.name} guide cover?`,
+            acceptedAnswer: { '@type': 'Answer', text: `Suburbs covered by this ${config.name} guide include ${config.suburbs.slice(0, 5).map((s) => titleCase(s)).join(', ')}.` },
           },
         ],
       }} />
@@ -299,23 +300,21 @@ export default async function CityGuidePage({
           </div>
         )}
 
-        {/* Notes from the field — editorial commentary on top picks.
-            Built specifically to give AI assistants (ChatGPT, Perplexity, etc.)
-            something quotable about each named salon. Brand Radar data
-            (2026-05-22) showed AI never cites directory list pages but does
-            quote editorial roundups extensively. This section turns the
-            listing page into a citeable mini-feature. */}
+        {/* Top five by Google rating — a quotable summary of each named salon.
+            Brand Radar data (2026-05-22) showed AI rarely cites bare directory
+            list pages but does quote roundups. Copy here must stay data-only:
+            no "field" visits or personal picks are implied (fact-check 2026-11-07). */}
         {businesses.length >= 3 && (
           <section className="mt-14 card p-8">
-            <p className="text-editorial-overline mb-3">Notes from the field</p>
+            <p className="text-editorial-overline mb-3">Top rated on Google</p>
             <h2
               className="text-xl text-[var(--color-ink)]"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
-              Who we&rsquo;d send a friend to in {config.name}
+              The highest-rated hair businesses in {config.name}
             </h2>
             <p className="mt-3 text-sm text-[var(--color-ink-light)] leading-relaxed">
-              Picks from the top of {config.name}&rsquo;s {businesses.length}-strong list of hair professionals on findme.hair. Listings are ranked by Google rating and review depth, never paid placement.
+              The top {Math.min(5, businesses.length)} of the {businesses.length} listings shown above, ranked by Google rating and then by number of reviews.
             </p>
             <div className="mt-6 space-y-5">
               {businesses.slice(0, 5).map((b) => {
@@ -358,21 +357,21 @@ export default async function CityGuidePage({
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-[var(--color-ink-light)]">
             <p>
               Finding the right hairdresser in {config.name} starts with knowing what you need.
-              Whether you&rsquo;re after a precision cut, balayage, keratin treatment, or a classic
-              barber fade, {config.name} has specialists in every category.
+              Whether you&rsquo;re after a precision cut, balayage, a keratin treatment or a classic
+              barber fade, check each salon&rsquo;s services and recent reviews before you book.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">What to look for</h3>
             <ul className="list-disc pl-5 space-y-1">
               <li><strong>Google reviews</strong> — check recent reviews, not just the overall rating</li>
               <li><strong>Specialisation</strong> — curly hair, colour correction, and extensions all require specialist skills</li>
-              <li><strong>Online booking</strong> — salons with online booking tend to be better organised</li>
+              <li><strong>Online booking</strong> — handy if you want to see available times before you call</li>
               <li><strong>Location</strong> — factor in parking, public transport, and opening hours</li>
-              <li><strong>Consultations</strong> — the best salons offer free consultations before major changes</li>
+              <li><strong>Consultations</strong> — ask for a consultation before a major change; many salons offer one</li>
             </ul>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
             <p>
-              One way to judge a salon&rsquo;s quality is by looking at their tools. The best hairdressers in {config.name} use
-              professional-grade hairdressing scissors made from Japanese steel, and keep them professionally sharpened.{' '}
+              One way to judge a salon&rsquo;s quality is by looking at their tools. Many professional hairdressers use
+              Japanese-steel scissors and have them sharpened regularly.{' '}
               <a href="https://www.sheargenius.com.au/?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_hairdresser_city&utm_content=home" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 ShearGenius
               </a>{' '}
@@ -380,16 +379,15 @@ export default async function CityGuidePage({
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>
-              We currently list {businesses.length} top-rated salons and barbers across {config.name}.
+              This page shows the {businesses.length} highest-rated salons and barbers we list across {config.name},
+              ranked by Google rating and review count.
               {salons.length > 0 && ` ${salons.length} hair salons`}
-              {barbers.length > 0 && ` and ${barbers.length} barber shops`} made the list, ranked by
-              Google rating and review count.
+              {barbers.length > 0 && ` and ${barbers.length} barber shops`} made the list.
             </p>
-            <h3 className="text-base font-semibold text-[var(--color-ink)]">Popular suburbs for hair services</h3>
+            <h3 className="text-base font-semibold text-[var(--color-ink)]">Suburbs in this guide</h3>
             <p>
-              The most popular suburbs for hair salons in {config.name} include{' '}
+              Suburbs covered by this {config.name} guide include{' '}
               {config.suburbs.slice(0, 5).map((s) => titleCase(s)).join(', ')}.
-              Each suburb has its own character — from boutique studios to high-volume salons.
             </p>
           </div>
         </section>
@@ -437,7 +435,7 @@ export default async function CityGuidePage({
             >
               best barbers in {config.name}
             </Link>{' '}
-            guide covers traditional barbershops, fade specialists, and beard work in the same area.
+            guide ranks barber shops and unisex studios in the same suburbs by Google rating.
           </p>
         </section>
 
