@@ -39,8 +39,10 @@ export default function robots(): MetadataRoute.Robots {
       // entries) — but repeat the disallow so they don't crawl utility routes.
       ...aiBots.map((userAgent) => ({ userAgent, allow, disallow })),
     ],
+    // Google gets the core list (strongest pages first); the full /sitemap.xml
+    // stays live and is submitted to Bing directly (findme-authority, 2026-11-07).
     sitemap: [
-      'https://www.findme.hair/sitemap.xml',
+      'https://www.findme.hair/sitemap-core.xml',
     ],
     host: 'https://www.findme.hair',
   };

@@ -17,6 +17,7 @@ import {
   listSuburbsInRegion,
 } from '@/lib/search';
 import { verifiedWalkIns } from '@/lib/listingCopy';
+import { supabaseServerInternal } from '@/lib/supabase';
 import type { AuState } from '@/types/database';
 
 export const revalidate = 3600; // ISR — regenerate at most once per hour
@@ -108,6 +109,7 @@ export default async function SuburbDirectoryPage({
   );
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
+  const inPerson = await inPersonChecks(businesses.map((b) => b.id));
 
   // Nearby suburbs for internal linking — counted links (Zillow
   // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons
@@ -208,7 +210,7 @@ export default async function SuburbDirectoryPage({
             Hair salons &amp; barbers in {readable}
           </h1>
           <p className="mt-2 text-[var(--color-ink-light)]">
-            {businesses.length} verified {businesses.length === 1 ? 'listing' : 'listings'}
+            {businesses.length} {businesses.length === 1 ? 'listing' : 'listings'}
           </p>
           {businesses.length > 1 && (
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-ink-light)]">
@@ -217,6 +219,14 @@ export default async function SuburbDirectoryPage({
                 ? `real Google ratings from ${totalReviews.toLocaleString('en-AU')} reviews, `
                 : ''}
               opening hours and booking links, all in one place. (Updated {updatedLabel})
+            </p>
+          )}
+          {inPerson.count > 0 && inPerson.latest && (
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--color-ink-light)]">
+              <strong>Checked in person:</strong> {inPerson.count} of these{' '}
+              {inPerson.count === 1 ? 'salon has' : 'salons have'} been checked in person and found open and
+              trading, most recently in{' '}
+              {new Date(inPerson.latest).toLocaleDateString('en-AU', { month: 'long', year: 'numeric', timeZone: 'Australia/Melbourne' })}.
             </p>
           )}
         </div>
@@ -513,4 +523,31 @@ function Chevron() {
       <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
     </svg>
   );
+}
+
+// First-hand data for the suburb guide: how many listed salons our team has
+// visited and found open (latest in-person check per salon = 'active'), and
+// the month of the most recent such visit. Same source and rule as the
+// "Checked in person" line on salon pages (verification_log, field visits).
+async function inPersonChecks(ids: string[]): Promise<{ count: number; latest: string | null }> {
+  if (ids.length === 0) return { count: 0, latest: null };
+  const { data } = await supabaseServerInternal()
+    .from('verification_log')
+    .select('business_id, result, checked_at')
+    .eq('check_type', 'field_visit_sg_routes')
+    .in('result', ['active', 'closed'])
+    .in('business_id', ids)
+    .order('checked_at', { ascending: false });
+  const latestByBusiness = new Map<string, { result: string; at: string }>();
+  for (const v of (data ?? []) as { business_id: string; result: string; checked_at: string }[]) {
+    if (!latestByBusiness.has(v.business_id)) latestByBusiness.set(v.business_id, { result: v.result, at: v.checked_at });
+  }
+  let count = 0;
+  let latest: string | null = null;
+  for (const { result, at } of latestByBusiness.values()) {
+    if (result !== 'active') continue;
+    count += 1;
+    if (!latest || at > latest) latest = at;
+  }
+  return { count, latest };
 }
