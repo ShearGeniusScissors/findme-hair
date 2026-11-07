@@ -96,7 +96,7 @@ export default function ForSalonsPage() {
             />
             <Feature
               title="Scissors for the team"
-              description="Shearlo sells all-rounder scissors made by ShearGenius, with a six-question finder that matches each stylist to the right length."
+              description="Shearlo sells professional all-rounder scissors online, with a six-question finder that matches each stylist to scissors that fit."
               link={{ text: 'Shop Shearlo', href: 'https://www.shearlo.com/?utm_source=findme_hair&utm_medium=referral&utm_campaign=for_salons' }}
             />
           </div>
