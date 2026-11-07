@@ -83,7 +83,7 @@ export default function PressPage() {
         <section className="card p-8">
           <h2 className="text-xl text-[var(--color-ink)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>Latest data report</h2>
           <p className="text-sm text-[var(--color-ink-light)] leading-relaxed mb-3">
-            <Link href="/press/state-of-australian-hair-industry-2026" className="underline font-medium">State of the Australian Hair Industry 2026</Link> — aggregate counts and benchmarks drawn from the 13,812-business findme.hair national index. Released under CC BY 4.0 for free editorial reuse.
+            <Link href="/press/state-of-australian-hair-industry-2026" className="underline font-medium">State of the Australian Hair Industry 2026</Link> — aggregate counts and benchmarks drawn from 13,916 hair businesses listed on findme.hair (updated 7 November 2026). Released under CC BY 4.0 for free editorial reuse.
           </p>
           <p className="text-xs text-[var(--color-ink-muted)]">Suggested citation: <em>findme.hair (2026). State of the Australian Hair Industry 2026.</em></p>
         </section>
