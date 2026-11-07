@@ -46,9 +46,9 @@ export async function GET(request: Request) {
 
   const typeLabel = TYPE_LABEL[data.business_type as string] ?? 'Salon';
   const stateLabel = STATE_NAME[data.state as string] ?? data.state;
-  const ratingLine = data.google_rating
-    ? `${Number(data.google_rating).toFixed(1)}★ · ${data.google_review_count ?? 0} reviews`
-    : 'New on findme.hair';
+  // The star is drawn as SVG: the default OG font has no ★ glyph, and the
+  // runtime fetch for one failed on every render (Vercel runtime errors).
+  const rating = data.google_rating ? Number(data.google_rating).toFixed(1) : null;
 
   return new ImageResponse(
     (
@@ -95,8 +95,18 @@ export async function GET(request: Request) {
           {typeLabel} in {data.suburb}, {stateLabel}
         </div>
 
-        <div style={{ marginTop: 'auto', fontSize: 28, color: '#666', display: 'flex' }}>
-          {ratingLine}
+        <div style={{ marginTop: 'auto', fontSize: 28, color: '#666', display: 'flex', alignItems: 'center', gap: 8 }}>
+          {rating ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>{rating}</span>
+              <svg width="26" height="26" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={GOLD} />
+              </svg>
+              <span>{`· ${data.google_review_count ?? 0} reviews`}</span>
+            </div>
+          ) : (
+            <span>New on findme.hair</span>
+          )}
         </div>
       </div>
     ),
