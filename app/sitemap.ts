@@ -17,7 +17,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // the newest updated_at of the listings they show; data-driven static pages
   // use the newest listing change; copy-only pages use CONTENT_UPDATED (bump it
   // when their copy changes).
-  const CONTENT_UPDATED = new Date('2026-11-02');
+  const CONTENT_UPDATED = new Date('2026-11-06');
+  // Salon pages render their copy from lib/listingCopy.ts, so a template change
+  // changes every salon page without touching its row. Bump this when the salon
+  // template's visible content changes (2 Nov: copy rebuilt from verified fields;
+  // 6 Nov: truthful verification wording, in-person check line, own-visit badge).
+  const SALON_TEMPLATE_UPDATED = new Date('2026-11-06');
 
   // ONE paginated pass over active businesses feeds every business-derived part
   // of the sitemap. PostgREST silently caps a plain select at 1,000 rows — keep
@@ -160,14 +165,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  // Business profile pages — each URL's lastmod is the row's own updated_at.
+  // Business profile pages — each URL's lastmod is the later of the row's own
+  // updated_at and the last salon-template change.
   // Low-confidence pages are noindexed in generateMetadata (audit row 3b164977),
   // so they are left out here too.
   const businessPages: MetadataRoute.Sitemap = allBusinessRows
     .filter((b) => (b.confidence_score ?? 0) >= 30) // low-confidence pages are noindex'd; drop from sitemap too
     .map((b) => ({
       url: `${base}/salon/${b.slug}`,
-      lastModified: b.updated_at ? new Date(b.updated_at) : CONTENT_UPDATED,
+      lastModified: newer(SALON_TEMPLATE_UPDATED, b.updated_at)!,
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }));

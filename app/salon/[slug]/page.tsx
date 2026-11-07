@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import BookingButton from '@/components/BookingButton';
 import ClaimBanner from '@/components/ClaimBanner';
 import JsonLd from '@/components/JsonLd';
@@ -170,6 +170,20 @@ function buildProfileFaqs(business: ProfileBusiness): ProfileFaq[] {
   return faqs;
 }
 
+// A listing retired as a duplicate (status 'duplicate', hidden_reason
+// "duplicate of <slug> …") permanently redirects to the listing it duplicates,
+// so links to its old URL still land on the salon.
+async function duplicateOf(slug: string): Promise<string | null> {
+  const { data } = await supabaseServerInternal()
+    .from('businesses')
+    .select('hidden_reason')
+    .eq('slug', slug)
+    .eq('status', 'duplicate')
+    .maybeSingle();
+  const match = data?.hidden_reason?.match(/^duplicate of ([A-Za-z0-9_-]+)/);
+  return match && match[1] !== slug ? match[1] : null;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -235,7 +249,11 @@ export default async function BusinessProfilePage({
 }) {
   const { slug } = await params;
   const business = await getBusinessBySlug(slug);
-  if (!business) notFound();
+  if (!business) {
+    const keep = await duplicateOf(slug);
+    if (keep) permanentRedirect(`/salon/${keep}`);
+    notFound();
+  }
   const profileFaqs = buildProfileFaqs(business);
 
   // Real-geography "Other salons near {suburb}" — haversine within 25km, never
