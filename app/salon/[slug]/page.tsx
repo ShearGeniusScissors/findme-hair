@@ -15,6 +15,7 @@ import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
 import ShearGeniusBadge from '@/components/ShearGeniusBadge';
+import { sgLink } from '@/lib/outbound';
 import EngagementTracker from '@/components/EngagementTracker';
 import PhotoGallery from '@/components/PhotoGallery';
 import type { AuState } from '@/types/database';
@@ -1060,36 +1061,27 @@ export default async function BusinessProfilePage({
               />
             </div>
 
-            {/* Preferred scissor supplier badge */}
-            {business.preferred_scissor_supplier_url && (() => {
-              const supplierUrl = new URL(business.preferred_scissor_supplier_url);
-              if (supplierUrl.hostname === 'sheargenius.com.au') {
-                supplierUrl.hostname = 'www.sheargenius.com.au';
-              }
-              supplierUrl.searchParams.set('utm_source', 'findme.hair');
-              supplierUrl.searchParams.set('utm_medium', 'referral');
-              supplierUrl.searchParams.set('utm_campaign', 'supplier-link');
-              supplierUrl.searchParams.set('utm_content', business.slug);
+            {/* Preferred scissor supplier — only when the salon itself chose one (set by admin on
+                the salon's request). 13,319 listings carried the same ShearGenius link as a blanket
+                default (utm_campaign=preferred_supplier_badge), which read as every salon's own
+                preference; no salon had set it. Default links are no longer shown (19 Nov 2026). */}
+            {(() => {
+              const supplierUrl = salonChosenSupplier(business.preferred_scissor_supplier_url);
+              if (!supplierUrl) return null;
+              const isSg = supplierUrl.hostname.replace(/^www\./, '') === 'sheargenius.com.au';
+              const href = isSg
+                ? sgLink(supplierUrl.toString(), { page: 'salon', block: 'preferred-scissors' })
+                : supplierUrl.toString();
               return (
                 <div className="card p-5">
                   <p className="text-xs text-[var(--color-ink-muted)] mb-2 font-medium uppercase tracking-wide">Preferred Scissors</p>
                   <a
-                    href={supplierUrl.toString()}
+                    href={href}
                     target="_blank"
-                    rel="sponsored nofollow noopener"
+                    rel="nofollow noopener"
                     className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] transition-colors"
                   >
-                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="6" cy="6" r="3" />
-                      <circle cx="6" cy="18" r="3" />
-                      <line x1="20" y1="4" x2="8.12" y2="15.88" />
-                      <line x1="14.47" y1="14.48" x2="20" y2="20" />
-                      <line x1="8.12" y1="8.12" x2="12" y2="12" />
-                    </svg>
-                    {supplierUrl.hostname.replace(/^www\./, '')}
-                    <svg className="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>
+                    {isSg ? 'ShearGenius' : supplierUrl.hostname.replace(/^www\./, '')}
                   </a>
                 </div>
               );
@@ -1175,4 +1167,19 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
       <span className="text-right font-medium text-[var(--color-ink)]">{children}</span>
     </div>
   );
+}
+
+/** A supplier URL the salon chose itself, or null for the old blanket default / an unparseable value. */
+function salonChosenSupplier(raw: string | null | undefined): URL | null {
+  if (!raw) return null;
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return null;
+  }
+  // The blanket default written to every listing in 2026: a ShearGenius homepage link tagged
+  // utm_campaign=preferred_supplier_badge. It was never the salon's own choice.
+  if (u.searchParams.get('utm_campaign') === 'preferred_supplier_badge') return null;
+  return u;
 }
