@@ -48,7 +48,13 @@ export function supabaseServiceRole() {
  */
 const RENDER_DB_TIMEOUT_MS = 15_000;
 
+// Only at request time. During `next build` (~1,500 prerendered pages) queries
+// can legitimately take longer while the build itself loads the database, and
+// a timeout there fails the deploy (it did on 19 Nov, commit 62bc020).
+const IS_BUILD = process.env.NEXT_PHASE === 'phase-production-build';
+
 function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  if (IS_BUILD) return fetch(input, init);
   const timeout = AbortSignal.timeout(RENDER_DB_TIMEOUT_MS);
   const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
   return fetch(input, { ...init, signal });

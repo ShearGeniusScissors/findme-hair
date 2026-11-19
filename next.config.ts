@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // The build prerenders ~1,500 pages against the Supabase database that SG
+  // Routes also uses. At the default 8 pages per worker (x3 workers on Vercel)
+  // the 19 Nov 2026 deploy saturated it and SG Routes threw errors for ~4 min.
+  // Render fewer pages at once and give each one longer, so deploys are gentle.
+  staticPageGenerationTimeout: 180,
+  experimental: {
+    staticGenerationMaxConcurrency: 2,
+  },
   // Force canonical host to https://www.findme.hair so the site doesn't serve
   // duplicate content on https://findme.hair (no www) or http://www.findme.hair.
   // Vercel sets x-forwarded-proto and Next sees the host header.
