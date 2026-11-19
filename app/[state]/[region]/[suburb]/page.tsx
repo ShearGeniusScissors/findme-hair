@@ -10,7 +10,10 @@ import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import { isOpenOnDay } from '@/lib/openNow';
 import { findSalonStrips } from '@/lib/streets';
 import {
+  canonicalSuburbSlugs,
   countActiveBySuburbInRegion,
+  dedupeSuburbs,
+  suburbKeyOf,
   getRegionBySlug,
   getSuburbActiveStats,
   getSuburbBusinesses,
@@ -51,7 +54,7 @@ export async function generateMetadata({
   // wrong state. A region that exists but belongs to a different state is not a page.
   if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
   const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
-  const suburbName = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
+  const suburbName = titleCase((suburbRow?.name ?? suburb.replace(/-/g, ' ')).trim());
   const postcode = suburbRow?.postcode ?? '';
   const fullState = stateName(stateCode);
 
@@ -105,7 +108,16 @@ export default async function SuburbDirectoryPage({
   // notFound() inside generateMetadata does not 404 the render.
   if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
   const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
-  const readable = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
+  const readable = titleCase((suburbRow?.name ?? suburb.replace(/-/g, ' ')).trim());
+  // A second row for the same suburb in the same region (e.g. st-kilda-vic and
+  // melbourne-inner-south-st-kilda) 308s to the canonical one (review 19 Nov 2026).
+  const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
+  if (suburbRow) {
+    const canonical = canonicalSuburbSlugs(allSuburbs).get(suburbKeyOf(suburbRow.region_id, suburbRow.name));
+    if (canonical && canonical !== suburb) {
+      permanentRedirect(`/${stateCode.toLowerCase()}/${region}/${canonical}`);
+    }
+  }
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
   // No suburb row in this region and nothing to list: either the suburb moved to its
@@ -122,10 +134,9 @@ export default async function SuburbDirectoryPage({
   // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons
   // · 4.6★ avg" beats a bare name. One light query per suburb (5 max, daily ISR).
   // Only suburbs whose page has listings (19 Nov 2026: links to "0 listings" pages removed).
-  const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const regionSuburbCounts = regionRow ? await countActiveBySuburbInRegion(regionRow.id) : new Map<string, number>();
   const nearbySuburbs = await Promise.all(
-    allSuburbs
+    dedupeSuburbs(allSuburbs)
       .filter((s) => s.slug !== suburb && (regionSuburbCounts.get(s.name.toLowerCase().trim()) ?? 0) > 0)
       .slice(0, 5)
       .map(async (s) => {

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import { PIVOT_CITIES } from '@/lib/cityPivotConfig';
+import { dedupeSuburbs } from '@/lib/search';
 import { cityPivotIndexable, suburbPivotIndexable, type CoverageRow, type SuburbPivotRoute } from '@/lib/pivotCoverage';
 
 // Builds every sitemap URL. app/sitemap.ts serves the full list (Bing and other
@@ -213,7 +214,8 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     }
   }
 
-  const suburbPages: MetadataRoute.Sitemap = allSuburbs
+  // dedupeSuburbs: one URL per (region, suburb name); the duplicate rows 308 (review 19 Nov).
+  const suburbPages: MetadataRoute.Sitemap = dedupeSuburbs(allSuburbs)
     .filter((s) => {
       // The page looks listings up by the suburb row's name (slug words as fallback).
       const k = suburbKey(s.region_id, s.name ?? (s.slug || '').replace(/-/g, ' '));

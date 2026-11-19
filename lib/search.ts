@@ -354,6 +354,31 @@ export const getRegionBySlug = cache(async (slug: string): Promise<Region | null
   return (data as Region | null) ?? null;
 });
 
+/**
+ * One suburb row per (region, name). 12 regions-and-names had two rows with different
+ * slugs (e.g. st-kilda-vic and melbourne-inner-south-st-kilda; sunbury and sunbury-sunbury)
+ * that render the same listings (review 19 Nov 2026). The canonical row is the shortest
+ * slug, then A–Z; the others 308 to it and are left out of hubs and sitemaps.
+ */
+export function suburbKeyOf(regionId: string | null | undefined, name: string | null | undefined): string {
+  return `${regionId ?? ''}|${(name ?? '').toLowerCase().trim()}`;
+}
+export function canonicalSuburbSlugs<T extends { slug: string; name: string | null; region_id: string | null }>(
+  rows: T[],
+): Map<string, string> {
+  const best = new Map<string, string>();
+  for (const r of rows) {
+    const k = suburbKeyOf(r.region_id, r.name ?? r.slug.replace(/-/g, ' '));
+    const cur = best.get(k);
+    if (!cur || r.slug.length < cur.length || (r.slug.length === cur.length && r.slug < cur)) best.set(k, r.slug);
+  }
+  return best;
+}
+export function dedupeSuburbs<T extends { slug: string; name: string | null; region_id: string | null }>(rows: T[]): T[] {
+  const canon = canonicalSuburbSlugs(rows);
+  return rows.filter((r) => canon.get(suburbKeyOf(r.region_id, r.name ?? r.slug.replace(/-/g, ' '))) === r.slug);
+}
+
 export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
   const supabase = supabaseServerInternal();
   const { data } = await supabase
@@ -480,7 +505,8 @@ export async function getSuburbBusinesses(
   // slug's words left 1,298 suburb pages showing "0 listings" although the region had
   // salons there (19 Nov 2026). The slug's words remain the fallback.
   const suburbRow = await getSuburbByRegionAndSlug(region.id, suburbSlug);
-  const suburbName = suburbRow?.name ?? suburbSlug.replace(/-/g, ' ');
+  // Trimmed: one row was stored as "Sunbury " and matched only 1 of 29 listings (review 19 Nov).
+  const suburbName = (suburbRow?.name ?? suburbSlug.replace(/-/g, ' ')).trim();
   const { data } = await supabase
     .from('businesses')
     .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, address_line1, top_rated_year, is_claimed')
@@ -511,7 +537,7 @@ export async function getSuburbActiveCount(
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', regionId)
-    .ilike('suburb', suburbName);
+    .ilike('suburb', suburbName.trim());
   return count ?? 0;
 }
 
@@ -534,7 +560,7 @@ export async function getSuburbActiveStats(
     .eq('status', 'active')
     .eq('state', state)
     .eq('region_id', regionId)
-    .ilike('suburb', suburbName);
+    .ilike('suburb', suburbName.trim());
   const rows = (data ?? []) as Array<{ google_rating: number | null }>;
   const rated = rows.filter((r) => r.google_rating != null).map((r) => r.google_rating as number);
   const avgRating =
@@ -605,8 +631,10 @@ export async function getSuburbHubUrls(
     .from('suburbs')
     .select('name, slug, region_id')
     .eq('state', state);
-  const matched = ((subs ?? []) as Array<{ name: string; slug: string; region_id: string | null }>)
-    .filter((r) => r.region_id && r.slug && want.has(r.name.toLowerCase().trim()));
+  const matched = dedupeSuburbs(
+    ((subs ?? []) as Array<{ name: string; slug: string; region_id: string | null }>)
+      .filter((r) => r.region_id && r.slug && want.has(r.name.toLowerCase().trim())),
+  );
   if (!matched.length) return {};
   const regionIds = Array.from(new Set(matched.map((r) => r.region_id as string)));
   const { data: regs } = await supabase.from('regions').select('id, slug').in('id', regionIds);

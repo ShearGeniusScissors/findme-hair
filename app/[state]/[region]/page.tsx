@@ -5,6 +5,7 @@ import JsonLd from '@/components/JsonLd';
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import {
   countActiveBySuburbInRegion,
+  dedupeSuburbs,
   getRegionBySlug,
   listSuburbsInRegion,
   searchBusinesses,
@@ -103,7 +104,8 @@ export default async function RegionDirectoryPage({
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const suburbCounts = regionRow ? await countActiveBySuburbInRegion(regionRow.id) : new Map<string, number>();
   const listingsIn = (name: string) => suburbCounts.get(name.toLowerCase().trim()) ?? 0;
-  const suburbs = allSuburbs
+  // dedupeSuburbs: one link per suburb (12 suburbs had two rows, 19 Nov review).
+  const suburbs = dedupeSuburbs(allSuburbs)
     .filter((s) => listingsIn(s.name) > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
 
