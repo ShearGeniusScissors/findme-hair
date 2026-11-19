@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { supabaseServerInternal } from '@/lib/supabase';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'About findme.hair — Australia\'s Hair Salon & Barber Directory',
@@ -227,7 +228,7 @@ export default async function AboutPage() {
             </ul>
             <p className="mt-3">
               Looking for professional scissors or an on-road sharpen? See{' '}
-              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href={sgLink('/', { page: 'about', block: 'salon-owners' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 ShearGenius
               </a>.
             </p>

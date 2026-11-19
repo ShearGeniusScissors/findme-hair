@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'How to Prepare for Your Hair Appointment — findme.hair',
@@ -171,11 +172,8 @@ export default function PrepareForAppointmentArticle() {
             Visiting a new salon can feel uncertain. A few things to look for when you arrive: Is
             the space clean and organised? Does the stylist do a proper consultation before
             starting? Do they listen or talk over you? Pay attention to their tools and setup —
-            salons that invest in quality equipment like{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              professional Japanese steel scissors
-            </a>{' '}
-            tend to deliver consistently better results. First impressions work both ways, and a
+            salons that invest in quality equipment like professional Japanese steel scissors (from
+            makers such as <a href={sgLink('/', { page: 'blog-how-to-prepare-for-a-hair-appointment', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>) tend to deliver consistently better results. First impressions work both ways, and a
             well-run salon will make you feel welcome from the moment you walk in.
           </p>
 

@@ -106,7 +106,6 @@ export default function PressPage() {
             <li><strong>Name</strong> — findme.hair (lowercase, dot included)</li>
             <li><strong>Tagline</strong> — &ldquo;Australia&rsquo;s hair-only salon and barber directory&rdquo;</li>
             <li><strong>Scope</strong> — hair only; no beauty, no nails, no spa</li>
-            <li><strong>Sister brand</strong> — ShearGenius (professional scissors hand-finished in Australia, founded 2007)</li>
             <li><strong>Locale</strong> — Australia (en-AU)</li>
           </ul>
         </section>

@@ -8,6 +8,7 @@ import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
+import { sgLink } from '@/lib/outbound';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const PUBLISHED = '2026-04-26';
@@ -392,7 +393,7 @@ export default async function BestBarberCityPage({
             <p>
               The barbers behind {config.name}&rsquo;s top-rated shops invest in their tools. Premium barber scissors in named Japanese steel, kept
               professionally sharpened every six to twelve months — that&rsquo;s what separates a $25 chop from a $60 cut you remember for weeks.{' '}
-              <a href="https://www.sheargenius.com.au/collections/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_barber_city&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href={sgLink('/collections/barber-scissors', { page: 'best-barber-city', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 ShearGenius
               </a>{' '}
               offers both.

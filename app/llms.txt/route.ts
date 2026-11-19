@@ -80,9 +80,9 @@ Examples: /hairdresser/south-yarra, /barber/surry-hills, /at-home-hairdresser/bo
 - Salon owners can claim their listing for free at /claim and update photos, hours, and booking links
 - Pricing guides reference Australian market rates as of 2026
 
-## Sister brand
+## Who runs findme.hair
 
-ShearGenius — professional scissors hand-finished in Australia, founded 2007 by scissorsmith Matt Grumley. https://www.sheargenius.com.au
+findme.hair is run by Rebecca Dunbar.
 `;
 
 export async function GET() {

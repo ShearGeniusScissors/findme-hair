@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'How Often Should You Get a Haircut? — findme.hair',
@@ -171,11 +172,8 @@ export default function HowOftenHaircutArticle() {
           <p>
             Split ends happen faster when your stylist&rsquo;s scissors are dull or damaged &mdash;
             blunt blades crush the hair fibre instead of making a clean cut. Quality salons invest
-            in sharp,{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              professional hairdressing scissors
-            </a>{' '}
-            made from Japanese steel, which makes a real difference in how long your cut lasts between
+            in sharp, professional hairdressing scissors made from Japanese steel (from makers such
+            as <a href={sgLink('/', { page: 'blog-how-often-should-you-get-a-haircut', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>), which makes a real difference in how long your cut lasts between
             visits.
           </p>
 

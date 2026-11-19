@@ -210,7 +210,7 @@ export default async function CityPivotPage({ city, businesses, content, allCiti
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
+                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} tag={{ page: `city-pivot-${content.routePrefix}`, block: 'brand-mention' }} />
               </p>
             )}
           </div>

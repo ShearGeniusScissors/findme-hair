@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'Haircut Cost in Australia (2026) — findme.hair',
@@ -103,11 +104,8 @@ export default function HaircutCostArticle() {
           <p>
             A standard men&rsquo;s haircut at a barber shop typically costs between <strong>$25 and $45</strong>.
             This usually includes a clipper cut or scissors cut, a style, and sometimes a neck shave.
-            Barbers who invest in quality tools &mdash; like precision{' '}
-            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_how_much_does_a_haircut_cost_in_australia&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              barber scissors
-            </a>
-            {' '}&mdash; tend to deliver cleaner, longer-lasting cuts.
+            Barbers who invest in quality tools &mdash; like precision barber scissors &mdash; tend
+            to deliver cleaner, longer-lasting cuts.
           </p>
           <p>
             At a unisex salon, men&rsquo;s cuts tend to run higher &mdash; between <strong>$50 and $70</strong> &mdash;
@@ -161,11 +159,9 @@ export default function HaircutCostArticle() {
               while an artistic director at the same salon charges $150.</li>
             <li><strong>Hair length and thickness:</strong> More hair means more time, more product, and a
               higher price. Many salons add a surcharge for extra-long or extra-thick hair.</li>
-            <li><strong>Products and tools:</strong> Salons that use premium colour lines and invest in{' '}
-              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                professional hairdressing scissors
-              </a>
-              {' '}made from Japanese steel tend to charge more &mdash; but the quality of the cut
+            <li><strong>Products and tools:</strong> Salons that use premium colour lines and invest in
+              professional hairdressing scissors made from Japanese steel (from makers such as{' '}
+              <a href={sgLink('/', { page: 'blog-how-much-does-a-haircut-cost-in-australia', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>) tend to charge more &mdash; but the quality of the cut
               and colour is noticeably better.</li>
             <li><strong>Salon ambience:</strong> Complimentary drinks, luxurious interiors, and a premium
               experience all add to the cost.</li>

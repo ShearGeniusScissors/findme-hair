@@ -47,7 +47,7 @@ export default function Page() {
         scissorPlug: {
           text: "Even at cheap prices, your stylist's tools matter. ShearGenius supplies",
           linkText: "professional scissors for salons, hand-finished in Australia",
-          linkHref: "https://www.sheargenius.com.au/collections/hair-scissors",
+          linkHref: "https://www.sheargenius.com.au/collections/hairdressing-scissors",
         },
       }}
     />

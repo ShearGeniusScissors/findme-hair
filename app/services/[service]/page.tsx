@@ -635,7 +635,7 @@ export default async function ServicePage({
           </p>
           {config.content.proTip && (
             <p className="mt-3 text-sm text-[var(--color-ink-muted)] italic">
-              <BrandMention sentence={`${config.content.proTip.text} ${config.content.proTip.linkText}.`} href={config.content.proTip.linkHref} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic" />
+              <BrandMention sentence={`${config.content.proTip.text} ${config.content.proTip.linkText}.`} href={config.content.proTip.linkHref} tag={{ page: `services-${config.slug}`, block: 'pro-tip' }} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic" />
             </p>
           )}
         </section>

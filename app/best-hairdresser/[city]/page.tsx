@@ -8,6 +8,7 @@ import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
+import { sgLink } from '@/lib/outbound';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const PUBLISHED = '2026-04-13';
@@ -372,7 +373,7 @@ export default async function CityGuidePage({
             <p>
               One way to judge a salon&rsquo;s quality is by looking at their tools. Many professional hairdressers use
               Japanese-steel scissors and have them sharpened regularly.{' '}
-              <a href="https://www.sheargenius.com.au/?utm_source=findme_hair&utm_medium=referral&utm_campaign=best_hairdresser_city&utm_content=home" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
+              <a href={sgLink('/', { page: 'best-hairdresser-city', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
                 ShearGenius
               </a>{' '}
               offers both. Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.

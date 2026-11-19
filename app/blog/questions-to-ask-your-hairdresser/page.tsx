@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: '10 Questions to Ask Your Hairdresser | findme.hair',
@@ -145,14 +146,8 @@ export default function QuestionsArticle() {
           <p>
             If you want balayage, ask if they specialise in it. If you have curly hair, ask how
             many curly clients they see per week. Specificity gets you honest answers. You can
-            also look at their tools — professionals who invest in quality Japanese{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              hairdressing scissors
-            </a>{' '}
-            and keep them{' '}
-            <a href="https://www.sheargenius.com.au/pages/hairdressing-scissor-sharpening-service?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_questions_to_ask_your_hairdresser&utm_content=hairdressing-scissor-sharpening-service" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              professionally sharpened
-            </a>{' '}
+            also look at their tools — professionals who invest in quality Japanese hairdressing
+            scissors (from makers such as <a href={sgLink('/', { page: 'blog-questions-to-ask-your-hairdresser', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>) and keep them professionally sharpened
             tend to take their craft seriously.
           </p>
 

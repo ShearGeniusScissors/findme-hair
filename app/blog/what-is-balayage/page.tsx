@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'What Is Balayage? Everything You Need to Know — findme.hair',
@@ -204,11 +205,8 @@ export default function WhatIsBalayageArticle() {
           </ul>
           <p>
             The best colourists also invest in their tools. Precision cutting and blending require
-            quality equipment &mdash; from colour brushes to{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              professional hairdressing scissors
-            </a>{' '}
-            made from Japanese steel. If a stylist cares about their tools, they care about the
+            quality equipment &mdash; from colour brushes to professional hairdressing scissors made
+            from Japanese steel by makers such as <a href={sgLink('/', { page: 'blog-what-is-balayage', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>. If a stylist cares about their tools, they care about the
             craft.
           </p>
 

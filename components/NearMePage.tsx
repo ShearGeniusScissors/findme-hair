@@ -167,7 +167,7 @@ export default function NearMePage({ content }: { content: NearMeContent }) {
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                <BrandMention sentence={`${content.scissorPlug.text} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
+                <BrandMention sentence={`${content.scissorPlug.text} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} tag={{ page: content.routePath.replace(/^\//, ''), block: 'brand-mention' }} />
               </p>
             )}
           </div>

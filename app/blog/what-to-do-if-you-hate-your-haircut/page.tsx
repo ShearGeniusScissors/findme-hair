@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'What to Do If You Hate Your Haircut — findme.hair',
@@ -180,11 +181,8 @@ export default function HateHaircutArticle() {
             </li>
             <li>
               <strong>Look at the salon&rsquo;s tools and environment.</strong> One sign of a quality
-              salon is their investment in professional equipment. Hairdressers who use precision-ground{' '}
-              <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                Japanese steel scissors
-              </a>{' '}
-              deliver cleaner, more accurate cuts &mdash; and it shows in the finished result.
+              salon is their investment in professional equipment. Hairdressers who use precision-ground
+              Japanese steel scissors (from makers such as <a href={sgLink('/', { page: 'blog-what-to-do-if-you-hate-your-haircut', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>) deliver cleaner, more accurate cuts &mdash; and it shows in the finished result.
             </li>
             <li>
               <strong>Read reviews before booking.</strong> Look for stylists with consistent positive

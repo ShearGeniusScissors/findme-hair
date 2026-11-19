@@ -3,8 +3,10 @@
  * territories. Visit dates are passed only where the van actually goes — Victoria and Tasmania
  * in full, and in SA only the Mount Gambier corner. Provides a dofollow backlink to sheargenius.com.au.
  *
- * UTM: ?utm_source=findme.hair&utm_medium=listing&utm_campaign=supplier-badge
+ * Only the word "ShearGenius" is the link (Matt, 6 Nov); the wording "Professional scissors by
+ * ShearGenius" stays. UTM: lib/outbound (utm_campaign=salon, utm_content=sg-badge), 19 Nov 2026.
  */
+import { sgLink } from '@/lib/outbound';
 
 interface ShearGeniusBadgeProps {
   /** ISO date of this salon's own last in-person visit (never the state's latest run), e.g. "2026-04-18" */
@@ -15,8 +17,7 @@ interface ShearGeniusBadgeProps {
   state?: string;
 }
 
-const SHEARGENIUS_URL =
-  'https://www.sheargenius.com.au?utm_source=findme.hair&utm_medium=listing&utm_campaign=supplier-badge';
+const SHEARGENIUS_URL = sgLink('/', { page: 'salon', block: 'sg-badge' });
 
 function formatDate(iso: string): string {
   return new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', {
@@ -31,12 +32,7 @@ export default function ShearGeniusBadge({ lastVisit, nextVisit, state }: ShearG
     <div className="mx-auto max-w-6xl px-6 py-6">
       <div className="border-t border-[var(--color-border-light)] pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <a
-            href={SHEARGENIUS_URL}
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-2 text-xs text-[var(--color-ink-muted)] hover:text-[var(--color-gold-dark)] transition-colors group"
-          >
+          <span className="inline-flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             {/* Scissors icon */}
             <svg
               className="w-4 h-4 text-[var(--color-gold)] flex-shrink-0"
@@ -56,11 +52,16 @@ export default function ShearGeniusBadge({ lastVisit, nextVisit, state }: ShearG
             </svg>
             <span>
               Professional scissors by{' '}
-              <span className="font-medium text-[var(--color-ink-light)] group-hover:text-[var(--color-gold-dark)]">
+              <a
+                href={SHEARGENIUS_URL}
+                target="_blank"
+                rel="noopener"
+                className="font-medium text-[var(--color-ink-light)] hover:text-[var(--color-gold-dark)] transition-colors"
+              >
                 ShearGenius
-              </span>
+              </a>
             </span>
-          </a>
+          </span>
 
           {(lastVisit || nextVisit) && (
             <div className="flex items-center gap-4 text-xs text-[var(--color-ink-muted)]">

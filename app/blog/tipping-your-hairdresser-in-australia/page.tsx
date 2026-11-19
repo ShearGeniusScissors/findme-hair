@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'Tipping Your Hairdresser in Australia | findme.hair',
@@ -172,11 +173,8 @@ export default function TippingHairdresserArticle() {
             <li><strong>Tell them you love it</strong> — a simple &ldquo;this is exactly what I wanted&rdquo; genuinely makes a stylist&rsquo;s day.</li>
           </ul>
           <p>
-            Great hairdressers invest in their craft — from ongoing training to using quality{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              professional scissors
-            </a>
-            . Showing appreciation in any form helps them keep doing what they love.
+            Great hairdressers invest in their craft — from ongoing training to using quality
+            professional scissors from makers such as <a href={sgLink('/', { page: 'blog-tipping-your-hairdresser-in-australia', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>. Showing appreciation in any form helps them keep doing what they love.
           </p>
 
           <h2>The bottom line</h2>

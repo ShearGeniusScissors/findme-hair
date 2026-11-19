@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import { sgLink } from '@/lib/outbound';
 
 export const metadata: Metadata = {
   title: 'Hair Salon vs Barber Shop: Which One Should You Choose? — findme.hair',
@@ -131,15 +132,10 @@ export default function SalonVsBarberArticle() {
             pathway), while barbers complete a Certificate III in Barbering. Both are nationally
             recognised qualifications. The key difference is in the practical training — barbers
             spend more time on clipper work and shaving, while hairdressers focus on chemical
-            services, colour theory, and long-hair techniques. Both professions rely on quality{' '}
-            <a href="https://www.sheargenius.com.au" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              hairdressing scissors
-            </a>{' '}
-            — the difference is in blade length and handle style. Barbers typically use longer 6.5&ndash;7&quot;{' '}
-            <a href="https://www.sheargenius.com.au/pages/barber-scissors?utm_source=findme_hair&utm_medium=referral&utm_campaign=blog_hair_salon_vs_barber_shop&utm_content=barber-scissors" target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-              barber scissors
-            </a>{' '}
-            for scissor-over-comb work.
+            services, colour theory, and long-hair techniques. Both professions rely on quality
+            hairdressing scissors — the difference is in blade length and handle style. Barbers
+            typically use longer 6.5&ndash;7&quot; barber scissors for scissor-over-comb work, and
+            makers such as <a href={sgLink('/collections/barber-scissors', { page: 'blog-hair-salon-vs-barber-shop', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a> make both.
           </p>
 
           <h2>Pricing</h2>

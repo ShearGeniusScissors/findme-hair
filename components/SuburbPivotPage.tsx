@@ -161,7 +161,7 @@ export default function SuburbPivotPage({ suburb, businesses, content, siblingSu
             </ul>
             {content.scissorPlug && (
               <p className="pt-2">
-                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} />
+                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} tag={{ page: `suburb-pivot-${content.routePrefix}`, block: 'brand-mention' }} />
               </p>
             )}
           </div>

@@ -3,9 +3,7 @@ export const dynamic = 'force-static';
 export const revalidate = 86400;
 
 const TEXT = `/* TEAM */
-Founder: Matt Grumley
-Role: Australian scissorsmith and hairdresser, behind the chair since 1990. Built findme.hair as a sister project to ShearGenius (professional scissors hand-finished in Australia, founded 2007).
-Twitter: —
+Runs findme.hair: Rebecca Dunbar
 Site: https://www.findme.hair
 From: Australia
 
