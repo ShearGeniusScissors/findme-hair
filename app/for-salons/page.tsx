@@ -1,5 +1,65 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { sgLink, tagged } from '@/lib/outbound';
+import { formatAud, formatLengths, getLiveProduct, type LiveProduct } from '@/lib/sgProducts';
+
+// Scissor picks for salon owners (19 Nov 2026). Matt Grumley's approved picks and
+// strengths only (memory/NOW rulings 15 Oct, 2–3 Nov, 19 Nov); prices and lengths
+// are read live from the ShearGenius storefront (lib/sgProducts), never typed here.
+// Handles resolved from the live collection JSON on 19 Nov 2026.
+type Pick = {
+  need: string;
+  model: string;
+  handle: string;
+  why: string;
+  /** Second product shown on the same card (e.g. the left-handed version). */
+  extra?: { label: string; handle: string };
+};
+const PICKS: Pick[] = [
+  {
+    need: 'Team kits: an all-rounder for every stylist',
+    model: 'Geisha',
+    handle: 'geisha-professional-hairdressing-scissors',
+    why: "One of Matt's two all-rounder picks: it does the lot.",
+    extra: { label: 'Left-handed Geisha', handle: 'geisha-left-handed' },
+  },
+  {
+    need: 'Team kits: the other all-rounder pick',
+    model: 'Rose Tattoo',
+    handle: 'rose-tattoo-professional-hairdressing-scissors',
+    why: "Matt's other all-rounder pick: VG10 steel at 60 HRC, engraved and hand-painted pink.",
+  },
+  {
+    need: 'Barbers',
+    model: 'Emperor',
+    handle: 'emperor-professional-hairdressing-scissors',
+    why: "Matt's pick for barbers: an all-rounder that is better for scissor-over-comb.",
+  },
+  {
+    need: 'Busy salons',
+    model: 'Firebird',
+    handle: 'firebird-shears',
+    why: "Matt's pick for busy salons. A hairdressing scissor and a good all-rounder, not just a barber scissor.",
+  },
+  {
+    need: 'Detail work, curly hair and dry cutting',
+    model: 'Diamond',
+    handle: 'diamond-professional-hairdressing-scissors',
+    why: 'A wide blade with an exaggerated radius, so it slides better: dry slide cutting, coarse dry hair, detail work and curly hair.',
+  },
+  {
+    need: 'The high-end chair',
+    model: 'Prodigy',
+    handle: 'prodigy-professional-hairdressing-scissors',
+    why: "Matt's high-end pick.",
+  },
+  {
+    need: 'Apprentices',
+    model: 'Young Genius',
+    handle: 'young-genius-hairdressing-scissor',
+    why: "Matt's pick for apprentices starting out.",
+  },
+];
 
 const path = 'https://www.findme.hair/for-salons';
 const title = 'For Salon Owners | findme.hair';
@@ -20,7 +80,11 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title, description },
 };
 
-export default function ForSalonsPage() {
+export default async function ForSalonsPage() {
+  const handles = Array.from(new Set(PICKS.flatMap((p) => [p.handle, ...(p.extra ? [p.extra.handle] : [])])));
+  const live = new Map<string, LiveProduct | null>(
+    await Promise.all(handles.map(async (h) => [h, await getLiveProduct(h)] as const)),
+  );
   return (
     <main className="min-h-screen">
       {/* Hero */}
@@ -85,20 +149,136 @@ export default function ForSalonsPage() {
               description="Listings are matched to their Google Business Profiles. Owners who claim their listing get a Claimed badge on it."
             />
             <Feature
-              title="Professional tools matter"
-              description="Clients notice when their stylist uses quality equipment. Investing in professional Japanese steel scissors — like those from ShearGenius — shows you take your craft seriously."
-              link={{ text: 'Shop professional scissors', href: 'https://www.sheargenius.com.au' }}
-            />
-            <Feature
               title="The business side"
               description="Shear Profit's free calculators work out your break-even, chair utilisation and the true cost of a rostered hour from your own numbers."
-              link={{ text: 'Free salon profit tools', href: 'https://www.shearprofit.com.au/tools?utm_source=findme_hair&utm_medium=referral&utm_campaign=for_salons' }}
+              link={{ text: 'Free salon profit tools', href: tagged('https://www.shearprofit.com.au/tools', { page: 'for-salons', block: 'shear-profit-card' }) }}
             />
             <Feature
               title="Scissors for the team"
               description="Shearlo sells professional all-rounder scissors online, with a six-question finder that matches each stylist to scissors that fit."
-              link={{ text: 'Shop Shearlo', href: 'https://www.shearlo.com/?utm_source=findme_hair&utm_medium=referral&utm_campaign=for_salons' }}
+              link={{ text: 'Shop Shearlo', href: tagged('https://www.shearlo.com/', { page: 'for-salons', block: 'shearlo-card' }) }}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Choosing scissors for the team — need → model → why → lengths → live price → link */}
+      <section className="bg-[var(--color-white)]" id="choosing-scissors">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="text-center">
+            <p className="text-editorial-overline">Professional resource</p>
+            <h2
+              className="mt-3 text-3xl text-[var(--color-ink)]"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              Choosing scissors for your team
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[var(--color-ink-light)]">
+              Picks by need from Matt Grumley, the ShearGenius scissorsmith, behind the chair since 1990.
+              Every ShearGenius cutting scissor except the Slider is an all-rounder: slide cutting,
+              chipping, channelling, point cutting and blunt cutting. So the choice comes down to length,
+              then price and steel.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {PICKS.map((p) => {
+              const lp = live.get(p.handle) ?? null;
+              const extra = p.extra ? live.get(p.extra.handle) ?? null : null;
+              return (
+                <div key={p.handle} className="card p-6 flex flex-col">
+                  <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">{p.need}</p>
+                  <h3 className="mt-2 text-lg font-semibold text-[var(--color-ink)]">{p.model}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">{p.why}</p>
+                  <dl className="mt-3 space-y-1 text-sm text-[var(--color-ink-light)]">
+                    {lp && lp.lengths.length > 0 && (
+                      <div><dt className="inline font-medium text-[var(--color-ink)]">Lengths in stock: </dt><dd className="inline">{formatLengths(lp.lengths)}</dd></div>
+                    )}
+                    {lp && lp.fromPrice != null && (
+                      <div><dt className="inline font-medium text-[var(--color-ink)]">Price today: </dt><dd className="inline">from {formatAud(lp.fromPrice)}</dd></div>
+                    )}
+                    {p.extra && extra && extra.lengths.length > 0 && (
+                      <div><dt className="inline font-medium text-[var(--color-ink)]">{p.extra.label}: </dt><dd className="inline">{formatLengths(extra.lengths)}{extra.fromPrice != null && <>, from {formatAud(extra.fromPrice)}</>}</dd></div>
+                    )}
+                  </dl>
+                  <p className="mt-auto pt-4 text-sm text-[var(--color-ink-light)]">
+                    See the {p.model} at{' '}
+                    <a
+                      href={sgLink(`/products/${p.handle}`, { page: 'for-salons', block: `pick-${p.handle}` })}
+                      target="_blank"
+                      rel="noopener"
+                      className="font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                    >
+                      ShearGenius
+                    </a>
+                    {p.extra && (
+                      <>
+                        {' '}(left-handed:{' '}
+                        <a
+                          href={sgLink(`/products/${p.extra.handle}`, { page: 'for-salons', block: `pick-${p.extra.handle}` })}
+                          target="_blank"
+                          rel="noopener"
+                          className="font-medium text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                        >
+                          ShearGenius
+                        </a>
+                        )
+                      </>
+                    )}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-6 text-center text-xs text-[var(--color-ink-muted)]">
+            Prices and lengths are read from the ShearGenius online store and refreshed every 10 minutes.
+          </p>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-3">
+            <div className="card p-6">
+              <h3 className="font-semibold text-[var(--color-ink)]">Keeping the team&rsquo;s scissors sharp</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">
+                How often to sharpen, what it costs and how to judge a sharpener: our{' '}
+                <Link href="/scissor-sharpening" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">scissor sharpening guide</Link>.{' '}
+                <a
+                  href={sgLink('/pages/hairdressing-scissor-sharpening-service', { page: 'for-salons', block: 'sharpening-service' })}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                >
+                  ShearGenius
+                </a>{' '}
+                sharpens on the road across Victoria and Tasmania, plus Mount Gambier and Millicent.
+              </p>
+            </div>
+            <div className="card p-6">
+              <h3 className="font-semibold text-[var(--color-ink)]">Care and troubleshooting</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">
+                Care routines and troubleshooting guides for professional scissors:{' '}
+                <a
+                  href={tagged('https://www.hairdressingscissors.org/', { page: 'for-salons', block: 'care-guides' })}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                >
+                  hairdressingscissors.org
+                </a>.
+              </p>
+            </div>
+            <div className="card p-6">
+              <h3 className="font-semibold text-[var(--color-ink)]">Compare before you buy</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">
+                Every ShearGenius model with its steel, hardness and lengths:{' '}
+                <a
+                  href={tagged('https://www.hairdressingscissors.net/shop', { page: 'for-salons', block: 'net-shop' })}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]"
+                >
+                  the hairdressingscissors.net shop
+                </a>.
+              </p>
+            </div>
           </div>
         </div>
       </section>
