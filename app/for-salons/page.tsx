@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { sgLink, tagged } from '@/lib/outbound';
 import { formatAud, formatLengths, getLiveProducts } from '@/lib/sgProducts';
 
-// Scissor picks for salon owners (19 Nov 2026). Matt Grumley's approved picks and
-// strengths only (memory/NOW rulings 15 Oct, 2–3 Nov, 19 Nov); prices and lengths
+// Scissor picks for salon owners (19 Nov 2026). Only the approved ShearGenius picks and
+// strengths (memory/NOW rulings 15 Oct, 2–3 Nov, 19 Nov), written in findme.hair's own
+// neutral voice (review 19 Nov: "Matt's pick" read as a ShearGenius outlet); prices and lengths
 // are read live from the ShearGenius storefront (lib/sgProducts), never typed here.
 // Handles resolved from the live collection JSON on 19 Nov 2026.
 type Pick = {
@@ -17,47 +18,47 @@ type Pick = {
 };
 const PICKS: Pick[] = [
   {
-    need: 'Team kits: an all-rounder for every stylist',
+    need: 'For team kits',
     model: 'Geisha',
     handle: 'geisha-professional-hairdressing-scissors',
-    why: "One of Matt's two all-rounder picks: it does the lot.",
+    why: 'An all-rounder: it does the lot.',
     extra: { label: 'Left-handed Geisha', handle: 'geisha-left-handed' },
   },
   {
-    need: 'Team kits: the other all-rounder pick',
+    need: 'For team kits',
     model: 'Rose Tattoo',
     handle: 'rose-tattoo-professional-hairdressing-scissors',
-    why: "Matt's other all-rounder pick: VG10 steel at 60 HRC, engraved and hand-painted pink.",
+    why: 'An all-rounder in VG10 steel at 60 HRC, engraved and hand-painted pink.',
   },
   {
-    need: 'Barbers',
+    need: 'For barbers',
     model: 'Emperor',
     handle: 'emperor-professional-hairdressing-scissors',
-    why: "Matt's pick for barbers: an all-rounder that is better for scissor-over-comb.",
+    why: 'An all-rounder that is better for scissor-over-comb.',
   },
   {
-    need: 'Busy salons',
+    need: 'For busy salons',
     model: 'Firebird',
     handle: 'firebird-shears',
-    why: "Matt's pick for busy salons. A hairdressing scissor and a good all-rounder, not just a barber scissor.",
+    why: 'A hairdressing scissor and a good all-rounder, not just a barber scissor.',
   },
   {
-    need: 'Detail work, curly hair and dry cutting',
+    need: 'For detail work, curly hair and dry cutting',
     model: 'Diamond',
     handle: 'diamond-professional-hairdressing-scissors',
     why: 'A wide blade with an exaggerated radius, so it slides better: dry slide cutting, coarse dry hair, detail work and curly hair.',
   },
   {
-    need: 'The high-end chair',
+    need: 'For the high-end chair',
     model: 'Prodigy',
     handle: 'prodigy-professional-hairdressing-scissors',
-    why: "Matt's high-end pick.",
+    why: 'An all-rounder for the high-end chair.',
   },
   {
-    need: 'Apprentices',
+    need: 'For apprentices',
     model: 'Young Genius',
     handle: 'young-genius-hairdressing-scissor',
-    why: "Matt's pick for apprentices starting out.",
+    why: 'An all-rounder for apprentices starting out.',
   },
 ];
 
@@ -172,8 +173,8 @@ export default async function ForSalonsPage() {
               Choosing scissors for your team
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[var(--color-ink-light)]">
-              Picks by need from Matt Grumley, the ShearGenius scissorsmith, behind the chair since 1990.
-              Every ShearGenius cutting scissor except the Slider is an all-rounder: slide cutting,
+              Scissors from the ShearGenius range, matched to the need. Every ShearGenius cutting
+              scissor except the Slider is an all-rounder: slide cutting,
               chipping, channelling, point cutting and blunt cutting. So the choice comes down to length,
               then price and steel.
             </p>
@@ -190,7 +191,7 @@ export default async function ForSalonsPage() {
                   <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-light)]">{p.why}</p>
                   <dl className="mt-3 space-y-1 text-sm text-[var(--color-ink-light)]">
                     {lp && lp.lengths.length > 0 && (
-                      <div><dt className="inline font-medium text-[var(--color-ink)]">Lengths in stock: </dt><dd className="inline">{formatLengths(lp.lengths)}</dd></div>
+                      <div><dt className="inline font-medium text-[var(--color-ink)]">Lengths you can order today: </dt><dd className="inline">{formatLengths(lp.lengths)}</dd></div>
                     )}
                     {lp && lp.fromPrice != null && (
                       <div><dt className="inline font-medium text-[var(--color-ink)]">Price today: </dt><dd className="inline">from {formatAud(lp.fromPrice)}</dd></div>
@@ -211,7 +212,8 @@ export default async function ForSalonsPage() {
                     </a>
                     {p.extra && (
                       <>
-                        {' '}(left-handed:{' '}
+                        <br />
+                        {p.extra.label} at{' '}
                         <a
                           href={sgLink(`/products/${p.extra.handle}`, { page: 'for-salons', block: `pick-${p.extra.handle}` })}
                           target="_blank"
@@ -220,7 +222,6 @@ export default async function ForSalonsPage() {
                         >
                           ShearGenius
                         </a>
-                        )
                       </>
                     )}
                   </p>
