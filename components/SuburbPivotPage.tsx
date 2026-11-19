@@ -4,7 +4,6 @@ import JsonLd from "@/components/JsonLd";
 import { stateName } from "@/lib/geo";
 import type { Business } from "@/types/database";
 import type { SuburbConfig } from "@/lib/suburbConfig";
-import BrandMention from "@/components/BrandMention";
 
 export interface SuburbPivotContent {
   // SEO + UI strings
@@ -159,11 +158,7 @@ export default function SuburbPivotPage({ suburb, businesses, content, siblingSu
                 <li key={i}>{interp(b, vars)}</li>
               ))}
             </ul>
-            {content.scissorPlug && (
-              <p className="pt-2">
-                <BrandMention sentence={`${interp(content.scissorPlug.text, vars)} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} tag={{ page: `suburb-pivot-${content.routePrefix}`, block: 'brand-mention' }} />
-              </p>
-            )}
+            {/* No equipment plug on consumer pages (Matt, 19 Nov 2026): scissor recommendations live on /for-salons. */}
           </div>
         </section>
 

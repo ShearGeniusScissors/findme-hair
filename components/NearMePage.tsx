@@ -2,7 +2,6 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import { PIVOT_CITIES } from "@/lib/cityPivotConfig";
 import { TOP_SUBURBS } from "@/lib/suburbConfig";
-import BrandMention from "@/components/BrandMention";
 
 export interface NearMeContent {
   // SEO
@@ -165,11 +164,7 @@ export default function NearMePage({ content }: { content: NearMeContent }) {
                 <li key={i}>{b}</li>
               ))}
             </ul>
-            {content.scissorPlug && (
-              <p className="pt-2">
-                <BrandMention sentence={`${content.scissorPlug.text} ${content.scissorPlug.linkText}.`} href={content.scissorPlug.linkHref} tag={{ page: content.routePath.replace(/^\//, ''), block: 'brand-mention' }} />
-              </p>
-            )}
+            {/* No equipment plug on consumer pages (Matt, 19 Nov 2026): scissor recommendations live on /for-salons. */}
           </div>
         </section>
 

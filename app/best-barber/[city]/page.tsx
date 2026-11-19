@@ -8,7 +8,6 @@ import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
-import { sgLink } from '@/lib/outbound';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const PUBLISHED = '2026-04-26';
@@ -392,11 +391,7 @@ export default async function BestBarberCityPage({
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
             <p>
               The barbers behind {config.name}&rsquo;s top-rated shops invest in their tools. Premium barber scissors in named Japanese steel, kept
-              professionally sharpened every six to twelve months — that&rsquo;s what separates a $25 chop from a $60 cut you remember for weeks.{' '}
-              <a href={sgLink('/collections/barber-scissors', { page: 'best-barber-city', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                ShearGenius
-              </a>{' '}
-              offers both.
+              professionally sharpened every six to twelve months — that&rsquo;s what separates a $25 chop from a $60 cut you remember for weeks.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>

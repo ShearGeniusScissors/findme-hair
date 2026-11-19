@@ -8,7 +8,6 @@ import { stateName, titleCase } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 import type { AuState, Business } from '@/types/database';
-import { sgLink } from '@/lib/outbound';
 
 const SUBURB_SLUG_SET = new Set(TOP_SUBURBS.map((s) => s.slug));
 const PUBLISHED = '2026-04-13';
@@ -372,11 +371,7 @@ export default async function CityGuidePage({
             <h3 className="text-base font-semibold text-[var(--color-ink)]">Tools of the trade</h3>
             <p>
               One way to judge a salon&rsquo;s quality is by looking at their tools. Many professional hairdressers use
-              Japanese-steel scissors and have them sharpened regularly.{' '}
-              <a href={sgLink('/', { page: 'best-hairdresser-city', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">
-                ShearGenius
-              </a>{' '}
-              offers both. Sharp, high-quality scissors reduce split ends and give cleaner, more precise results.
+              Japanese-steel scissors and have them sharpened regularly.
             </p>
             <h3 className="text-base font-semibold text-[var(--color-ink)]">{config.name} by the numbers</h3>
             <p>

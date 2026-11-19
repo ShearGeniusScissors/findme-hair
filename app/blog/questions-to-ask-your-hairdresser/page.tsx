@@ -146,7 +146,7 @@ export default function QuestionsArticle() {
           <p>
             If you want balayage, ask if they specialise in it. If you have curly hair, ask how
             many curly clients they see per week. Specificity gets you honest answers. You can
-            also look at their tools — professionals who invest in quality Japanese hairdressing
+            also look at their tools — professionals who invest in quality professional hairdressing
             scissors (from makers such as <a href={sgLink('/', { page: 'blog-questions-to-ask-your-hairdresser', block: 'brand-mention' })} target="_blank" rel="noopener" className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)]">ShearGenius</a>) and keep them professionally sharpened
             tend to take their craft seriously.
           </p>

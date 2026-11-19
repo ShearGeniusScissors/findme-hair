@@ -5,7 +5,6 @@ import BusinessCard from '@/components/BusinessCard';
 import JsonLd from '@/components/JsonLd';
 import { supabaseServerInternal } from '@/lib/supabase';
 import type { Business, BusinessType } from '@/types/database';
-import BrandMention from '@/components/BrandMention';
 
 export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
@@ -633,11 +632,7 @@ export default async function ServicePage({
           <p className="mt-4 text-sm text-[var(--color-ink-light)] leading-relaxed">
             {config.content.closing}
           </p>
-          {config.content.proTip && (
-            <p className="mt-3 text-sm text-[var(--color-ink-muted)] italic">
-              <BrandMention sentence={`${config.content.proTip.text} ${config.content.proTip.linkText}.`} href={config.content.proTip.linkHref} tag={{ page: `services-${config.slug}`, block: 'pro-tip' }} className="text-[var(--color-gold-dark)] hover:text-[var(--color-gold)] not-italic" />
-            </p>
-          )}
+          {/* No equipment plug on consumer pages (Matt, 19 Nov 2026): scissor recommendations live on /for-salons. */}
         </section>
 
         {/* Cross-links to other services */}
