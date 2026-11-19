@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
         destination: "https://www.findme.hair/:path*",
         permanent: true,
       },
+      // Vercel hostnames (findme-hair.vercel.app and the team/branch aliases) served the
+      // whole site uncached, were indexed, and let crawlers bypass the www cache and hit
+      // the shared database (review 19 Nov 2026). Send every *.vercel.app request to www.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?<vhost>.+)\\.vercel\\.app" }],
+        destination: "https://www.findme.hair/:path*",
+        permanent: true,
+      },
       // /hair-salon/[suburb] listed the same salons as /hairdresser/[suburb] with
       // ~76% identical copy (indexing audit 2026-11-02) — one URL per intent.
       {
