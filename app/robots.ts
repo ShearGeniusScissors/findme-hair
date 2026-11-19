@@ -14,14 +14,18 @@ export default function robots(): MetadataRoute.Robots {
   // Notes:
   // - '/claim' (no trailing slash) blocks the actual route; '/claim/' did not.
   // - '/search' is thin, infinite query-combo bot-bait — never meant for index.
-  // - '/_next/' build chunks otherwise get pulled as if they were pages.
+  // - '/_next/' stays disallowed for the rest of the build output (data routes etc.).
   const disallow = ['/admin/', '/dashboard/', '/api/', '/claim', '/search', '/_next/'];
   // Carve the dynamic OG-image endpoint back out of the /api/ block: salon
   // pages set og:image to /api/og?slug=… and robots-respecting engines (AI
   // citations, Google rich results) need to fetch it. Longest-match wins, so
   // '/api/og' (allow) beats '/api/' (disallow) while the rest of /api stays
   // blocked. Suburb pages already use the static /og-image.jpg.
-  const allow = ['/', '/api/og'];
+  // 19 Nov 2026: every page's stylesheet and JS chunks live under /_next/static/,
+  // and optimised images under /_next/image. With '/_next/' blocked since 28 Apr,
+  // Google rendered every page without CSS or JS. Same longest-match rule: these
+  // two allows beat the '/_next/' disallow.
+  const allow = ['/', '/api/og', '/_next/static/', '/_next/image'];
 
   const aiBots = [
     'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web',
