@@ -19,12 +19,15 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
   // the newest updated_at of the listings they show; data-driven static pages
   // use the newest listing change; copy-only pages use CONTENT_UPDATED (bump it
   // when their copy changes).
-  const CONTENT_UPDATED = new Date('2026-11-06');
+  // 19 Nov: blog posts, /for-salons, /scissor-sharpening, /press and the region/suburb hub templates changed.
+  const CONTENT_UPDATED = new Date('2026-11-19');
+  const UNCHANGED_SINCE_6_NOV = new Date('2026-11-06');
   // Salon pages render their copy from lib/listingCopy.ts, so a template change
   // changes every salon page without touching its row. Bump this when the salon
   // template's visible content changes (2 Nov: copy rebuilt from verified fields;
   // 6 Nov: truthful verification wording, in-person check line, own-visit badge).
-  const SALON_TEMPLATE_UPDATED = new Date('2026-11-06');
+  // 19 Nov: the blanket "Preferred Scissors" block was removed from salon pages.
+  const SALON_TEMPLATE_UPDATED = new Date('2026-11-19');
 
   // ONE paginated pass over active businesses feeds every business-derived part
   // of the sitemap. PostgREST silently caps a plain select at 1,000 rows — keep
@@ -82,8 +85,9 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     latestListingChange = newer(latestListingChange, b.updated_at);
     if (b.state) stateLastMod.set(b.state.toUpperCase(), newer(stateLastMod.get(b.state.toUpperCase()), b.updated_at)!);
     if (b.region_id) regionLastMod.set(b.region_id, newer(regionLastMod.get(b.region_id), b.updated_at)!);
-    if (b.state && b.suburb) {
-      const key = `${b.state.toUpperCase()}|${b.suburb.toLowerCase().trim()}`;
+    if (b.region_id && b.suburb) {
+      // Same region + name key the suburb hub uses (see suburbKey below).
+      const key = `${b.region_id}|${b.suburb.toLowerCase().trim()}`;
       suburbLastMod.set(key, newer(suburbLastMod.get(key), b.updated_at)!);
     }
   }
@@ -102,7 +106,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     { url: `${base}/press`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/press/state-of-australian-hair-industry-2026`, lastModified: new Date('2026-11-07'), changeFrequency: 'yearly', priority: 0.85 },
     { url: `${base}/for-salons/badge`, lastModified: new Date('2026-05-22'), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${base}/trust`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/trust`, lastModified: UNCHANGED_SINCE_6_NOV, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/best-haircut-australia`, lastModified: dataUpdated, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/stats`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.7 },
     { url: `${base}/reviews`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.85 },
@@ -127,6 +131,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
   type RegionRow = { id: string; slug: string | null; state: string | null };
   type SuburbRow = {
     slug: string;
+    name: string | null;
     state: string;
     region_id: string | null;
     regions: { slug: string } | { slug: string }[];
@@ -158,7 +163,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
   while (true) {
     const { data } = await supabase
       .from('suburbs')
-      .select('slug, state, region_id, regions!inner(slug)')
+      .select('slug, name, state, region_id, regions!inner(slug)')
       .range(suburbOffset, suburbOffset + suburbBatch - 1);
     if (!data || data.length === 0) break;
     allSuburbs.push(...(data as unknown as SuburbRow[]));
@@ -166,25 +171,60 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     suburbOffset += suburbBatch;
   }
 
-  // Build a set of suburbs that actually have active businesses, so we don't
-  // pollute the sitemap with suburb pages that render noindex (the per-page
-  // template noindexes empty suburb pages). Ahrefs Site Audit flagged 1,384
-  // "Noindex page in sitemap" errors traced primarily to this.
-  // Uses the single paginated business pass above (the 2026-08-06 1,000-row cap fix).
-  const populatedSuburbs = new Set<string>();
+  // Suburb hubs are listed only where the page has listings to show. The page
+  // (app/[state]/[region]/[suburb]) lists active salons with the SAME region_id
+  // and suburb name, and noindexes itself when there are none. Until 19 Nov the
+  // sitemap matched on state + suburb name only, so a suburb row filed under a
+  // second, overlapping region (e.g. Ballarat Cbd) went in although its page
+  // rendered "0 listings" + noindex.
+  //   Full sitemap (Bing): at least 1 active listing in that region + suburb.
+  //   Core sitemap (Google): at least MIN_CORE_SUBURB_SHOPFRONTS active shopfront
+  //   listings (published opening hours; a listing without hours may be a home
+  //   salon). Google indexed 1 page of ~4,000 core URLs; 1-listing hubs were
+  //   ~175 words of main content and diluted the list (owned-sites baseline, 19 Nov).
+  const MIN_CORE_SUBURB_SHOPFRONTS = 3;
+  const suburbKey = (regionId: string | null, suburb: string | null) =>
+    `${regionId ?? ''}|${(suburb ?? '').toLowerCase().trim()}`;
+  const suburbListingCount = new Map<string, number>();
   for (const row of allBusinessRows) {
-    if (row.suburb && row.state) {
-      populatedSuburbs.add(`${row.state.toUpperCase()}|${row.suburb.toLowerCase().trim()}`);
+    if (!row.region_id || !row.suburb) continue;
+    const k = suburbKey(row.region_id, row.suburb);
+    suburbListingCount.set(k, (suburbListingCount.get(k) ?? 0) + 1);
+  }
+  const suburbShopfrontCount = new Map<string, number>();
+  if (opts.core) {
+    // One light extra pass for the core list only: two short columns per active
+    // listing that publishes hours (google_hours present = shopfront).
+    for (let offset = 0; ; offset += 1000) {
+      const { data } = await supabase
+        .from('businesses')
+        .select('region_id, suburb')
+        .eq('status', 'active')
+        .not('google_hours', 'is', null)
+        .order('id')
+        .range(offset, offset + 999);
+      if (!data || data.length === 0) break;
+      for (const r of data as { region_id: string | null; suburb: string | null }[]) {
+        if (!r.region_id || !r.suburb) continue;
+        const k = suburbKey(r.region_id, r.suburb);
+        suburbShopfrontCount.set(k, (suburbShopfrontCount.get(k) ?? 0) + 1);
+      }
+      if (data.length < 1000) break;
     }
   }
 
   const suburbPages: MetadataRoute.Sitemap = allSuburbs
-    .filter((s) => populatedSuburbs.has(`${s.state.toUpperCase()}|${(s.slug || '').replace(/-/g, ' ').toLowerCase().trim()}`))
+    .filter((s) => {
+      // The page looks listings up by the suburb row's name (slug words as fallback).
+      const k = suburbKey(s.region_id, s.name ?? (s.slug || '').replace(/-/g, ' '));
+      if (opts.core) return (suburbShopfrontCount.get(k) ?? 0) >= MIN_CORE_SUBURB_SHOPFRONTS;
+      return (suburbListingCount.get(k) ?? 0) > 0;
+    })
     .map((s) => {
       const regionSlug = Array.isArray(s.regions) ? s.regions[0]?.slug : s.regions?.slug;
       return {
         url: `${base}/${s.state.toLowerCase()}/${regionSlug}/${s.slug}`,
-        lastModified: atLeastContent(suburbLastMod.get(`${s.state.toUpperCase()}|${(s.slug || '').replace(/-/g, ' ').toLowerCase().trim()}`)),
+        lastModified: atLeastContent(suburbLastMod.get(suburbKey(s.region_id, s.name ?? (s.slug || '').replace(/-/g, ' ')))),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
       };
@@ -245,7 +285,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     'how-to-prepare-for-a-hair-appointment',
   ];
   const blogPages: MetadataRoute.Sitemap = [
-    { url: `${base}/blog`, lastModified: CONTENT_UPDATED, changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${base}/blog`, lastModified: UNCHANGED_SINCE_6_NOV, changeFrequency: 'weekly' as const, priority: 0.7 },
     ...blogSlugs.map((slug) => ({
       url: `${base}/blog/${slug}`,
       lastModified: CONTENT_UPDATED,
@@ -269,7 +309,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
 
   // About page
   const aboutPage: MetadataRoute.Sitemap = [
-    { url: `${base}/about`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${base}/about`, lastModified: UNCHANGED_SINCE_6_NOV, changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
 
   // High-volume "near me" landing pages

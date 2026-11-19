@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import BusinessCard from '@/components/BusinessCard';
 import CardRail from '@/components/CardRail';
 import JsonLd from '@/components/JsonLd';
@@ -10,6 +10,7 @@ import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import { isOpenOnDay } from '@/lib/openNow';
 import { findSalonStrips } from '@/lib/streets';
 import {
+  countActiveBySuburbInRegion,
   getRegionBySlug,
   getSuburbActiveStats,
   getSuburbBusinesses,
@@ -103,21 +104,29 @@ export default async function SuburbDirectoryPage({
   // listing Victorian salons as New South Wales. Must live in the PAGE component —
   // notFound() inside generateMetadata does not 404 the render.
   if (regionRow && regionRow.state && regionRow.state.toUpperCase() !== stateCode) notFound();
-  const readable = titleCase(
-    (await getSuburbByRegionAndSlug(regionRow?.id ?? '', suburb))?.name ??
-    suburb.replace(/-/g, ' ')
-  );
+  const suburbRow = regionRow ? await getSuburbByRegionAndSlug(regionRow.id, suburb) : null;
+  const readable = titleCase(suburbRow?.name ?? suburb.replace(/-/g, ' '));
 
   const businesses = await getSuburbBusinesses(stateCode, region, suburb);
+  // No suburb row in this region and nothing to list: either the suburb moved to its
+  // correct region (19 Nov 2026: North Bondi, Box Hill North/South) — send it there —
+  // or the URL was never a page.
+  if (!suburbRow && businesses.length === 0) {
+    const moved = await findSuburbElsewhere(stateCode, suburb);
+    if (moved && moved !== region) permanentRedirect(`/${stateCode.toLowerCase()}/${moved}/${suburb}`);
+    notFound();
+  }
   const inPerson = await inPersonChecks(businesses.map((b) => b.id));
 
   // Nearby suburbs for internal linking — counted links (Zillow
   // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons
   // · 4.6★ avg" beats a bare name. One light query per suburb (5 max, daily ISR).
+  // Only suburbs whose page has listings (19 Nov 2026: links to "0 listings" pages removed).
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
+  const regionSuburbCounts = regionRow ? await countActiveBySuburbInRegion(regionRow.id) : new Map<string, number>();
   const nearbySuburbs = await Promise.all(
     allSuburbs
-      .filter((s) => s.slug !== suburb)
+      .filter((s) => s.slug !== suburb && (regionSuburbCounts.get(s.name.toLowerCase().trim()) ?? 0) > 0)
       .slice(0, 5)
       .map(async (s) => {
         const stats = regionRow
@@ -550,4 +559,18 @@ async function inPersonChecks(ids: string[]): Promise<{ count: number; latest: s
     if (!latest || at > latest) latest = at;
   }
   return { count, latest };
+}
+
+/** Region slug of a suburb with this slug elsewhere in the state (a suburb that moved region), or null. */
+async function findSuburbElsewhere(state: AuState, suburbSlug: string): Promise<string | null> {
+  const { data } = await supabaseServerInternal()
+    .from('suburbs')
+    .select('regions!inner(slug)')
+    .eq('state', state)
+    .eq('slug', suburbSlug)
+    .limit(2);
+  const rows = (data ?? []) as unknown as { regions: { slug: string } | { slug: string }[] }[];
+  if (rows.length !== 1) return null;
+  const r = rows[0].regions;
+  return (Array.isArray(r) ? r[0]?.slug : r?.slug) ?? null;
 }

@@ -345,11 +345,14 @@ export async function listRegions(state?: AuState): Promise<Region[]> {
   return (data ?? []) as Region[];
 }
 
-export async function getRegionBySlug(slug: string): Promise<Region | null> {
+// React.cache: the region and suburb pages look the same row up from generateMetadata,
+// the page and getSuburbBusinesses — one query per request instead of three (19 Nov 2026,
+// shared-database load).
+export const getRegionBySlug = cache(async (slug: string): Promise<Region | null> => {
   const supabase = supabaseServerInternal();
   const { data } = await supabase.from('regions').select('*').eq('slug', slug).maybeSingle();
   return (data as Region | null) ?? null;
-}
+});
 
 export async function listSuburbsInRegion(regionId: string): Promise<Suburb[]> {
   const supabase = supabaseServerInternal();
@@ -472,7 +475,12 @@ export async function getSuburbBusinesses(
   const supabase = supabaseServerInternal();
   const region = await getRegionBySlug(regionSlug);
   if (!region) return [];
-  const suburbName = suburbSlug.replace(/-/g, ' ');
+  // Look listings up by the suburb's NAME. 1,423 suburb rows have a slug that is not
+  // the name (e.g. "ballarat-cbd-lake-gardens" for Lake Gardens), and matching on the
+  // slug's words left 1,298 suburb pages showing "0 listings" although the region had
+  // salons there (19 Nov 2026). The slug's words remain the fallback.
+  const suburbRow = await getSuburbByRegionAndSlug(region.id, suburbSlug);
+  const suburbName = suburbRow?.name ?? suburbSlug.replace(/-/g, ' ');
   const { data } = await supabase
     .from('businesses')
     .select('id, slug, name, suburb, state, postcode, business_type, google_rating, google_review_count, google_photos, specialties, walk_ins_welcome, featured_until, lat, lng, confidence_score, phone, google_hours, address_line1, top_rated_year, is_claimed')
@@ -536,10 +544,11 @@ export async function getSuburbActiveStats(
   return { count: rows.length, avgRating };
 }
 
-export async function getSuburbByRegionAndSlug(
+export const getSuburbByRegionAndSlug = cache(async (
   regionId: string,
   suburbSlug: string,
-): Promise<Suburb | null> {
+): Promise<Suburb | null> => {
+  if (!regionId) return null;
   const supabase = supabaseServerInternal();
   const { data } = await supabase
     .from('suburbs')
@@ -548,6 +557,33 @@ export async function getSuburbByRegionAndSlug(
     .eq('slug', suburbSlug)
     .maybeSingle();
   return (data as Suburb | null) ?? null;
+});
+
+/**
+ * Active-listing count per suburb name (lower-cased) within one region — the same
+ * region + name match the suburb page uses. One light paginated pass over a single
+ * column. Lets the region hub link only suburbs whose page has listings (19 Nov 2026).
+ */
+export async function countActiveBySuburbInRegion(regionId: string): Promise<Map<string, number>> {
+  const supabase = supabaseServerInternal();
+  const counts = new Map<string, number>();
+  for (let offset = 0; ; offset += 1000) {
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('suburb')
+      .eq('status', 'active')
+      .eq('region_id', regionId)
+      .order('id')
+      .range(offset, offset + 999);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    for (const r of data as { suburb: string | null }[]) {
+      const k = (r.suburb ?? '').toLowerCase().trim();
+      if (k) counts.set(k, (counts.get(k) ?? 0) + 1);
+    }
+    if (data.length < 1000) break;
+  }
+  return counts;
 }
 
 /**

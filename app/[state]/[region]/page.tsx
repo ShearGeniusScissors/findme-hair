@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { AU_STATES, stateName, titleCase } from '@/lib/geo';
 import {
-  countBusinessesByRegion,
+  countActiveBySuburbInRegion,
   getRegionBySlug,
   listSuburbsInRegion,
   searchBusinesses,
@@ -96,16 +96,23 @@ export default async function RegionDirectoryPage({
   const regionName = titleCase(regionRow?.name ?? region.replace(/-/g, ' '));
   const regionSlug = regionRow?.slug ?? region;
 
-  // Suburbs in this region (alphabetical) — fall back to filtering by region slug
-  // joined through suburbs.region_id when the region row is missing.
+  // Suburbs in this region (alphabetical), only those whose page has listings: the
+  // hub used to link every suburb row, including ones whose page said "0 listings"
+  // (noindex), e.g. 11 of 12 under Ballarat Cbd (19 Nov 2026). Counts use the same
+  // region + suburb-name match as the suburb page.
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
-  const suburbs = [...allSuburbs].sort((a, b) => a.name.localeCompare(b.name));
+  const suburbCounts = regionRow ? await countActiveBySuburbInRegion(regionRow.id) : new Map<string, number>();
+  const listingsIn = (name: string) => suburbCounts.get(name.toLowerCase().trim()) ?? 0;
+  const suburbs = allSuburbs
+    .filter((s) => listingsIn(s.name) > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   // Internal-link cross-pollination — pull up to 100 salons in this region so
   // every region hub spreads PageRank to ~100 long-tail profiles, not just 6.
   // Kills most of the "only one dofollow incoming link" Ahrefs warnings.
   const featured = await searchBusinesses({ region: regionSlug, limit: 100 });
-  const totalCount = regionRow ? await countBusinessesByRegion(regionRow.id) : 0;
+  let totalCount = 0;
+  for (const n of suburbCounts.values()) totalCount += n;
   const moneyPageSuburbs = TOP_SUBURBS.filter(
     (suburb) => suburb.state === stateCode && suburb.regionSlug === regionSlug,
   );
@@ -197,11 +204,9 @@ export default async function RegionDirectoryPage({
                   <span className="capitalize truncate">
                     {titleCase(s.name)}
                   </span>
-                  {s.postcode && (
-                    <span className="text-[10px] text-[var(--color-ink-muted)] group-hover:text-[var(--color-gold-dark)] flex-shrink-0 ml-2">
-                      {s.postcode}
-                    </span>
-                  )}
+                  <span className="text-[10px] text-[var(--color-ink-muted)] group-hover:text-[var(--color-gold-dark)] flex-shrink-0 ml-2">
+                    {listingsIn(s.name)} {listingsIn(s.name) === 1 ? 'listing' : 'listings'}
+                  </span>
                 </Link>
               ))}
             </div>
