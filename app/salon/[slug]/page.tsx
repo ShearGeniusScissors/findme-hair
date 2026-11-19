@@ -314,13 +314,18 @@ export default async function BusinessProfilePage({
   // Filter by region_id too so the peer pool matches getSuburbBusinesses
   // (the suburb-page pool) — without it, same-named suburbs in other
   // regions inflate the count and the profile disagrees with the page.
-  const { data: suburbPeerRows } = await supabaseServerInternal()
-    .from('businesses')
-    .select('id, google_rating, google_review_count, google_hours')
-    .eq('status', 'active')
-    .eq('suburb', business.suburb)
-    .eq('state', business.state)
-    .eq('region_id', business.region_id);
+  // A listing with no region has no suburb page, so it has no peer pool. Skip the
+  // query: `.eq('region_id', null)` sent `region_id=eq.null`, which PostgREST rejects
+  // with 400 (13 in 15 min on 19 Nov). The page rendered the same without the result.
+  const { data: suburbPeerRows } = business.region_id
+    ? await supabaseServerInternal()
+        .from('businesses')
+        .select('id, google_rating, google_review_count, google_hours')
+        .eq('status', 'active')
+        .eq('suburb', business.suburb)
+        .eq('state', business.state)
+        .eq('region_id', business.region_id)
+    : { data: [] };
   const peers = (suburbPeerRows ?? []) as Array<{
     id: string;
     google_rating: number | null;
