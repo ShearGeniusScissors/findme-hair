@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { sgLink, tagged } from '@/lib/outbound';
-import { formatAud, formatLengths, getLiveProduct, type LiveProduct } from '@/lib/sgProducts';
+import { formatAud, formatLengths, getLiveProducts } from '@/lib/sgProducts';
 
 // Scissor picks for salon owners (19 Nov 2026). Matt Grumley's approved picks and
 // strengths only (memory/NOW rulings 15 Oct, 2–3 Nov, 19 Nov); prices and lengths
@@ -82,9 +82,7 @@ export const metadata: Metadata = {
 
 export default async function ForSalonsPage() {
   const handles = Array.from(new Set(PICKS.flatMap((p) => [p.handle, ...(p.extra ? [p.extra.handle] : [])])));
-  const live = new Map<string, LiveProduct | null>(
-    await Promise.all(handles.map(async (h) => [h, await getLiveProduct(h)] as const)),
-  );
+  const live = await getLiveProducts(handles);
   return (
     <main className="min-h-screen">
       {/* Hero */}
