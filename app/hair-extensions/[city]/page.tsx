@@ -7,7 +7,7 @@ import { supabaseServerInternal } from "@/lib/supabase";
 import { PIVOT_NOINDEX, isCityPivotIndexable } from "@/lib/pivotCoverage";
 import type { AuState, Business } from "@/types/database";
 
-export const revalidate = 3600;
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 export const dynamicParams = false;
 
 const ROUTE = "hair-extensions";

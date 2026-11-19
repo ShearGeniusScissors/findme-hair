@@ -34,7 +34,7 @@ export default function Page() {
         "Saturday is the busiest day; weekday mornings are the quietest",
       ],
       faq: [
-        { q: "How do I find a hair salon open right now?", a: "Use the search above with your suburb name. Then check the live opening hours on each listing — findme.hair pulls these from Google Business Profile and refreshes hourly. Many salons post live wait-time updates on Google or Instagram." },
+        { q: "How do I find a hair salon open right now?", a: "Use the search above with your suburb name. Then check the opening hours on each listing — findme.hair takes these from Google Business Profile. Many salons post live wait-time updates on Google or Instagram." },
         { q: "Are hair salons open on Sundays in Australia?", a: "Most major-city salons open at least limited Sunday hours, especially in shopping precincts. Regional salons often close Sundays. Always check live opening hours before driving." },
         { q: "What time do hair salons usually close?", a: "Most Australian salons close 5-6pm weekdays, 4-5pm Saturdays. Premium salons in capital cities often run late opening (until 7-8pm) on Thursdays and Fridays. Barber shops typically run later than hair salons." },
         { q: "Can I get a same-day haircut?", a: "Yes — many salons hold walk-in slots, especially for trims, blow-dries and men's cuts. For colour, balayage or any senior-stylist work, same-day is harder. Call ahead, or book through the salon's online booking link." },

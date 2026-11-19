@@ -7,7 +7,7 @@ import { listRegions, searchBusinesses, countBusinessesByRegionBatch } from '@/l
 import type { AuState, Region } from '@/types/database';
 import { TOP_SUBURBS } from '@/lib/suburbConfig';
 
-export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 // Pre-render all 8 state hub pages at build time so the first request is fast
 // (Ahrefs Site Audit flagged these as 2.6-4.6s loading time when generated

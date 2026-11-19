@@ -38,9 +38,29 @@ export function supabaseServiceRole() {
  * unverified listings would leak onto public pages.
  *
  * Server-only. Never imported into Client Components.
+ *
+ * Every request from this client gives up after RENDER_DB_TIMEOUT_MS. The
+ * database is shared with SG Routes: on 19 Nov 2026 a crawler sweeping
+ * hundreds of directory pages left renders waiting up to 300 s on a
+ * saturated database, which also took SG Routes (and its sign-in) down for
+ * ~15 minutes. Failing fast lets ISR keep serving the last good page instead
+ * of piling up more waiting connections.
  */
+const RENDER_DB_TIMEOUT_MS = 15_000;
+
+function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  const timeout = AbortSignal.timeout(RENDER_DB_TIMEOUT_MS);
+  const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
+  return fetch(input, { ...init, signal });
+}
+
 export function supabaseServerInternal() {
-  return supabaseServiceRole();
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  if (!key) throw new Error('SUPABASE_SERVICE_KEY is not set');
+  return createClient(SUPABASE_URL, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: fetchWithTimeout },
+  });
 }
 
 /**

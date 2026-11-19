@@ -20,7 +20,7 @@ import PhotoGallery from '@/components/PhotoGallery';
 import type { AuState } from '@/types/database';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const revalidate = 21600; // ISR — regenerate at most every 6 hours (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 // Pre-render the 500 highest-traffic salons (featured + most-reviewed) at build
 // time so Ahrefs/Google never hit a cold ISR start on these. The remaining 13k

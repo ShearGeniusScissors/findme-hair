@@ -25,7 +25,7 @@ export default function Page() {
       cityRoute: "/best-hairdresser",
       suburbRoute: "/hairdresser",
       guideTitle: "How to find a hairdresser open on Sunday",
-      guideIntro: "Most major-city Australian hair salons keep at least limited Sunday hours, especially salons in shopping precincts. Regional salons often close Sundays. The fastest way to find a Sunday-open salon is to type your suburb above, click through to listings, and check live Google opening hours — findme.hair pulls these hourly.",
+      guideIntro: "Most major-city Australian hair salons keep at least limited Sunday hours, especially salons in shopping precincts. Regional salons often close Sundays. The fastest way to find a Sunday-open salon is to type your suburb above, click through to listings, and check the Google opening hours on each listing.",
       whatToDo: [
         "Type your suburb above to find salons nearby",
         "Click through to a listing and check Sunday opening hours on the Details card",

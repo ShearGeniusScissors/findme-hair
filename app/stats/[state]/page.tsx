@@ -6,7 +6,7 @@ import { AU_STATES, stateName } from '@/lib/geo';
 import { supabaseServerInternal } from '@/lib/supabase';
 import type { AuState } from '@/types/database';
 
-export const revalidate = 3600;
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 export function generateStaticParams() {
   return AU_STATES.map(({ code }) => ({ state: code.toLowerCase() }));

@@ -7,7 +7,7 @@ import { supabaseServerInternal } from '@/lib/supabase';
 import type { Business, BusinessType } from '@/types/database';
 import BrandMention from '@/components/BrandMention';
 
-export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 interface ServiceConfig {
   slug: string;

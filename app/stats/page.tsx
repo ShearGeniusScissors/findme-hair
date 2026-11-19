@@ -3,7 +3,7 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import { supabaseServerInternal } from "@/lib/supabase";
 
-export const revalidate = 3600;
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 const path = "https://www.findme.hair/stats";
 const title = `Australian Hair Industry Stats ${new Date().getFullYear()} | findme.hair`;

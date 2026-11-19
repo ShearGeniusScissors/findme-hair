@@ -20,13 +20,13 @@ import { verifiedWalkIns } from '@/lib/listingCopy';
 import { supabaseServerInternal } from '@/lib/supabase';
 import type { AuState } from '@/types/database';
 
-export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 
 // Without generateStaticParams this dynamic route was rendered on every request
 // (cache-control: no-store, x-vercel-cache MISS, 2.3–2.6s TTFB — indexing audit
 // 2026-11-02) and `revalidate` was ignored. Next 16 needs generateStaticParams —
 // an empty list is enough — to cache paths at runtime: each page now renders on
-// first visit and is then served from cache, regenerating hourly.
+// first visit and is then served from cache, regenerating at most daily.
 export async function generateStaticParams() {
   return [];
 }
@@ -113,7 +113,7 @@ export default async function SuburbDirectoryPage({
 
   // Nearby suburbs for internal linking — counted links (Zillow
   // child-geography pattern, playbook Part 3 #10): "Collingwood — 19 salons
-  // · 4.6★ avg" beats a bare name. One light query per suburb (5 max, hourly ISR).
+  // · 4.6★ avg" beats a bare name. One light query per suburb (5 max, daily ISR).
   const allSuburbs = regionRow ? await listSuburbsInRegion(regionRow.id) : [];
   const nearbySuburbs = await Promise.all(
     allSuburbs

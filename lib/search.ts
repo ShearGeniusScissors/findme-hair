@@ -511,7 +511,7 @@ export async function getSuburbActiveCount(
  * Count + average Google rating for a suburb's active listings — extends the
  * counted nearby links to the full Zillow child-geography pattern:
  * "Collingwood — 19 salons · 4.6★ avg". One light single-column fetch per
- * suburb per hourly ISR render; avg is null below 3 rated listings so a
+ * suburb per daily ISR render; avg is null below 3 rated listings so a
  * single 5.0★ outlier can't headline a suburb.
  */
 export async function getSuburbActiveStats(

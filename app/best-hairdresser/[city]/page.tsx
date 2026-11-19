@@ -14,7 +14,7 @@ const PUBLISHED = '2026-04-13';
 const MODIFIED = '2026-11-07'; // city copy rewritten from live findme.hair data
 const suburbToSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-export const revalidate = 3600; // ISR — regenerate at most once per hour
+export const revalidate = 86400; // ISR — regenerate at most daily (was hourly; 19 Nov 2026: crawler sweeps overloaded the shared DB)
 export const dynamicParams = false;
 
 interface CityConfig {
