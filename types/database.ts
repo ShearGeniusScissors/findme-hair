@@ -94,6 +94,10 @@ export interface Business {
   /** FindMe Hair Top Rated badge year — top 10% of active listings by Bayesian-weighted Google rating. NULL = no badge. */
   top_rated_year?: number | null;
   preferred_scissor_supplier_url: string | null;
+  /** ShearGenius Partner salon — set by findme.hair admins only (DB guard trigger). Shows the partner badge. */
+  sg_partner?: boolean;
+  /** Date the salon became a ShearGenius Partner (YYYY-MM-DD), optional. */
+  sg_partner_since?: string | null;
   created_at: string;
   updated_at: string;
 }

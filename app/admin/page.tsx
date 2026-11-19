@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase';
 import type { Business, Territory } from '@/types/database';
+import PartnerControl from './PartnerControl';
+import AdminSignIn from './AdminSignIn';
 
-type Tab = 'pending' | 'active' | 'territories' | 'flags' | 'recency';
+type Tab = 'pending' | 'active' | 'partners' | 'territories' | 'flags' | 'recency';
 
 interface RecencyRow {
   id: string;
@@ -41,6 +43,7 @@ export default function AdminPage() {
   const supabase = supabaseBrowser();
   const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
+  const [nonAdminEmail, setNonAdminEmail] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('pending');
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [territories, setTerritories] = useState<Territory[]>([]);
@@ -48,9 +51,11 @@ export default function AdminPage() {
   const [recencyFilter, setRecencyFilter] = useState<string>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
+  // Find one listing among ~13,900 (the Active tab only shows the first 250 A–Z).
+  const [search, setSearch] = useState('');
 
   const load = useCallback(
-    async (t: Tab) => {
+    async (t: Tab, q = '') => {
       setTab(t);
       setSelected(new Set());
       if (t === 'territories') {
@@ -73,6 +78,13 @@ export default function AdminPage() {
         query = query.eq('status', 'unverified').order('confidence_score', { ascending: false });
       } else if (t === 'active') {
         query = query.eq('status', 'active').order('name');
+        // Search by name, or paste a findme.hair listing URL / slug.
+        const slug = q.match(/\/salon\/([A-Za-z0-9-]+)/)?.[1] ?? null;
+        const words = q.replace(/[%_,()*\\]/g, ' ').trim();
+        if (slug) query = query.eq('slug', slug);
+        else if (words) query = query.ilike('name', `%${words}%`).limit(50);
+      } else if (t === 'partners') {
+        query = query.eq('sg_partner', true).order('name');
       } else if (t === 'flags') {
         query = query.not('verification_flags', 'eq', '[]').order('confidence_score', { ascending: true });
       }
@@ -91,6 +103,7 @@ export default function AdminPage() {
       }
       const { data: me } = await supabase.from('users').select('role').eq('id', auth.user.id).maybeSingle();
       if ((me as { role?: string } | null)?.role !== 'admin') {
+        setNonAdminEmail(auth.user.email ?? auth.user.id);
         setLoading(false);
         return;
       }
@@ -106,6 +119,15 @@ export default function AdminPage() {
     setBusinesses((prev) => prev.map((b) => b.id === id ? { ...b, preferred_scissor_supplier_url: trimmed } : b));
     setStatus(trimmed ? 'Supplier URL saved' : 'Supplier URL cleared');
     setTimeout(() => setStatus(null), 2000);
+  }
+
+  async function savePartner(id: string, next: { sg_partner: boolean; sg_partner_since: string | null }) {
+    const { error } = await supabase.from('businesses').update(next).eq('id', id);
+    if (error) return error.message;
+    setBusinesses((prev) => prev.map((b) => (b.id === id ? { ...b, ...next } : b)));
+    setStatus(next.sg_partner ? 'ShearGenius Partner badge on' : 'ShearGenius Partner badge off');
+    setTimeout(() => setStatus(null), 2500);
+    return null;
   }
 
   async function setBusinessStatus(ids: string[], next: 'active' | 'excluded' | 'unverified') {
@@ -144,6 +166,7 @@ export default function AdminPage() {
       <Shell>
         <h1 className="text-2xl font-semibold">Admin</h1>
         <p className="mt-2 text-sm text-neutral-600">You must be signed in as an admin user to view this page.</p>
+        <AdminSignIn signedInAs={nonAdminEmail} />
       </Shell>
     );
   }
@@ -156,7 +179,7 @@ export default function AdminPage() {
       </div>
 
       <nav className="mt-6 flex gap-2 border-b border-neutral-200">
-        {(['pending', 'active', 'territories', 'flags', 'recency'] as Tab[]).map((t) => (
+        {(['pending', 'active', 'partners', 'territories', 'flags', 'recency'] as Tab[]).map((t) => (
           <button
             key={t}
             type="button"
@@ -167,7 +190,7 @@ export default function AdminPage() {
                 : 'border-transparent text-neutral-500 hover:text-neutral-800'
             }`}
           >
-            {t === 'pending' ? 'Pending approval' : t}
+            {t === 'pending' ? 'Pending approval' : t === 'partners' ? 'SG Partners' : t}
           </button>
         ))}
       </nav>
@@ -262,8 +285,46 @@ export default function AdminPage() {
         </div>
       )}
 
-      {(tab === 'pending' || tab === 'active' || tab === 'flags') && (
+      {(tab === 'pending' || tab === 'active' || tab === 'partners' || tab === 'flags') && (
         <>
+          {tab === 'active' && (
+            <form
+              className="mt-6 flex flex-wrap items-center gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                load('active', search);
+              }}
+            >
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Salon name, or paste its findme.hair link"
+                className="w-80 max-w-full rounded border border-neutral-300 px-3 py-1.5 text-sm focus:border-rose-300 focus:outline-none"
+              />
+              <button type="submit" className="rounded-full bg-neutral-900 px-4 py-1.5 text-xs font-semibold text-white hover:bg-neutral-700">
+                Find
+              </button>
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    load('active');
+                  }}
+                  className="text-xs text-neutral-500 hover:text-neutral-800"
+                >
+                  Clear
+                </button>
+              )}
+            </form>
+          )}
+          {tab === 'partners' && (
+            <p className="mt-6 text-sm text-neutral-600">
+              Salons showing the &ldquo;ShearGenius Partner salon&rdquo; badge. To add one, find it on the Active tab and tick
+              &ldquo;ShearGenius Partner&rdquo;.
+            </p>
+          )}
           {tab === 'pending' && (
             <div className="mt-6 flex flex-wrap gap-2">
               <button
@@ -299,7 +360,7 @@ export default function AdminPage() {
                 <th className="pb-2">Business</th>
                 <th>Suburb</th>
                 <th>Type</th>
-                {tab !== 'active' && <th>Score</th>}
+                {tab !== 'active' && tab !== 'partners' && <th>Score</th>}
                 <th>Rating</th>
                 <th>Flags</th>
                 <th className="text-right">Actions</th>
@@ -331,6 +392,24 @@ export default function AdminPage() {
                       {b.address_line1 && (
                         <p className="text-xs text-neutral-500">{b.address_line1}</p>
                       )}
+                      {(tab === 'active' || tab === 'partners') && (
+                        <>
+                          <a
+                            href={`/salon/${b.slug}`}
+                            target="_blank"
+                            rel="noopener"
+                            className="text-[11px] text-rose-600 hover:text-rose-500"
+                          >
+                            /salon/{b.slug}
+                          </a>
+                          <PartnerControl
+                            key={`${b.id}-${b.sg_partner ? 1 : 0}`}
+                            partner={!!b.sg_partner}
+                            since={b.sg_partner_since ?? null}
+                            onSave={(next) => savePartner(b.id, next)}
+                          />
+                        </>
+                      )}
                       {tab === 'active' && (
                         <div className="mt-1.5 flex items-center gap-1">
                           <input
@@ -352,7 +431,7 @@ export default function AdminPage() {
                     </td>
                     <td className="py-3">{b.suburb}, {b.state}</td>
                     <td className="py-3 capitalize">{b.business_type.replace('_', ' ')}</td>
-                    {tab !== 'active' && (
+                    {tab !== 'active' && tab !== 'partners' && (
                       <td className="py-3">
                         <span
                           className={`inline-block rounded-full border px-2 py-0.5 text-xs font-semibold ${badge.cls}`}

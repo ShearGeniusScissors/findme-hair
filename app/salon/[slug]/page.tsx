@@ -1104,8 +1104,18 @@ export default async function BusinessProfilePage({
         </div>
       </div>
 
-      {/* ─── ShearGenius supplier badge; visit dates only where the van actually goes ── */}
-      {showSgBadge && (
+      {/* ─── ShearGenius badge; visit dates only where the van actually goes ──
+          Partner salons (sg_partner, admin-set) get the "ShearGenius Partner salon" badge
+          instead of the generic one, in any state; everyone else is unchanged. */}
+      {business.sg_partner ? (
+        <ShearGeniusBadge
+          lastVisit={sgLastVisit}
+          nextVisit={sgNextVisit}
+          state={business.state}
+          partner
+          partnerSince={business.sg_partner_since ?? null}
+        />
+      ) : showSgBadge && (
         <ShearGeniusBadge lastVisit={sgLastVisit} nextVisit={sgNextVisit} state={business.state} />
       )}
 
