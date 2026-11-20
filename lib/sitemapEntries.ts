@@ -23,6 +23,8 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
   // 19 Nov: blog posts, /for-salons, /scissor-sharpening, /press and the region/suburb hub templates changed.
   const CONTENT_UPDATED = new Date('2026-11-19');
   const UNCHANGED_SINCE_6_NOV = new Date('2026-11-06');
+  // 20 Nov: /scissor-sharpening care, frequency and method wording aligned to the current rules.
+  const SHARPENING_UPDATED = new Date('2026-11-20');
   // Salon pages render their copy from lib/listingCopy.ts, so a template change
   // changes every salon page without touching its row. Bump this when the salon
   // template's visible content changes (2 Nov: copy rebuilt from verified fields;
@@ -111,7 +113,7 @@ export async function sitemapEntries(opts: { core?: boolean } = {}): Promise<Met
     { url: `${base}/best-haircut-australia`, lastModified: dataUpdated, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/stats`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.7 },
     { url: `${base}/reviews`, lastModified: dataUpdated, changeFrequency: 'daily', priority: 0.85 },
-    { url: `${base}/scissor-sharpening`, lastModified: CONTENT_UPDATED, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/scissor-sharpening`, lastModified: SHARPENING_UPDATED, changeFrequency: 'monthly', priority: 0.7 },
   ];
 
   // State pages
